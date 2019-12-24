@@ -1,0 +1,605 @@
+:root {
+  --input-padding-x: .75rem;
+  --input-padding-y: .75rem;
+}
+
+html,
+body {
+  height: 100%;
+}
+
+body {
+  display: -ms-flexbox;
+  display: -webkit-box;
+  display: flex;
+  -ms-flex-align: center;
+  -ms-flex-pack: center;
+  -webkit-box-align: center;
+  align-items: center;
+  -webkit-box-pack: center;
+  justify-content: center;
+  padding-top: 40px;
+  padding-bottom: 40px;
+  background-color: #f5f5f5;
+}
+@media(max-height:350px){
+  html,
+  body {
+    height: auto;
+  }
+  body {
+    display: block;
+    padding-top: 0px;
+  }
+}
+
+@keyframes changeToBindExistingAccount
+{
+  from {height: 375px;}
+  to {height: 295px;}
+}
+@-webkit-keyframes changeToBindExistingAccount /* Safari 与 Chrome */
+{
+  from {height: 375px;}
+  to {height: 295px;}
+}
+
+@keyframes changeToBindNewAccount
+{
+  from {height: 295px;}
+  to {height: 375px;}
+}
+@-webkit-keyframes changeToBindNewAccount /* Safari 与 Chrome */
+{
+  from {height: 295px;}
+  to {height: 375px;}
+}
+
+@keyframes floatLeftToRight
+{
+  from {right: 100%;}
+  to {right: 0%;}
+}
+@-webkit-keyframes floatLeftToRight /* Safari 与 Chrome */
+{
+  from {right: 100%;}
+  to {right: 0%;}
+}
+
+@keyframes floatRightToLeft
+{
+  from {left: 100%; font-size: 12px;}
+  to {left: 0%; font-size: 16px;}
+}
+@-webkit-keyframes floatRightToLeft /* Safari 与 Chrome */
+{
+  from {left: 100%; font-size: 12px;}
+  to {left: 0%; font-size: 16px;}
+}
+
+.form-signin {
+  width: 100%;
+  max-width: 420px;
+  padding: 15px;
+  margin: 0 auto;
+}
+.form-signin .user-info{
+  font-size: 22px;
+  line-height: 25px;
+  min-height: 50px;
+  position: relative;
+}
+.form-signin .user-info img{
+  height: 50px;
+  border-radius: 26px;
+  position: absolute;
+  top: 0;
+  left: 0;
+}
+.form-signin .user-info div{
+  word-break: break-all;
+  word-wrap:break-word;
+  padding-left: 60px;
+  height: 50px;
+  display: table-cell;
+  vertical-align: middle;
+}
+.form-signin .user-info strong{
+  font-size: 14px;
+  color: orange;
+}
+.form-bind-title{
+  margin: 15px 0 8px 0;
+  height: 27px;
+  position: relative;
+  overflow: hidden;
+}
+.form-bind-title .existing-account{
+  position: absolute;
+  top: 0px;
+  left: 0px;
+  font-weight: bold;
+  border-bottom:#212529 3px solid;
+  color: #212529;
+  cursor: pointer;
+}
+.bind-existing-animation .existing-account{
+  /*animation-delay: 500ms;*/
+  /*-webkit-animation-delay: 500ms;*/
+  animation-timing-function:ease-out;
+  -webkit-animation-timing-function:ease-out; /* Safari and Chrome */
+  animation: floatRightToLeft 400ms;
+  -webkit-animation: floatRightToLeft 400ms; /* Safari 与 Chrome */
+}
+.form-bind-title .new-account{
+  position: absolute;
+  top: 5px;
+  right: 0px;
+  border-bottom:none;
+  color: #666666;
+  cursor: pointer;
+}
+.bind-existing-animation .new-account{
+  animation: floatLeftToRight 300ms;
+  -webkit-animation: floatLeftToRight 300ms;
+}
+.new-account-form{
+  height: 375px;
+  display: none;
+}
+.new-account-form .btn-secondary{
+  width: 140px;
+}
+.bind-new .new-account-form{
+  display: block;
+}
+.existing-account-form{
+  height: 295px;
+}
+.bind-new-animation .new-account-form{
+  animation: changeToBindNewAccount 300ms;
+  -webkit-animation: changeToBindNewAccount 300ms; /* Safari 与 Chrome */
+}
+.bind-new-animation .existing-account-form{
+  animation: changeToBindExistingAccount 300ms;
+  -webkit-animation: changeToBindExistingAccount 300ms; /* Safari 与 Chrome */
+}
+
+.bind-new .existing-account-form{
+  display: none;
+}
+.bind-new .existing-account{
+  position: absolute;
+  top: 5px;
+  right: 0px;
+  left: unset;
+  font-weight: normal;
+  border-bottom:none;
+  color: #666666;
+  cursor: pointer;
+}
+.bind-new-animation .existing-account{
+  animation: floatLeftToRight 300ms;
+  -webkit-animation: floatLeftToRight 300ms; /* Safari 与 Chrome */
+}
+.bind-new .new-account{
+  position: absolute;
+  top: 0px;
+  left: 0px;
+  right: unset;
+  font-weight: bold;
+  border-bottom:#212529 3px solid;
+  color: #212529;
+  cursor: pointer;
+}
+.bind-new-animation .new-account{
+  /*animation-delay: 500ms;*/
+  /*-webkit-animation-delay: 500ms;*/
+  animation-timing-function:ease-out;
+  -webkit-animation-timing-function:ease-out; /* Safari and Chrome */
+  animation: floatRightToLeft 400ms;
+  -webkit-animation: floatRightToLeft 400ms; /* Safari 与 Chrome */
+}
+
+
+@keyframes showAreaSelect
+{
+  from {height: 0px; color: #fd7e14;font-size: 2rem;}
+  to {height: 62px; color: #218838;font-size: 1rem;}
+}
+@-webkit-keyframes showAreaSelect /* Safari 与 Chrome */
+{
+  from {height: 0px; color: #fd7e14;font-size: 2rem;}
+  to {height: 62px; color: #218838;font-size: 1rem;}
+}
+@keyframes hideAreaSelect
+{
+  from {height: 62px; font-size: 1rem;}
+  to {height: 0px; font-size: 0.2rem;}
+}
+@-webkit-keyframes hideAreaSelect /* Safari 与 Chrome */
+{
+  from {height: 62px; font-size: 1rem;}
+  to {height: 0px; font-size: 0.2rem;}
+}
+#existing-area-select{
+  height: 0;
+  overflow: hidden;
+}
+#existing-area-select.show-area-select{
+  height: 62px;
+  animation: showAreaSelect 400ms;
+  -webkit-animation: showAreaSelect 400ms; /* Safari 与 Chrome */
+  margin-bottom: 1rem!important;
+}
+#existing-area-select.hide-area-select{
+  height: 0;
+  animation: hideAreaSelect 400ms;
+  -webkit-animation: hideAreaSelect 400ms; /* Safari 与 Chrome */
+}
+
+
+@keyframes showAreaSelect
+{
+  from {height: 0px; color: #fd7e14;font-size: 2rem;}
+  to {height: 62px; color: #218838;font-size: 1rem;}
+}
+@-webkit-keyframes showAreaSelect /* Safari 与 Chrome */
+{
+  from {height: 0px; color: #fd7e14;font-size: 2rem;}
+  to {height: 62px; color: #218838;font-size: 1rem;}
+}
+@keyframes hideAreaSelect
+{
+  from {height: 62px; font-size: 1rem;}
+  to {height: 0px; font-size: 0.2rem;}
+}
+@-webkit-keyframes hideAreaSelect /* Safari 与 Chrome */
+{
+  from {height: 62px; font-size: 1rem;}
+  to {height: 0px; font-size: 0.2rem;}
+}
+#existing-area-select{
+  height: 0;
+  overflow: hidden;
+}
+#existing-area-select.show-area-select{
+  height: 62px;
+  animation: showAreaSelect 400ms;
+  -webkit-animation: showAreaSelect 400ms; /* Safari 与 Chrome */
+  margin-bottom: 1rem!important;
+}
+#existing-area-select.hide-area-select{
+  height: 0;
+  animation: hideAreaSelect 400ms;
+  -webkit-animation: hideAreaSelect 400ms; /* Safari 与 Chrome */
+}
+
+@keyframes showAreaSelect2
+{
+  from {height: 0px; color: #fd7e14;}
+  to {height: 62px; color: #218838;}
+}
+@-webkit-keyframes showAreaSelect2 /* Safari 与 Chrome */
+{
+  from {height: 0px; color: #fd7e14;}
+  to {height: 62px; color: #218838;}
+}
+@keyframes hideAreaSelect2
+{
+  from {height: 62px;}
+  to {height: 0px;}
+}
+@-webkit-keyframes hideAreaSelect2 /* Safari 与 Chrome */
+{
+  from {height: 62px;}
+  to {height: 0px;}
+}
+#existing-area-select.show-area-select2{
+  height: 62px;
+  animation: showAreaSelect2 400ms;
+  -webkit-animation: showAreaSelect2 400ms; /* Safari 与 Chrome */
+  margin-bottom: 1rem!important;
+}
+#existing-area-select.hide-area-select2{
+  height: 0;
+  animation: hideAreaSelect2 400ms;
+  -webkit-animation: hideAreaSelect2 400ms; /* Safari 与 Chrome */
+}
+.min-dialog .dialog-content{
+  max-width: 310px;
+}
+
+.btn_loading,
+.btn-primary.btn_loading{
+  background-image: url(/img/loading.gif);
+  background-size: 26px;
+  background-position: center;
+  background-repeat: no-repeat;
+  color: rgba(0,0,0,0);
+}
+
+#wxlogin_btn,
+#qqlogin_btn{
+  opacity: 0.3;
+}
+#wxlogin_btn:hover, #qqlogin_btn:hover{
+  opacity: 1;
+}
+#wxlogin_btn{
+  display:inline-block;
+  text-align: center;
+  width: 47px;
+  margin-right: 20px;
+  text-decoration: none;
+}
+#wxlogin_btn span{
+  display: inline-block;
+  overflow: hidden;
+  width: 47px;
+}
+#qqlogin_btn{
+  display:inline-block;
+  text-align: center;
+  width: 47px;
+  text-decoration: none;
+}
+#qqlogin_btn span{
+  display: inline-block;
+  overflow: hidden;
+  width: 47px;
+}
+#show_wx_code {
+  display: none;
+  background: rgb(51, 51, 51);
+  position: absolute;
+  width: 100vw;
+  height: 100vh;
+  left: 0;
+  top: 0;
+  color: #fff;
+  text-align: center;
+}
+#show_wx_code .widget {
+  position: absolute;
+  top: 50%;
+  margin-top: -150px;
+  left: 50%;
+  margin-left: -123px;
+}
+#show_wx_code .tt_1 {
+  margin-bottom: 10px;
+}
+#show_wx_code .tt_2 {
+  margin-top: 10px;
+}
+#show_wx_code .img {
+  width: 245px;
+  height: 245px;
+  position: relative;
+}
+#show_wx_code .img img{
+  width: 245px;
+  height: 245px;
+}
+#show_wx_code .img div{
+  display: none;
+  width: 245px;
+  height: 147px;
+  padding-top: 98px;
+  left: 0;
+  top: 0;
+  position: absolute;
+  background: #000;
+  opacity: 0.9;
+  line-height: 25px;
+}
+
+
+.form-label-group {
+  position: relative;
+  margin-bottom: 1rem;
+}
+
+.form-label-group > input,
+.form-label-group > label {
+  padding: var(--input-padding-y) var(--input-padding-x);
+}
+
+.form-label-group > label {
+  position: absolute;
+  top: 0;
+  left: 0;
+  display: block;
+  width: 100%;
+  margin-bottom: 0; /* Override default `<label>` margin */
+  line-height: 1.5;
+  color: #495057;
+  border: 1px solid transparent;
+  border-radius: .25rem;
+  transition: all .1s ease-in-out;
+}
+
+.form-label-group input::-webkit-input-placeholder {
+  color: transparent;
+}
+
+.form-label-group input:-ms-input-placeholder {
+  color: transparent;
+}
+
+.form-label-group input::-ms-input-placeholder {
+  color: transparent;
+}
+
+.form-label-group input::-moz-placeholder {
+  color: transparent;
+}
+
+.form-label-group input::placeholder {
+  color: transparent;
+}
+
+.form-label-group input:not(:placeholder-shown) {
+  padding-top: calc(var(--input-padding-y) + var(--input-padding-y) * (2 / 3));
+  padding-bottom: calc(var(--input-padding-y) / 3);
+}
+
+.form-label-group input:not(:placeholder-shown) ~ label {
+  padding-top: calc(var(--input-padding-y) / 3);
+  padding-bottom: calc(var(--input-padding-y) / 3);
+  font-size: 12px;
+  color: #777;
+}
+
+.gray_title{
+  border-bottom: dotted 1px #ccc;
+  color: #ccc;
+  margin: 1rem 0;
+}
+#wxlogin_btn,
+#qqlogin_btn,
+#alipaylogin_btn{
+  opacity: 0.8;
+  display:inline-block;
+  text-align: center;
+  margin-right: 20px;
+}
+#wxlogin_btn:hover, #qqlogin_btn:hover, #alipaylogin_btn:hover{
+  opacity: 1;
+}
+#wxlogin_btn{
+  width: 47px;
+  text-decoration: none;
+}
+#wxlogin_btn span{
+  display: inline-block;
+  overflow: hidden;
+  width: 47px;
+}
+#qqlogin_btn{
+  width: 47px;
+  text-decoration: none;
+}
+#qqlogin_btn span{
+  display: inline-block;
+  overflow: hidden;
+  width: 47px;
+}
+#alipaylogin_btn{
+  width: 58px;
+  margin-right: 20px;
+  text-decoration: none;
+}
+#alipaylogin_btn span{
+  display: inline-block;
+  overflow: hidden;
+  width: 47px;
+}
+
+
+
+@keyframes showAreaSelect
+{
+  from {height: 0px; color: #fd7e14;font-size: 2rem;}
+  to {height: 62px; color: #218838;font-size: 1rem;}
+}
+@-webkit-keyframes showAreaSelect /* Safari 与 Chrome */
+{
+  from {height: 0px; color: #fd7e14;font-size: 2rem;}
+  to {height: 62px; color: #218838;font-size: 1rem;}
+}
+@keyframes hideAreaSelect
+{
+  from {height: 62px; font-size: 1rem;}
+  to {height: 0px; font-size: 0.2rem;}
+}
+@-webkit-keyframes hideAreaSelect /* Safari 与 Chrome */
+{
+  from {height: 62px; font-size: 1rem;}
+  to {height: 0px; font-size: 0.2rem;}
+}
+#existing-area-select{
+  height: 0;
+  overflow: hidden;
+}
+#existing-area-select.show-area-select{
+  height: 62px;
+  animation: showAreaSelect 400ms;
+  -webkit-animation: showAreaSelect 400ms; /* Safari 与 Chrome */
+  margin-bottom: 1rem!important;
+}
+#existing-area-select.hide-area-select{
+  height: 0;
+  animation: hideAreaSelect 400ms;
+  -webkit-animation: hideAreaSelect 400ms; /* Safari 与 Chrome */
+}
+
+
+@keyframes showAreaSelect
+{
+  from {height: 0px; color: #fd7e14;font-size: 2rem;}
+  to {height: 62px; color: #218838;font-size: 1rem;}
+}
+@-webkit-keyframes showAreaSelect /* Safari 与 Chrome */
+{
+  from {height: 0px; color: #fd7e14;font-size: 2rem;}
+  to {height: 62px; color: #218838;font-size: 1rem;}
+}
+@keyframes hideAreaSelect
+{
+  from {height: 62px; font-size: 1rem;}
+  to {height: 0px; font-size: 0.2rem;}
+}
+@-webkit-keyframes hideAreaSelect /* Safari 与 Chrome */
+{
+  from {height: 62px; font-size: 1rem;}
+  to {height: 0px; font-size: 0.2rem;}
+}
+#existing-area-select{
+  height: 0;
+  overflow: hidden;
+}
+#existing-area-select.show-area-select{
+  height: 62px;
+  animation: showAreaSelect 400ms;
+  -webkit-animation: showAreaSelect 400ms; /* Safari 与 Chrome */
+  margin-bottom: 1rem!important;
+}
+#existing-area-select.hide-area-select{
+  height: 0;
+  animation: hideAreaSelect 400ms;
+  -webkit-animation: hideAreaSelect 400ms; /* Safari 与 Chrome */
+}
+
+@keyframes showAreaSelect2
+{
+  from {height: 0px; color: #fd7e14;}
+  to {height: 62px; color: #218838;}
+}
+@-webkit-keyframes showAreaSelect2 /* Safari 与 Chrome */
+{
+  from {height: 0px; color: #fd7e14;}
+  to {height: 62px; color: #218838;}
+}
+@keyframes hideAreaSelect2
+{
+  from {height: 62px;}
+  to {height: 0px;}
+}
+@-webkit-keyframes hideAreaSelect2 /* Safari 与 Chrome */
+{
+  from {height: 62px;}
+  to {height: 0px;}
+}
+#existing-area-select.show-area-select2{
+  height: 62px;
+  animation: showAreaSelect2 400ms;
+  -webkit-animation: showAreaSelect2 400ms; /* Safari 与 Chrome */
+  margin-bottom: 1rem!important;
+}
+#existing-area-select.hide-area-select2{
+  height: 0;
+  animation: hideAreaSelect2 400ms;
+  -webkit-animation: hideAreaSelect2 400ms; /* Safari 与 Chrome */
+}

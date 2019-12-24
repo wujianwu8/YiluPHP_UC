@@ -1,0 +1,20 @@
+在前后端信息传输时，YiLuPHP的密码传输使用了RSA加密算法，RSA加密算法是一种非对称加密算法。
+
+加密解密的第一步是生成公钥、私钥对，私钥加密的内容能通过公钥解密（反过来亦可以），为了信息安全，用户请自己生成一对公钥和私钥。生成方法如下：
+
+下载开源RSA密钥生成工具openssl（通常Linux系统都自带该程序），解压缩至独立的文件夹，进入其中的bin目录，执行以下命令：
+（如果电脑上已有openssl，则进入任意目录执行以下命令，生成的文件就在当前目录中）
+
+openssl genrsa -out rsa_private_key.pem 1024
+openssl pkcs8 -topk8 -inform PEM -in rsa_private_key.pem -outform PEM -nocrypt -out private_key.pem
+openssl rsa -in rsa_private_key.pem -pubout -out rsa_public_key.pem
+
+第一条命令生成原始 RSA私钥文件 rsa_private_key.pem，第二条命令将原始 RSA私钥转换为 pkcs8格式的文件 private_key.pem，第三条生成RSA公钥 rsa_public_key.pem
+从上面看出通过私钥能生成对应的公钥，因此我们将私钥private_key.pem用在服务器端，公钥发放给Android或iOS或JS等前端。
+
+
+在本文档中，YiLuPHP提供了一对公钥和私钥，为使程序可正常运行。
+见同目录中的：
+private_key.pem
+rsa_private_key.pem
+rsa_public_key.pem

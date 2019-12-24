@@ -1,0 +1,44 @@
+server {
+        #设置监听端口
+        listen 80;
+
+        #在这里设置你的访问域名
+        server_name www.yiluphp.com;
+
+        #设置nginx访问日志的保存地址，需要确保目录和文件具有读写的权限
+        access_log /logs/www.yiluphp.com.ngx-access.log main;
+
+        #设置nginx错误日志的保存地址，需要确保目录和文件具有读写的权限
+        error_log  /logs/www.yiluphp.com.ngx-error.log;
+
+        #设置根目录，把默认的根目录指向静态文件的目录
+        root /data/web/www.yiluphp.com/public/;
+
+        #设置默认首页，默认首页使用静态文件，提高访问速度
+        index index.php;
+
+        location / {
+                # 如果在static目录中找不到真实存在的文件，把请求分发至index.php
+                try_files $uri $uri/ /index.php?$args;
+        }
+        location ~ \.((?!php).)*$ {
+                root /data/web/www.yiluphp.com/static;
+                index index.shtml;
+        }
+        location ~ \.php$ {
+                root /data/web/www.yiluphp.com/public;
+                index index.php;
+
+                #以下修改为你的nginx与php-fpm的通讯方式
+                fastcgi_pass 127.0.0.1:9000;
+                #fastcgi_pass unix:/tmp/php-fpm.sock;
+                fastcgi_index index.php;
+                fastcgi_param SCRIPT_FILENAME $document_root$fastcgi_script_name;
+                fastcgi_param PATH_INFO $fastcgi_path_info;
+                include fastcgi_params;
+        }
+
+        fastcgi_intercept_errors on;
+        #设置404页面路径
+        error_page  404 /error/404.html;
+}

@@ -1,0 +1,33 @@
+<?php
+/*
+ * 消息队列的入口文件
+ * 用户写的消息队列业务处理类需要继承queue类
+ * 执行方式，例如有like_post.php，则执行命令：php [目录路径]queue queue_name=like_post
+ * 启动后这个队列将一直监听着是否有新的消息，如果要让队列在系统后台默默运行，则这样执行：php [目录路径]queue queue_name=like_post &
+ * 也可以带上action参数(多个参数记得加上双引号)，例如：php [目录路径]queue "queue_name=like_post&action=stop"
+ * action可选值有：
+ * stop：停止当前队列,正在执行的消息将继续执行完毕
+ * pause：暂停当前队列,不会有新的消息加入执行,正在执行的消息将继续执行完毕
+ * delete：删除当前队列,不会有新的消息加入执行,正在执行的消息将继续执行完毕
+ * start：恢复当前队列,继续处理消息
+ * 使用redis列表实现
+ * YiluPHP vision 1.0
+ * User: Jim.Wu
+ * Date: 19/12/24
+ * Time: 18:45
+ */
+if(!isset($_SERVER['REQUEST_URI'])){
+    $the_argv = $argv;
+    unset($the_argv[0]);
+    $_SERVER['REQUEST_URI'] = 'php '.$argv[0].' "'.implode('" "', $the_argv).'"';
+}
+$project_root = dirname(__FILE__).'/';
+include_once($project_root.'public/index.php');
+include_once($project_root.'system/cli/queue.class.php');
+
+$queue_name = isset($_GET['queue_name'])?trim($_GET['queue_name']):null;
+if(!$queue_name){
+    exit("参数错误:缺少queue_name\r\n");
+}
+$action = isset($_GET['action']) ? trim($_GET['action']) : '';
+new queue($queue_name, $action);

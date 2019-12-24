@@ -1,0 +1,404 @@
+array(201) {
+  [0]=>
+  string(11) "__construct"
+  [1]=>
+  string(10) "__destruct"
+  [2]=>
+  string(7) "connect"
+  [3]=>
+  string(8) "pconnect"
+  [4]=>
+  string(5) "close"
+  [5]=>
+  string(4) "ping"
+  [6]=>
+  string(4) "echo"
+  [7]=>
+  string(3) "get"
+  [8]=>
+  string(3) "set"
+  [9]=>
+  string(5) "setex"
+  [10]=>
+  string(6) "psetex"
+  [11]=>
+  string(5) "setnx"
+  [12]=>
+  string(6) "getSet"
+  [13]=>
+  string(9) "randomKey"
+  [14]=>
+  string(9) "renameKey"
+  [15]=>
+  string(8) "renameNx"
+  [16]=>
+  string(11) "getMultiple"
+  [17]=>
+  string(6) "exists"
+  [18]=>
+  string(6) "delete"
+  [19]=>
+  string(4) "incr"
+  [20]=>
+  string(6) "incrBy"
+  [21]=>
+  string(11) "incrByFloat"
+  [22]=>
+  string(4) "decr"
+  [23]=>
+  string(6) "decrBy"
+  [24]=>
+  string(4) "type"
+  [25]=>
+  string(6) "append"
+  [26]=>
+  string(8) "getRange"
+  [27]=>
+  string(8) "setRange"
+  [28]=>
+  string(6) "getBit"
+  [29]=>
+  string(6) "setBit"
+  [30]=>
+  string(6) "strlen"
+  [31]=>
+  string(7) "getKeys"
+  [32]=>
+  string(4) "sort"
+  [33]=>
+  string(7) "sortAsc"
+  [34]=>
+  string(12) "sortAscAlpha"
+  [35]=>
+  string(8) "sortDesc"
+  [36]=>
+  string(13) "sortDescAlpha"
+  [37]=>
+  string(5) "lPush"
+  [38]=>
+  string(5) "rPush"
+  [39]=>
+  string(6) "lPushx"
+  [40]=>
+  string(6) "rPushx"
+  [41]=>
+  string(4) "lPop"
+  [42]=>
+  string(4) "rPop"
+  [43]=>
+  string(5) "blPop"
+  [44]=>
+  string(5) "brPop"
+  [45]=>
+  string(5) "lSize"
+  [46]=>
+  string(7) "lRemove"
+  [47]=>
+  string(8) "listTrim"
+  [48]=>
+  string(4) "lGet"
+  [49]=>
+  string(9) "lGetRange"
+  [50]=>
+  string(4) "lSet"
+  [51]=>
+  string(7) "lInsert"
+  [52]=>
+  string(4) "sAdd"
+  [53]=>
+  string(5) "sSize"
+  [54]=>
+  string(7) "sRemove"
+  [55]=>
+  string(5) "sMove"
+  [56]=>
+  string(4) "sPop"
+  [57]=>
+  string(11) "sRandMember"
+  [58]=>
+  string(9) "sContains"
+  [59]=>
+  string(8) "sMembers"
+  [60]=>
+  string(6) "sInter"
+  [61]=>
+  string(11) "sInterStore"
+  [62]=>
+  string(6) "sUnion"
+  [63]=>
+  string(11) "sUnionStore"
+  [64]=>
+  string(5) "sDiff"
+  [65]=>
+  string(10) "sDiffStore"
+  [66]=>
+  string(10) "setTimeout"
+  [67]=>
+  string(4) "save"
+  [68]=>
+  string(6) "bgSave"
+  [69]=>
+  string(8) "lastSave"
+  [70]=>
+  string(7) "flushDB"
+  [71]=>
+  string(8) "flushAll"
+  [72]=>
+  string(6) "dbSize"
+  [73]=>
+  string(4) "auth"
+  [74]=>
+  string(3) "ttl"
+  [75]=>
+  string(4) "pttl"
+  [76]=>
+  string(7) "persist"
+  [77]=>
+  string(4) "info"
+  [78]=>
+  string(9) "resetStat"
+  [79]=>
+  string(6) "select"
+  [80]=>
+  string(4) "move"
+  [81]=>
+  string(12) "bgrewriteaof"
+  [82]=>
+  string(7) "slaveof"
+  [83]=>
+  string(6) "object"
+  [84]=>
+  string(5) "bitop"
+  [85]=>
+  string(8) "bitcount"
+  [86]=>
+  string(6) "bitpos"
+  [87]=>
+  string(4) "mset"
+  [88]=>
+  string(6) "msetnx"
+  [89]=>
+  string(9) "rpoplpush"
+  [90]=>
+  string(10) "brpoplpush"
+  [91]=>
+  string(4) "zAdd"
+  [92]=>
+  string(7) "zDelete"
+  [93]=>
+  string(6) "zRange"
+  [94]=>
+  string(13) "zReverseRange"
+  [95]=>
+  string(13) "zRangeByScore"
+  [96]=>
+  string(16) "zRevRangeByScore"
+  [97]=>
+  string(11) "zRangeByLex"
+  [98]=>
+  string(6) "zCount"
+  [99]=>
+  string(19) "zDeleteRangeByScore"
+  [100]=>
+  string(18) "zDeleteRangeByRank"
+  [101]=>
+  string(5) "zCard"
+  [102]=>
+  string(6) "zScore"
+  [103]=>
+  string(5) "zRank"
+  [104]=>
+  string(8) "zRevRank"
+  [105]=>
+  string(6) "zInter"
+  [106]=>
+  string(6) "zUnion"
+  [107]=>
+  string(7) "zIncrBy"
+  [108]=>
+  string(8) "expireAt"
+  [109]=>
+  string(7) "pexpire"
+  [110]=>
+  string(9) "pexpireAt"
+  [111]=>
+  string(4) "hGet"
+  [112]=>
+  string(4) "hSet"
+  [113]=>
+  string(6) "hSetNx"
+  [114]=>
+  string(4) "hDel"
+  [115]=>
+  string(4) "hLen"
+  [116]=>
+  string(5) "hKeys"
+  [117]=>
+  string(5) "hVals"
+  [118]=>
+  string(7) "hGetAll"
+  [119]=>
+  string(7) "hExists"
+  [120]=>
+  string(7) "hIncrBy"
+  [121]=>
+  string(12) "hIncrByFloat"
+  [122]=>
+  string(5) "hMset"
+  [123]=>
+  string(5) "hMget"
+  [124]=>
+  string(5) "multi"
+  [125]=>
+  string(7) "discard"
+  [126]=>
+  string(4) "exec"
+  [127]=>
+  string(8) "pipeline"
+  [128]=>
+  string(5) "watch"
+  [129]=>
+  string(7) "unwatch"
+  [130]=>
+  string(7) "publish"
+  [131]=>
+  string(9) "subscribe"
+  [132]=>
+  string(10) "psubscribe"
+  [133]=>
+  string(11) "unsubscribe"
+  [134]=>
+  string(12) "punsubscribe"
+  [135]=>
+  string(4) "time"
+  [136]=>
+  string(4) "eval"
+  [137]=>
+  string(7) "evalsha"
+  [138]=>
+  string(6) "script"
+  [139]=>
+  string(5) "debug"
+  [140]=>
+  string(4) "dump"
+  [141]=>
+  string(7) "restore"
+  [142]=>
+  string(7) "migrate"
+  [143]=>
+  string(12) "getLastError"
+  [144]=>
+  string(14) "clearLastError"
+  [145]=>
+  string(7) "_prefix"
+  [146]=>
+  string(10) "_serialize"
+  [147]=>
+  string(12) "_unserialize"
+  [148]=>
+  string(6) "client"
+  [149]=>
+  string(4) "scan"
+  [150]=>
+  string(5) "hscan"
+  [151]=>
+  string(5) "zscan"
+  [152]=>
+  string(5) "sscan"
+  [153]=>
+  string(5) "pfadd"
+  [154]=>
+  string(7) "pfcount"
+  [155]=>
+  string(7) "pfmerge"
+  [156]=>
+  string(9) "getOption"
+  [157]=>
+  string(9) "setOption"
+  [158]=>
+  string(6) "config"
+  [159]=>
+  string(7) "slowlog"
+  [160]=>
+  string(10) "rawCommand"
+  [161]=>
+  string(7) "getHost"
+  [162]=>
+  string(7) "getPort"
+  [163]=>
+  string(8) "getDBNum"
+  [164]=>
+  string(10) "getTimeout"
+  [165]=>
+  string(14) "getReadTimeout"
+  [166]=>
+  string(15) "getPersistentID"
+  [167]=>
+  string(7) "getAuth"
+  [168]=>
+  string(11) "isConnected"
+  [169]=>
+  string(7) "getMode"
+  [170]=>
+  string(4) "wait"
+  [171]=>
+  string(6) "pubsub"
+  [172]=>
+  string(4) "open"
+  [173]=>
+  string(5) "popen"
+  [174]=>
+  string(4) "lLen"
+  [175]=>
+  string(11) "sGetMembers"
+  [176]=>
+  string(4) "mget"
+  [177]=>
+  string(6) "expire"
+  [178]=>
+  string(11) "zunionstore"
+  [179]=>
+  string(11) "zinterstore"
+  [180]=>
+  string(7) "zRemove"
+  [181]=>
+  string(4) "zRem"
+  [182]=>
+  string(19) "zRemoveRangeByScore"
+  [183]=>
+  string(16) "zRemRangeByScore"
+  [184]=>
+  string(15) "zRemRangeByRank"
+  [185]=>
+  string(5) "zSize"
+  [186]=>
+  string(6) "substr"
+  [187]=>
+  string(6) "rename"
+  [188]=>
+  string(3) "del"
+  [189]=>
+  string(4) "keys"
+  [190]=>
+  string(4) "lrem"
+  [191]=>
+  string(5) "ltrim"
+  [192]=>
+  string(6) "lindex"
+  [193]=>
+  string(6) "lrange"
+  [194]=>
+  string(5) "scard"
+  [195]=>
+  string(4) "srem"
+  [196]=>
+  string(9) "sismember"
+  [197]=>
+  string(9) "zrevrange"
+  [198]=>
+  string(8) "sendEcho"
+  [199]=>
+  string(8) "evaluate"
+  [200]=>
+  string(11) "evaluateSha"
+}

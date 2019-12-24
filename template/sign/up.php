@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <!-- The above 3 meta tags *must* come first in the head; any other head content must come *after* these tags -->
+    <meta name="description" content="">
+    <meta name="author" content="">
+    <link rel="icon" href="/favicon.ico">
+    <title><?php echo $app->lang('sign_up_account'); ?></title>
+      <!--#include virtual="/include/css_bootstrap.shtml"-->
+      <!--#include virtual="/include/css_dialog.shtml"-->
+      <!--#include virtual="/include/css_base.shtml"-->
+      <!--#include virtual="/include/css_sign.shtml"-->
+
+      <!--#include virtual="/include/js_jquery.shtml"-->
+      <!--#include virtual="/include/js_jquery_cookie.shtml"-->
+      <!--#include virtual="/include/js_config_js.shtml"-->
+      <!--#include virtual="/include/js_jsencrypt.shtml"-->
+      <!--#include virtual="/include/js_dialog_diy.shtml"-->
+      <!--#include virtual="/include/js_base.shtml"-->
+      <script>
+          var _hmt = _hmt || [];
+          (function() {
+              var hm = document.createElement("script");
+              hm.src = "https://hm.baidu.com/hm.js?802be9112dbcdf29bc10f0eabed49dca";
+              var s = document.getElementsByTagName("script")[0];
+              s.parentNode.insertBefore(hm, s);
+          })();
+      </script>
+  </head>
+
+  <body>
+      <div class="language_handle">
+          <a href="javascript:changeLanguage('<?php echo $app->current_lang()=='cn' ?'selected':'cn'; ?>');" class="<?php echo $app->current_lang()=='cn' ?'selected':''; ?>" >简体中文</a>
+          <a href="javascript:changeLanguage('<?php echo $app->current_lang()=='en' ?'selected':'en'; ?>');" class="<?php echo $app->current_lang()=='en' ?'selected':''; ?>" >English</a>
+      </div>
+
+      <form class="form-signin" onsubmit="return submitRegisterForm(this)" method="post">
+        <h2 class="form-signin-heading"><?php echo $app->lang('sign_up_account'); ?></h2>
+          <div><?php echo $app->lang('your_mobile_located_in'); ?></div>
+          <div class="mb-3">
+          <select class="custom-select d-block w-100" id="area_code_2" name="area_code">
+              <?php foreach ($area_list as $item): ?>
+                <option value="<?php echo $item['code_number']; ?>" <?php if(!empty($item['recommend'])): ?>style="color: blue"<?php endif; ?> >
+                    (+<?php echo $item['code_number']; echo strlen($item['code_number'])<2 ? '&nbsp;&nbsp;':''; ?>）<?php echo $item['name']; ?>
+                </option>
+              <?php endforeach; ?>
+          </select>
+          </div>
+
+        <div class="mb-3">
+              <input type="number" id="mobile" name="mobile" class="form-control" placeholder="<?php echo $app->lang('mobile_number'); ?>" required autofocus>
+        </div>
+
+        <div class="mb-3">
+            <label for="inputPassword" class="sr-only">Password</label>
+            <input type="password" id="password" name="password" class="form-control" placeholder="<?php echo $app->lang('login_password'); ?>" required>
+        </div>
+
+        <div class="mb-3">
+          <label for="inputPassword" class="sr-only">Confim Password</label>
+          <input type="password" id="confirm_password" name="confirm_password" class="form-control" placeholder="<?php echo $app->lang('confirm_login_password'); ?>" required>
+        </div>
+
+          <div class="mb-3">
+              <div class="input-group">
+                  <input type="number" class="form-control" name="verify_code" id="verify_code" placeholder="<?php echo $app->lang('verify_code'); ?>" maxlength="6" minlength="4" oninput="if(value.length>6) value=value.slice(0,6)" required>
+                  <div class="input-group-append">
+                      <button type="button" id="btn_send_sms_code" class="btn btn-secondary" use_for="sign_up"><?php echo $app->lang('send_code'); ?></button>
+                  </div>
+              </div>
+          </div>
+        <button class="btn btn-lg btn-primary btn-block" type="submit" id="registerButton"><?php echo $app->lang('sign_up'); ?></button>
+        <div class="checkbox" style="overflow: hidden;zoom:1;margin-top: 20px;margin-bottom: 30px;">
+          <a href="/find_password" style="float: left;"><?php echo $app->lang('forgot_password'); ?></a>
+          <a href="/sign/in" style="float: right;"><?php echo $app->lang('sign_in'); ?></a>
+        </div>
+      </form>
+
+      <!--#include virtual="/include/js_no_logged_in.shtml"-->
+      <script src="/js/language/<?php echo $app->current_lang(); ?>.js"></script>
+      <script type="text/javascript">var cnzz_protocol = (("https:" == document.location.protocol) ? "https://" : "http://");document.write(unescape("%3Cspan id='cnzz_stat_icon_1278278388'%3E%3C/span%3E%3Cscript src='" + cnzz_protocol + "s4.cnzz.com/z_stat.php%3Fid%3D1278278388' type='text/javascript'%3E%3C/script%3E"));</script>
+      <script type="text/javascript" src="https://tajs.qq.com/stats?sId=66496946" charset="UTF-8"></script>
+  </body>
+</html>

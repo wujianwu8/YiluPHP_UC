@@ -1,0 +1,289 @@
+
+/*
+<div class="loadEffect">
+  <span></span>
+  <span></span>
+  <span></span>
+  <span></span>
+  <span></span>
+  <span></span>
+  <span></span>
+  <span></span>
+</div>
+
+一行为
+<div class="loadEffect"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></div>
+*/
+
+.loadEffect{
+  width: 60px;
+  height: 60px;
+  position: relative;
+  margin: 0 auto;
+  /*margin-top:100px;*/
+}
+.loadEffect span{
+  display: inline-block;
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  background: #007bff;
+  position: absolute;
+  -webkit-animation: load 1.04s ease infinite;
+  box-shadow: #0069d9 0px 8px 10px;
+  border: 1px #2990ff solid;
+}
+@keyframes load{
+  0%{
+    opacity: 1;
+  }
+  100%{
+    opacity: 0.2;
+  }
+}
+@-moz-keyframes load{
+  0%{
+    opacity: 1;
+  }
+  100%{
+    opacity: 0.2;
+  }
+}
+@-webkit-keyframes load{
+  0%{
+    opacity: 1;
+  }
+  100%{
+    opacity: 0.2;
+  }
+}
+@-o-keyframes load{
+  0%{
+    opacity: 1;
+  }
+  100%{
+    opacity: 0.2;
+  }
+}
+.loadEffect span:nth-child(1){
+  left: 0;
+  top: 50%;
+  margin-top:-6px;
+  -webkit-animation-delay:0.13s;
+}
+.loadEffect span:nth-child(2){
+  left: 12%;
+  top: 12%;
+  -webkit-animation-delay:0.26s;
+}
+.loadEffect span:nth-child(3){
+  left: 50%;
+  top: 0;
+  margin-left: -6px;
+  -webkit-animation-delay:0.39s;
+}
+.loadEffect span:nth-child(4){
+  top: 12%;
+  right:12%;
+  -webkit-animation-delay:0.52s;
+}
+.loadEffect span:nth-child(5){
+  right: 0;
+  top: 50%;
+  margin-top:-6px;
+  -webkit-animation-delay:0.65s;
+}
+.loadEffect span:nth-child(6){
+  right: 12%;
+  bottom:12%;
+  -webkit-animation-delay:0.78s;
+}
+.loadEffect span:nth-child(7){
+  bottom: 0;
+  left: 50%;
+  margin-left: -6px;
+  -webkit-animation-delay:0.91s;
+}
+.loadEffect span:nth-child(8){
+  bottom: 12%;
+  left: 12%;
+  -webkit-animation-delay:1.04s;
+}
+
+.dialog-open .dialog-content{
+  box-shadow: #999 0px 6px 16px;
+}
+
+@keyframes loading{
+  0%{
+    opacity: 0;
+  }
+  5%{
+    opacity: 0;
+  }
+  100%{
+    opacity: 1;
+  }
+}
+@-moz-keyframes loading{
+  0%{
+    opacity: 0;
+  }
+  5%{
+    opacity: 0;
+  }
+  100%{
+    opacity: 1;
+  }
+}
+@-webkit-keyframes loading{
+  0%{
+    opacity: 0;
+  }
+  5%{
+    opacity: 0;
+  }
+  100%{
+    opacity: 1;
+  }
+}
+@-o-keyframes loading{
+  0%{
+    opacity: 0;
+  }
+  5%{
+    opacity: 0;
+  }
+  100%{
+    opacity: 1;
+  }
+}
+.dialog_transparent{
+  -webkit-animation: loading 2s ease;
+}
+.dialog_transparent .dialog-content{
+  box-shadow: none;
+}
+.dialog-overlay{
+  position: fixed;
+}
+.dialog-content{
+  position: fixed;
+}
+
+#weixinQR span{
+  position: relative;
+  display: inline-block;
+}
+#weixinQR strong{
+  display: none;
+  line-height: 210px;
+  color: #FFFFFF;
+  background-color: rgba(0,0,0,0.7)!important;
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+}
+.language_handle{
+  position: absolute;
+  top: 5px;
+  right: 5px;
+  height: 1.7em;
+  overflow: hidden;
+  line-height: 1.7em;
+  padding: 32px 8px 2px 8px;
+}
+.language_handle a{
+  display: table-caption;
+  white-space:nowrap;
+  color: #212529;
+  width: 80px;
+}
+.language_handle a.selected{
+  position: absolute;
+  top: 2px;
+  left: 8px;
+}
+a.selected::after {
+  display: inline-block;
+  width: 0;
+  height: 0;
+  margin-left: .255em;
+  vertical-align: .255em;
+  content: "";
+  border-top: .3em solid;
+  border-right: .3em solid transparent;
+  border-bottom: 0;
+  border-left: .3em solid transparent;
+}
+.language_handle:active,
+.language_handle:hover{
+  overflow: visible;
+  height: auto;
+  background: #FFFFFF;
+  color: #007bff;
+  padding-bottom: 12px;
+}
+.language_handle a:hover{
+  overflow: visible;
+  height: auto;
+  background: #FFFFFF;
+  color: #007bff;
+}
+
+@keyframes animotion_notice_change {
+  0% {
+    color: orange;
+  }
+  5% {
+    color: red;
+  }
+  10% {
+    color: blueviolet;
+  }
+  15% {
+    color: orange;
+  }
+  20% {
+    color: red;
+  }
+  25% {
+    color: blueviolet;
+  }
+  30% {
+    color: orange;
+  }
+  35% {
+    color: red;
+  }
+  40% {
+    color: blueviolet;
+  }
+  45% {
+    color: orange;
+  }
+  50% {
+    color: red;
+  }
+  55% {
+    color: blueviolet;
+  }
+  60% {
+    color: orange;
+  }
+  95% {
+    color: maroon;
+  }
+  100% {
+     color: #212529;
+   }
+}
+.notice_change{
+  animation:animotion_notice_change 8s;
+  animation-direction: alternate;
+}
+#cnzz_stat_icon_1278278388{
+  display: none;
+}
