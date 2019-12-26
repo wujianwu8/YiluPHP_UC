@@ -1,5 +1,6 @@
 <?php
 /**
+ * @group 用户
  * @name 修改用户状态
  * @desc
  * @method POST

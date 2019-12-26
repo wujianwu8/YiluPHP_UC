@@ -1,5 +1,6 @@
 <?php
 /**
+ * @group 用户
  * @name 找回密码页
  * @desc
  * @method GET

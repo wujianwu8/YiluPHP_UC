@@ -1,5 +1,6 @@
 <?php
 /**
+ * @group 用户
  * @name 解除绑定支付宝账号
  * @desc
  * @method POST

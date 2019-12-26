@@ -11,7 +11,7 @@ class hook_internal
 
     public function check()
     {
-        return true;
+//        return true;
         global $app;
         $params = $app->input->validate(
             [

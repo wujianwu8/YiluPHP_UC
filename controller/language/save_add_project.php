@@ -1,5 +1,6 @@
 <?php
 /**
+ * @group 语言包
  * @name 保存新的语言包项目
  * @desc
  * @method POST

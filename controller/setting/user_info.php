@@ -1,5 +1,6 @@
 <?php
 /**
+ * @group 用户
  * @name 账号设置
  * @desc 修改自己的资料、绑定邮箱、登录账号
  * @method GET

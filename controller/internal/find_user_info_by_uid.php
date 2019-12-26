@@ -1,5 +1,6 @@
 <?php
 /**
+ * @group 内部接口
  * @name 根据uid获取用户信息
  * @desc 返回用户的安全信息
  * @method GET|POST

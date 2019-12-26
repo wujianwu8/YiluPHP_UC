@@ -1,5 +1,6 @@
 <?php
 /**
+ * @group 用户
  * @name 给用户授权页
  * @desc
  * @method POST

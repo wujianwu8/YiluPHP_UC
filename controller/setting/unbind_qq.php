@@ -1,5 +1,6 @@
 <?php
 /**
+ * @group 用户
  * @name 解除绑定QQ
  * @desc
  * @method POST

@@ -1,5 +1,6 @@
 <?php
 /**
+ * @group 用户投诉
  * @name 用户投诉详情页
  * @desc
  * @method GET

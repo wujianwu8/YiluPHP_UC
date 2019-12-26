@@ -1,5 +1,6 @@
 <?php
 /**
+ * @group 用户
  * @name 微信公众平台（服务号）登录用的二维码图片
  * @desc 即图片地址
  * @method GET

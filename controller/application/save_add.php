@@ -1,5 +1,6 @@
 <?php
 /**
+ * @group 应用系统
  * @name 保存新应用
  * @desc
  * @method POST
@@ -38,7 +39,7 @@ $params = $app->input->validate(
         'app_id' => 'required|trim|string|min:3|max:20|return',
         'app_name' => 'required|trim|string|min:3|max:30|return',
         'status' => 'required|integer|min:0|max:1|return',
-        'app_white_ip' => 'required|trim|string|max:2000|return',
+        'app_white_ip' => 'trim|string|max:2000|return',
         'index_url' => 'trim|string|min:6|max:200|return',
     ],
     [
@@ -56,19 +57,24 @@ $params = $app->input->validate(
         'index_url.*' => 6,
     ]);
 
-if (preg_match('/^(\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}[\,|\r|\n]*)+$/', $params['app_white_ip'], $matches)==false){
-    unset($params);
-    return_code(8,'白名单IP设置错误，请检查');
+if (!isset($params['app_white_ip']) || trim($params['app_white_ip'])==''){
+    $params['app_white_ip'] = '';
 }
+else {
+    if (preg_match('/^(\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}[\,|\r|\n]*)+$/', $params['app_white_ip'], $matches) == false) {
+        unset($params);
+        return_code(8, '白名单IP设置错误，请检查');
+    }
 
-$tmp = preg_replace('/[\r|\n|\,]+/', ',', $params['app_white_ip']);
-$tmp = explode(',', $tmp);
-$tmp2 = array_unique($tmp);
-if (count($tmp)!=count($tmp2)){
-    unset($params);
-    return_code(11,'IP白名单重复了：'.implode(',', array_diff_assoc($tmp, $tmp2)));
+    $tmp = preg_replace('/[\r|\n|\,]+/', ',', $params['app_white_ip']);
+    $tmp = explode(',', $tmp);
+    $tmp2 = array_unique($tmp);
+    if (count($tmp) != count($tmp2)) {
+        unset($params);
+        return_code(11, 'IP白名单重复了：' . implode(',', array_diff_assoc($tmp, $tmp2)));
+    }
+    unset($tmp, $tmp2);
 }
-unset($tmp, $tmp2);
 
 if (preg_match('/^[a-zA-Z0-9_]{3,20}$/', $params['app_id'], $matches)==false){
     unset($params);

@@ -1,6 +1,7 @@
 <?php
 /**
- * @name 保存删除的用户的权限
+ * @group 用户
+ * @name 删除的用户的权限
  * @desc
  * @method POST
  * @uri /user/save_delete_permission

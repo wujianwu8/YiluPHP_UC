@@ -1,5 +1,6 @@
 <?php
 /**
+ * @group 用户
  * @name 注册页（UI界面）
  * @desc
  * @method GET

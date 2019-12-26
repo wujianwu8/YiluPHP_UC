@@ -1,5 +1,6 @@
 <?php
 /**
+ * @group 菜单
  * @name 删除菜单
  * @desc
  * @method POST

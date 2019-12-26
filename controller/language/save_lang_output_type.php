@@ -1,5 +1,6 @@
 <?php
 /**
+ * @group 语言包
  * @name 保存语言可输出的文件类型
  * @desc
  * @method POST

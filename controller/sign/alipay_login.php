@@ -1,5 +1,6 @@
 <?php
 /**
+ * @group 用户
  * @name 支付宝授权登录的跳转地址
  * @desc
  * @method GET

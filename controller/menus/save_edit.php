@@ -1,5 +1,6 @@
 <?php
 /**
+ * @group 菜单
  * @name 保存修改后的菜单
  * @desc
  * @method POST

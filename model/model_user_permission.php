@@ -52,7 +52,7 @@ class model_user_permission extends model
         $data = $stmt->fetchAll(PDO::FETCH_ASSOC);
         $data = array_column($data, 'str');
         $GLOBALS['app']->redis()->set($cache_key, json_encode($data));
-        $GLOBALS['app']->redis()->expire($cache_key, TIME_10_MIN);
+        $GLOBALS['app']->redis()->expire($cache_key, TIME_30_SEC);
         unset($cache_key, $uid, $app_id, $stmt, $sql, $connection);
         return $data;
     }

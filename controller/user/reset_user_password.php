@@ -1,5 +1,6 @@
 <?php
 /**
+ * @group 用户
  * @name 重置用户密码
  * @desc
  * @method POST

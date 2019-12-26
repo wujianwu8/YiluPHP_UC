@@ -1,5 +1,6 @@
 <?php
 /**
+ * @group 应用系统
  * @name 显示应用密匙
  * @desc
  * @method POST

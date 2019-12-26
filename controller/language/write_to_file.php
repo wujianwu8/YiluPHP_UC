@@ -1,5 +1,6 @@
 <?php
 /**
+ * @group 语言包
  * @name 把语言包内容写入PHP文件
  * @desc 完全替换覆盖的方式
  * @method POST

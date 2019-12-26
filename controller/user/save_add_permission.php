@@ -1,5 +1,6 @@
 <?php
 /**
+ * @group 用户
  * @name 保存新增的用户的权限
  * @desc
  * @method POST

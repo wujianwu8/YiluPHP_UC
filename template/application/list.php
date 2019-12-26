@@ -146,6 +146,5 @@ $head_info = [
     'last_page_text' => $app->lang('last_page'),
 ]); ?>
 
-<!--#include virtual="/include/js_config_js.shtml"-->
-<!--#include virtual="/include/js_jsencrypt.shtml"-->
 <!--#include virtual="/include/js_application_list.shtml"-->
+

@@ -1,5 +1,6 @@
 <?php
 /**
+ * @group 用户
  * @name 微信公众平台（服务号）授权登录的回调地址
  * @desc
  * @method GET

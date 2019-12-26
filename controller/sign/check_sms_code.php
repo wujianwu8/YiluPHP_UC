@@ -1,5 +1,6 @@
 <?php
 /**
+ * @group 用户
  * @name 校验短信验证码是否正确
  * @desc 校验短信验证码是否正确
  * @method POST

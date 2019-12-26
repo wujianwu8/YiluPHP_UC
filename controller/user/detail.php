@@ -1,5 +1,6 @@
 <?php
 /**
+ * @group 用户
  * @name 用户的详细信息
  * @desc
  * @method GET

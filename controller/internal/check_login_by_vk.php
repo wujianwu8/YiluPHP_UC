@@ -1,5 +1,6 @@
 <?php
 /**
+ * @group 内部接口
  * @name 根据vk检查用户是否登录
  * @desc 如果登录了则返回用户的简短信息
  * @method GET|POST

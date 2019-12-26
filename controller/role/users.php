@@ -1,5 +1,6 @@
 <?php
 /**
+ * @group 用户
  * @name 查看拥有某个角色的用户
  * @desc
  * @method GET

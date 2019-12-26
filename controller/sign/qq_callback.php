@@ -1,5 +1,6 @@
 <?php
 /**
+ * @group 用户
  * @name QQ授权登录后的回调地址
  * @desc
  * @method GET

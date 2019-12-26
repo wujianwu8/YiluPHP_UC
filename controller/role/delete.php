@@ -1,5 +1,6 @@
 <?php
 /**
+ * @group 角色
  * @name 删除角色
  * @desc
  * @method POST

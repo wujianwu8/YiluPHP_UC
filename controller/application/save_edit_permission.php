@@ -1,5 +1,6 @@
 <?php
 /**
+ * @group 应用系统
  * @name 保存编辑后的应用权限
  * @desc
  * @method POST

@@ -1,5 +1,6 @@
 <?php
 /**
+ * @group 用户
  * @name 用户退出登录
  * @desc
  * @method GET

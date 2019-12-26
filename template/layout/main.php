@@ -18,6 +18,8 @@
     <!--#include virtual="/include/js_popper.shtml"-->
     <!--#include virtual="/include/js_bootstrap.shtml"-->
     <!--#include virtual="/include/js_base.shtml"-->
+    <!--#include virtual="/include/js_config_js.shtml"-->
+    <!--#include virtual="/include/js_jsencrypt.shtml"-->
     <script>
         var _hmt = _hmt || [];
         (function() {

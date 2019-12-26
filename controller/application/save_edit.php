@@ -1,5 +1,6 @@
 <?php
 /**
+ * @group 应用系统
  * @name 保存修改后的应用信息
  * @desc
  * @method POST
@@ -57,7 +58,10 @@ $params = $app->input->validate(
     ]);
 
 $data = [];
-if (isset($params['app_white_ip'])) {
+if (!isset($params['app_white_ip']) || trim($params['app_white_ip'])=='') {
+    $data['app_white_ip'] = '';
+}
+else{
     if (preg_match('/^(\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}[\,|\r|\n]*)+$/', $params['app_white_ip'], $matches) == false) {
         unset($params);
         return_code(8, '白名单IP设置错误，请检查');

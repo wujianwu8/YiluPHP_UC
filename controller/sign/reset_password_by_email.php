@@ -1,5 +1,6 @@
 <?php
 /**
+ * @group 用户
  * @name 通过邮箱重设密码
  * @desc 通过邮箱重设密码
  * @method POST

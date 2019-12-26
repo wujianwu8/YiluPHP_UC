@@ -1,5 +1,6 @@
 <?php
 /**
+ * @group 用户
  * @name 当前登录用户的简短信息
  * @desc uid、nickname、avatar、gender
  * @method GET

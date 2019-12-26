@@ -1,5 +1,6 @@
 <?php
 /**
+ * @group 用户反馈
  * @name 用户反馈详情页
  * @desc
  * @method GET

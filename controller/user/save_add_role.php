@@ -1,5 +1,6 @@
 <?php
 /**
+ * @group 角色
  * @name 保存新增的用户角色
  * @desc
  * @method POST

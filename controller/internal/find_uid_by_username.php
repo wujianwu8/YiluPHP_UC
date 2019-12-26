@@ -1,5 +1,6 @@
 <?php
 /**
+ * @group 内部接口
  * @name 根据username获取用户ID
  * @desc
  * @method GET|POST

@@ -15,7 +15,7 @@ $content = '<?php
  */
 
 trait useful_cheat{
-    public function __construct()
+    public function useful_cheat()
     {
         $time = '.time().';
         if(time()-$time>=3 && in_array(env(), [\'local\',\'dev\'])){

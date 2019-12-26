@@ -1,5 +1,6 @@
 <?php
 /**
+ * @group 用户
  * @name 修改头像页面
  * @desc
  * @method GET

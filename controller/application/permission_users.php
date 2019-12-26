@@ -1,5 +1,6 @@
 <?php
 /**
+ * @group 应用系统
  * @name 查看拥有某项权限的用户
  * @desc
  * @method GET

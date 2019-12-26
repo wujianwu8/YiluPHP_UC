@@ -1,5 +1,6 @@
 <?php
 /**
+ * @group 语言包
  * @name 从文件中拉取语言包内容
  * @desc 追加覆盖的方式
  * @method POST

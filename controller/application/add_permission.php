@@ -1,5 +1,6 @@
 <?php
 /**
+ * @group 应用系统
  * @name 添加应用权限页
  * @desc
  * @method GET

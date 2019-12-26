@@ -181,13 +181,15 @@
 <main class="row">
     <div class="col-lg-2 menu_list">
         <h6>Menu List</h6>
+        <?php $title_index = 0; ?>
         <?php foreach ($menu_list as $key => $item): ?>
             <?php if (strlen($key)>=32): ?>
-                <div class="h6 gray_text menu_group"><?php echo $item[0]['group'];?></div>
+                <?php $title_index++; ?>
+                <div class="h6 gray_text menu_group" title_index="<?php echo $title_index;?>"><?php echo $item[0]['group'];?></div>
                 <div class="menu_children show_children_menu">
             <?php endif; ?>
             <?php foreach ($item as $api): ?>
-                <div <?php echo $key==0?'':'class="pl-3"' ?> >
+                <div <?php echo strlen($key)<32?'':'class="pl-3"' ?> >
                     <?php
                         $params = ['version'=>$version, 'path'=>$api['path']];
                         if (isset($_GET['keyword']) && trim($_GET['keyword'])!=''){
@@ -295,6 +297,30 @@
 </footer>
 
 <script>
+    //设置cookie
+    function setCookie(name,value){
+        if(!name||!value) return;
+        var Days = 30;//默认30天
+        var exp  = new Date();
+        exp.setTime(exp.getTime() + Days*24*60*60*1000);
+        document.cookie = name + "="+ encodeURIComponent(value) +";expires="+ exp.toUTCString();
+    }
+
+    //获取cookie
+    function getCookie(name){
+        var arr = document.cookie.match(new RegExp("(^| )"+name+"=([^;]*)(;|$)"));
+        if(arr != null) return decodeURIComponent(arr[2]);
+        return null;
+    }
+
+    //删除cookie
+    function delCookie(name){
+        var exp = new Date();
+        exp.setTime(exp.getTime() - 1);
+        var cval=getCookie(name);
+        if(!cval) document.cookie=name +"="+cval+";expires="+exp.toUTCString();
+    }
+
     $(document).ready(function(){
         var jsFormatterDemo = new JsonFormatter({dom:$("#testResult")});
         var forms = document.getElementsByClassName('needs-validation');
@@ -384,19 +410,46 @@
             if (linkDom != null) {
                 e.preventDefault();
                 if (action == "menu_group") {
+                    menuCookieValue = getCookie("docs_menu_title");
+                    if (menuCookieValue === null){
+                        menuCookieValue = {};
+                    }
+                    else{
+                        menuCookieValue = JSON.parse(menuCookieValue);
+                    }
                     if (linkDom.next().hasClass("show_children_menu")){
                         linkDom.next().slideUp("fast",function(){
                             linkDom.next().removeClass("show_children_menu")
                         });
+                        eval("menuCookieValue.tt"+linkDom.attr("title_index")+"=0");
                     }
                     else{
                         linkDom.next().addClass("show_children_menu")
                         linkDom.next().slideDown("fast");
+                        eval("menuCookieValue.tt"+linkDom.attr("title_index")+"=1");
                     }
+                    setCookie("docs_menu_title", JSON.stringify(menuCookieValue));
                 }
             }
         });
     });
+
+    function initMenus() {
+        menuCookieValue = getCookie("docs_menu_title");
+        if (menuCookieValue !== null){
+            menuCookieValue = JSON.parse(menuCookieValue);
+            $.each(menuCookieValue, function (index, item) {
+                index = index.substring(2);
+                if (item==1){
+                    $("div[title_index="+index+"]").next().addClass("show_children_menu");
+                }
+                else {
+                    $("div[title_index="+index+"]").next().removeClass("show_children_menu");
+                }
+            });
+        }
+    }
+    initMenus();
 </script>
 
 </body>

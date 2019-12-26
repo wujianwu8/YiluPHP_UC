@@ -1,5 +1,6 @@
 <?php
 /**
+ * @group 角色
  * @name 编辑角色页
  * @desc
  * @method GET

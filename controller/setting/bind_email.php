@@ -1,5 +1,6 @@
 <?php
 /**
+ * @group 用户
  * @name 绑定登录邮箱页面
  * @desc
  * @method GET

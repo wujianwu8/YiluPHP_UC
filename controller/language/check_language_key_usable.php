@@ -1,5 +1,6 @@
 <?php
 /**
+ * @group 语言包
  * @name 检查项目的语言键是否可用
  * @desc 新建语言键时使用
  * @method POST

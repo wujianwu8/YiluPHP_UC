@@ -1,5 +1,6 @@
 <?php
 /**
+ * @group 用户
  * @name Linkedin授权登录的回调地址
  * @desc
  * @method GET

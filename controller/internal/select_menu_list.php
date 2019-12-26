@@ -1,5 +1,6 @@
 <?php
 /**
+ * @group 内部接口
  * @name 根据uid获取该用户能看到的所有菜单
  * @desc
  * @method GET|POST
@@ -15,17 +16,8 @@
  *  code: 0, //0获取成功，其它不成功
  *  msg: "获取成功",
  *  data: {
- *      user_info: {
- *          uid: 123,
- *          nickname: "Jim",
- *          avatar: "https://yiluphp...png",
- *          gender: "female",
- *          birthday: "2011-08-21",
- *          country: "中国",
- *          province: "江西省",
- *          city: "赣州市",
- *          last_active: 1514567890,
- *          ctime: 1494567890
+ *      menu_list: {
+ *          ...
  *      }
  *  }
  * }
@@ -45,13 +37,32 @@ $params = $app->input->validate(
         'uid.*' => 1,
     ]);
 
-if ($user_info = $app->logic_user->find_user_safe_info($params['uid'])) {
+if ($menu_list = $app->logic_menus->get_all($params['uid'])) {
+    foreach ($menu_list as $key => $menu){
+        if($menu['lang_key']!='nav-user-avatar') {
+            $menu_list[$key]['lang_key'] = $app->lang($menu['lang_key']);
+        }
+        if (!empty($menu['children'])){
+            foreach ($menu['children'] as $key2 => $menu2) {
+                if($menu2['lang_key']!='nav-user-avatar') {
+                    $menu_list[$key]['children'][$key2]['lang_key'] = $app->lang($menu2['lang_key']);
+                }
+                if (!empty($menu2['children'])){
+                    foreach ($menu2['children'] as $key3 => $menu3) {
+                        if($menu3['lang_key']!='nav-user-avatar') {
+                            $menu_list[$key]['children'][$key2]['children'][$key3]['lang_key'] = $app->lang($menu3['lang_key']);
+                        }
+                    }
+                }
+            }
+        }
+    }
     unset($params);
     return_json(0, $app->lang('successful_get'),
         [
-            'user_info' => $user_info,
+            'menu_list' => $menu_list,
         ]
     );
 }
-unset($user_info, $params);
+unset($menu_list, $params);
 return_json(2, $app->lang('failure_get'));

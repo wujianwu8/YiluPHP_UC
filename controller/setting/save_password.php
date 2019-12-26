@@ -1,5 +1,6 @@
 <?php
 /**
+ * @group 用户
  * @name 保存新密码
  * @desc
  * @method POST

@@ -1,5 +1,6 @@
 <?php
 /**
+ * @group 应用系统
  * @name 删除应用
  * @desc
  * @method POST

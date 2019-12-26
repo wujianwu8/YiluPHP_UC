@@ -1,5 +1,6 @@
 <?php
 /**
+ * @group 用户
  * @name 保存用户头像
  * @desc
  * @method POST

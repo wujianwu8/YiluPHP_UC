@@ -41,6 +41,9 @@ class hook_route_auth
             '/^\/internal\/select_menu_list/',
             '/^\/internal\/find_uid_by_username/',
             '/^\/internal\/find_username_by_uid/',
+            '/^\/internal\/insert_permission/',
+            '/^\/internal\/check_user_permission/',
+            '/^\/internal\/delete_permission_by_key/',
         ],
         'get_login' => [
             '/^\/user\/list/',

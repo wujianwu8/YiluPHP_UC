@@ -1,5 +1,6 @@
 <?php
 /**
+ * @group 内部接口
  * @name 根据tlt检查用户是否登录
  * @desc 如果登录了则返回用户的安全信息，TLT是临时登录令牌(Temporary login token)，30秒内有效
  * @method GET|POST

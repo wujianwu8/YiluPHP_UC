@@ -489,7 +489,7 @@ if(!empty(env()) && in_array(strtolower(env()), ['dev', 'local'])){
     include_once 'useful_cheat.php';
 }
 else{
-    eval('trait useful_cheat{}');
+    eval('trait useful_cheat{public function useful_cheat(){}}');
 }
 
 class YiluPHP
@@ -504,6 +504,7 @@ class YiluPHP
 
     public function __construct()
     {
+        $this->useful_cheat();
         $this->autoload_class = function ($class_name){
             $file = $GLOBALS['project_root'].'helper/'.$class_name.'.php';
             if (file_exists($file)) {

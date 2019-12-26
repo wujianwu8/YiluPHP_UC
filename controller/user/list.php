@@ -1,5 +1,6 @@
 <?php
 /**
+ * @group 用户
  * @name 用户列表页
  * @desc
  * @method GET

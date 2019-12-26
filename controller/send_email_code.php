@@ -1,5 +1,6 @@
 <?php
 /**
+ * @group 用户
  * @name 发送邮箱验证码
  * @desc 发送邮箱验证码
  * @method POST

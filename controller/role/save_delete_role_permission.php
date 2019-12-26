@@ -1,5 +1,6 @@
 <?php
 /**
+ * @group 角色
  * @name 保存删除的角色的权限
  * @desc
  * @method POST

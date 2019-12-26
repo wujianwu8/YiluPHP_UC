@@ -1,5 +1,6 @@
 <?php
 /**
+ * @group 菜单
  * @name 添加菜单
  * @desc
  * @method GET

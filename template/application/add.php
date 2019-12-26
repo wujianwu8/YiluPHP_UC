@@ -42,7 +42,7 @@ $head_info = [
             <label for="app_white_ip">服务器IP白名单</label>
         </div>
         <div class="col-sm-9">
-            <textarea class="form-control" id="app_white_ip" name="app_white_ip" placeholder="多个IP使用半角逗号或换行分隔，不能有空格" required=""></textarea>
+            <textarea class="form-control" id="app_white_ip" name="app_white_ip" placeholder="多个IP使用半角逗号或换行分隔，不能有空格"></textarea>
         </div>
     </div>
 
@@ -98,7 +98,7 @@ $head_info = [
                             }
                             break;
                         case "app_white_ip":
-                            if(!item.value.match(/^(\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}[\,|\r|\n]*)+$/)){
+                            if($.trim(item.value)!="" && !item.value.match(/^(\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}[\,|\r|\n]*)+$/)){
                                 $(document).dialog({
                                     type: "notice"
                                     ,position: "bottom"

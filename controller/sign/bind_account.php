@@ -1,5 +1,6 @@
 <?php
 /**
+ * @group 用户
  * @name 第三方平台登录后绑定账号（UI界面）
  * @desc
  * @method GET

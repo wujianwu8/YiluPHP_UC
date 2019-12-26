@@ -1,5 +1,6 @@
 <?php
 /**
+ * @group 用户
  * @name 找回用户密码
  * @desc 找回用户密码
  * @method POST

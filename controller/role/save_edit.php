@@ -1,5 +1,6 @@
 <?php
 /**
+ * @group 角色
  * @name 保存编辑后的角色
  * @desc
  * @method POST

@@ -1,5 +1,6 @@
 <?php
 /**
+ * @group 角色
  * @name 给用户分配角色页
  * @desc
  * @method POST

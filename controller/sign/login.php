@@ -1,5 +1,6 @@
 <?php
 /**
+ * @group 用户
  * @name 用户登录
  * @desc 如果是从第三方授权登录过来的，则会登录后绑定
  * @method POST

@@ -1,5 +1,6 @@
 <?php
 /**
+ * @group 语言包
  * @name 添加语言包项目页
  * @desc
  * @method GET

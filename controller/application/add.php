@@ -1,5 +1,6 @@
 <?php
 /**
+ * @group 应用系统
  * @name 添加应用
  * @desc
  * @method GET

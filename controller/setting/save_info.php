@@ -1,5 +1,6 @@
 <?php
 /**
+ * @group 用户
  * @name 保存账号相关信息
  * @desc
  * @method POST
