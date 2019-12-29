@@ -361,7 +361,7 @@ function is_debug_mode(){
             return true;
         }
     }
-    return false;
+    return empty($GLOBALS['config']['debug_mode'])?false:true;
 }
 
 /**
