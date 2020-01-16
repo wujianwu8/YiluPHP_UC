@@ -425,6 +425,13 @@ function return_json($code, $msg='', $data=[])
     if(is_debug_mode()){
         //输出程序运行回溯路径
         $res['backtrace'] = debug_backtrace();
+        if (empty(json_encode($res['backtrace'],JSON_UNESCAPED_UNICODE))){
+            foreach ($res['backtrace'] as $key => $item){
+                if (isset($res['backtrace'][$key]['object'])){
+                    $res['backtrace'][$key]['object'] = '...';
+                }
+            }
+        }
     }
     $res = json_encode($res, JSON_UNESCAPED_UNICODE);
     write_applog('RESPONSE', $res);
@@ -458,10 +465,17 @@ function return_jsonp($code, $msg='', $data=[])
     if(is_debug_mode()){
         //输出程序运行回溯路径
         $backtrace = debug_backtrace();
-        $backtrace = json_encode($backtrace);
+        if (empty(json_encode($backtrace,JSON_UNESCAPED_UNICODE))){
+            foreach ($backtrace as $key => $item){
+                if (isset($backtrace[$key]['object'])){
+                    $backtrace[$key]['object'] = '...';
+                }
+            }
+        }
+        $backtrace = json_encode($backtrace,JSON_UNESCAPED_UNICODE);
     }
     $fun = isset($_REQUEST['callback']) && trim($_REQUEST['callback'])!=='' ? trim($_REQUEST['callback']) : 'callback';
-    $data = is_array($data)?json_encode($data, JSON_UNESCAPED_UNICODE):[];
+    $data = is_array($data)?json_encode($data,JSON_UNESCAPED_UNICODE):[];
     $res = $fun.'('.$code.', "'.htmlspecialchars($msg).'", '.$data.', '.$backtrace.');';
     write_applog('RESPONSE', $res);
     echo $res;
