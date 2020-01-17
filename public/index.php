@@ -328,6 +328,15 @@ function return_result($template, $data=[], $return_html=false)
     }
     if($YiluPHP['with_layout'] !== null) {
         if (isset($_REQUEST['dtype']) && in_array(strtolower($_REQUEST['dtype']), ['json', 'jsonp'])) {
+            preg_match_all('/<!--#include.*?"(.*?)".*-->/',$YiluPHP['cache_string'],$matches);
+            if($matches && count($matches)>=2){
+                foreach ($matches[1] as $key=>$match){
+                    if (file_exists($GLOBALS['project_root'].'static'.$match)){
+                        $tmp = file_get_contents($GLOBALS['project_root'].'static'.$match);
+                        $YiluPHP['cache_string'] = str_replace($matches[0][$key], $tmp, $YiluPHP['cache_string']);
+                    }
+                }
+            }
             $data = [
                 'html'=>$YiluPHP['cache_string']
             ];
