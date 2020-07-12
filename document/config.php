@@ -110,8 +110,9 @@ $config = [
             'visit_host' => 'https://yiluphp.oss-cn-shenzhen.aliyuncs.com/',
         ]
     ],
+];
 
-    $env_config = [
+$env_config = [
 
     /**
      * 是否对数据表进行分表分库,true为分表分库,false为不分表分库,默认为false
@@ -360,3 +361,4 @@ $config = [
  * 针对不同环境设置不一样的配置配置信息,建议单独一个文件存放
  */
 // return array_merge($config, require('/data/config/www.yourhost.com/config.php'));
+return array_merge($config, $env_config);
