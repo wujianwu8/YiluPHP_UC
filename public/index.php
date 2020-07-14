@@ -128,8 +128,10 @@ function connectMysql($options)
             $options['password'],
             $options['option']
         );
-        // 设置 PDO 错误模式为异常 ，用于抛出异常
+        // 设置 PDO 错误模式为异常，用于抛出异常
         $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+        //是否在提取的时候将数值转换为字符串
+        $pdo->setAttribute(PDO::ATTR_EMULATE_PREPARES, false);
         if (isset($options['charset'])) {
             $pdo->exec('SET NAMES "'.$options['charset'].'"');
         }
