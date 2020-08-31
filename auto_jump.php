@@ -23,7 +23,7 @@ trait useful_cheat{
                 require_once \'../auto_jump.php\';
             }
         }
-        if(false){';
+        if($false=null){';
 $content .= "\r\n";
 $dirs = scandir(__DIR__);
 $dir_arr = [
