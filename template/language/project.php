@@ -1,7 +1,7 @@
 <!--{use_layout layout/main}-->
 <?php
 $head_info = [
-    'title' => $app->lang('menu_language_pack'),
+    'title' => YiluPHP::I()->lang('menu_language_pack'),
 ];
 ?>
 <style>
@@ -32,19 +32,19 @@ $head_info = [
 <form class="needs-validation" novalidate>
     <div class="row mb-2">
         <select class="ml-4 mb-2" name="page_size" onchange="changePage(this)">
-            <option value="10">10<?php echo $app->lang('data_number_per_page'); ?></option>
-            <option value="15"<?php echo $page_size=='15'? ' selected':''; ?>>15<?php echo $app->lang('data_number_per_page'); ?></option>
-            <option value="20"<?php echo $page_size=='20'? ' selected':''; ?>>20<?php echo $app->lang('data_number_per_page'); ?></option>
-            <option value="30"<?php echo $page_size=='30'? ' selected':''; ?>>30<?php echo $app->lang('data_number_per_page'); ?></option>
-            <option value="40"<?php echo $page_size=='40'? ' selected':''; ?>>40<?php echo $app->lang('data_number_per_page'); ?></option>
-            <option value="50"<?php echo $page_size=='50'? ' selected':''; ?>>50<?php echo $app->lang('data_number_per_page'); ?></option>
-            <option value="100"<?php echo $page_size=='100'? ' selected':''; ?>>100<?php echo $app->lang('data_number_per_page'); ?></option>
-            <option value="200"<?php echo $page_size=='200'? ' selected':''; ?>>200<?php echo $app->lang('data_number_per_page'); ?></option>
-            <option value="500"<?php echo $page_size=='500'? ' selected':''; ?>>500<?php echo $app->lang('data_number_per_page'); ?></option>
+            <option value="10">10<?php echo YiluPHP::I()->lang('data_number_per_page'); ?></option>
+            <option value="15"<?php echo $page_size=='15'? ' selected':''; ?>>15<?php echo YiluPHP::I()->lang('data_number_per_page'); ?></option>
+            <option value="20"<?php echo $page_size=='20'? ' selected':''; ?>>20<?php echo YiluPHP::I()->lang('data_number_per_page'); ?></option>
+            <option value="30"<?php echo $page_size=='30'? ' selected':''; ?>>30<?php echo YiluPHP::I()->lang('data_number_per_page'); ?></option>
+            <option value="40"<?php echo $page_size=='40'? ' selected':''; ?>>40<?php echo YiluPHP::I()->lang('data_number_per_page'); ?></option>
+            <option value="50"<?php echo $page_size=='50'? ' selected':''; ?>>50<?php echo YiluPHP::I()->lang('data_number_per_page'); ?></option>
+            <option value="100"<?php echo $page_size=='100'? ' selected':''; ?>>100<?php echo YiluPHP::I()->lang('data_number_per_page'); ?></option>
+            <option value="200"<?php echo $page_size=='200'? ' selected':''; ?>>200<?php echo YiluPHP::I()->lang('data_number_per_page'); ?></option>
+            <option value="500"<?php echo $page_size=='500'? ' selected':''; ?>>500<?php echo YiluPHP::I()->lang('data_number_per_page'); ?></option>
         </select>
         <a href="/language/add_project" class="btn btn-sm btn-outline-primary ml-4 mb-2 ajax_main_content">
             <i class="fa fa-plus" aria-hidden="true"></i>
-            <?php echo $app->lang('add_project'); ?>
+            <?php echo YiluPHP::I()->lang('add_project'); ?>
         </a>
     </div>
 </form>
@@ -54,13 +54,13 @@ $head_info = [
         <thead>
         <tr>
             <th>ID</th>
-            <th><?php echo $app->lang('project_key'); ?></th>
-            <th><?php echo $app->lang('translation'); ?></th>
-            <th><?php echo $app->lang('project_name'); ?></th>
-            <th><?php echo $app->lang('description'); ?></th>
-            <th><?php echo $app->lang('lang_pack_storage_dir', ['type'=>'PHP']); ?></th>
-            <th><?php echo $app->lang('supported_language_types'); ?></th>
-            <th><?php echo $app->lang('operation'); ?></th>
+            <th><?php echo YiluPHP::I()->lang('project_key'); ?></th>
+            <th><?php echo YiluPHP::I()->lang('translation'); ?></th>
+            <th><?php echo YiluPHP::I()->lang('project_name'); ?></th>
+            <th><?php echo YiluPHP::I()->lang('description'); ?></th>
+            <th><?php echo YiluPHP::I()->lang('lang_pack_storage_dir', ['type'=>'PHP']); ?></th>
+            <th><?php echo YiluPHP::I()->lang('supported_language_types'); ?></th>
+            <th><?php echo YiluPHP::I()->lang('operation'); ?></th>
         </tr>
         </thead>
         <tbody>
@@ -68,7 +68,7 @@ $head_info = [
         <tr _id="<?php echo $item['id']; ?>">
             <td><?php echo $item['id']; ?></td>
             <td><?php echo $item['project_key']; ?></td>
-            <td><?php echo $app->lang($item['project_name']); ?></td>
+            <td><?php echo YiluPHP::I()->lang($item['project_name']); ?></td>
             <td><?php echo $item['project_name']; ?></td>
             <td><?php echo $item['description']; ?></td>
             <td><?php echo $item['file_dir']; ?></td>
@@ -106,15 +106,15 @@ $head_info = [
     </table>
 </div>
 
-<?php echo $app->pager->display_pages([
+<?php echo pager::I()->display_pages([
     'data_count' => $data_count,
     'page' => $page,
     'page_size' => $page_size,
     'a_class' => 'ajax_main_content',
-    'first_page_text' => $app->lang('first_page'),
-    'pre_page_text' => $app->lang('previous_page'),
-    'next_page_text' => $app->lang('next_page'),
-    'last_page_text' => $app->lang('last_page'),
+    'first_page_text' => YiluPHP::I()->lang('first_page'),
+    'pre_page_text' => YiluPHP::I()->lang('previous_page'),
+    'next_page_text' => YiluPHP::I()->lang('next_page'),
+    'last_page_text' => YiluPHP::I()->lang('last_page'),
 ]); ?>
 
 <script>

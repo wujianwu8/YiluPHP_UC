@@ -9,11 +9,11 @@
  * @return html
  */
 
-if (!$app->logic_permission->check_permission('user_center:edit_role')) {
-    return_code(100, $app->lang('not_authorized'));
+if (!logic_permission::I()->check_permission('user_center:edit_role')) {
+    return code(100, YiluPHP::I()->lang('not_authorized'));
 }
 
-$params = $app->input->validate(
+$params = input::I()->validate(
     [
         'role_id' => 'required|integer|min:1|return',
     ],
@@ -24,11 +24,11 @@ $params = $app->input->validate(
         'role_id.*' => 2,
     ]);
 
-if(!$role_info = $app->model_role->find_table(['id' => $params['role_id']])){
+if(!$role_info = model_role::I()->find_table(['id' => $params['role_id']])){
     unset($params);
-    return_code(1, '角色不存在');
+    return code(1, '角色不存在');
 }
 
-return_result('role/edit', [
+return result('role/edit', [
     'role_info' => $role_info,
 ]);

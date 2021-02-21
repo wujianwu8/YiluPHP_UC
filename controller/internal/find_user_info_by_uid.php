@@ -35,7 +35,7 @@
  *  1 uid参数错误
  */
 
-$params = $app->input->validate(
+$params = input::I()->validate(
     [
         'uid' => 'required|integer|min:1|return',
     ],
@@ -46,13 +46,13 @@ $params = $app->input->validate(
         'uid.*' => 1,
     ]);
 
-if ($user_info = $app->logic_user->find_user_safe_info($params['uid'])) {
+if ($user_info = logic_user::I()->find_user_safe_info($params['uid'])) {
     unset($params);
-    return_json(0, $app->lang('successful_get'),
+    return json(0, YiluPHP::I()->lang('successful_get'),
         [
             'user_info' => $user_info,
         ]
     );
 }
 unset($user_info, $params);
-return_json(2, $app->lang('failure_get'));
+return json(2, YiluPHP::I()->lang('failure_get'));

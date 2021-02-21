@@ -54,13 +54,13 @@ if (!isset($_COOKIE['vk'])){
 }
 $cache_key = 'VISIT_API_DOCS_SIGN_'.$_COOKIE['vk'];
 if (!empty($_GET['logout'])){
-    $app->redis()->del($cache_key);
+    redis_y::I()->del($cache_key);
 }
 $is_login = false;
 
 if (!empty($config['visit_api_docs_password'])){
-    if ($app->redis()->exists($cache_key)){
-        $app->redis()->EXPIRE($cache_key, 3600);
+    if (redis_y::I()->exists($cache_key)){
+        redis_y::I()->EXPIRE($cache_key, 3600);
         $is_login = true;
     }
     else{
@@ -69,8 +69,8 @@ if (!empty($config['visit_api_docs_password'])){
         }
         else{
             if ($config['visit_api_docs_password'] == $_POST['passport']){
-                $app->redis()->set($cache_key, 1);
-                $app->redis()->EXPIRE($cache_key, 3600);
+                redis_y::I()->set($cache_key, 1);
+                redis_y::I()->EXPIRE($cache_key, 3600);
                 $is_login = true;
             }
             else{
@@ -81,7 +81,7 @@ if (!empty($config['visit_api_docs_password'])){
     }
 }
 else if (!in_array(env(), ['dev', 'local'])){
-    return_code(CODE_NO_AUTHORIZED,'Can\'t visited in '.env().' environment');
+    return code(CODE_NO_AUTHORIZED,'Can\'t visited in '.env().' environment');
 }
 
 $menu_list = [
@@ -108,16 +108,16 @@ $menu_list = [
 //    ...
 ];
 
-$path = $app->input->get_trim('path', '');
-$version = $app->input->get_trim('version', '');
+$path = input::I()->get_trim('path', '');
+$version = input::I()->get_trim('version', '');
 $first_api = null;
 $current_api = null;
 $version_list = [];
 
-$file_list1 = get_dir_and_file($project_root.'controller');
+$file_list1 = get_dir_and_file(APP_PATH.'controller');
 foreach ($file_list1 as $key1 => $item1){
     if (is_integer($key1)){
-        if ($data = parseApiAnnotation($project_root.'controller/'.$item1)){
+        if ($data = parseApiAnnotation(APP_PATH.'controller/'.$item1)){
             if ($version!='' && !in_array($version, $data['version'])){
                 continue;
             }
@@ -142,10 +142,10 @@ foreach ($file_list1 as $key1 => $item1){
         }
     }
     else{
-        $file_list2 = get_dir_and_file($project_root.'controller/'.$item1);
+        $file_list2 = get_dir_and_file(APP_PATH.'controller/'.$item1);
         foreach ($file_list2 as $key2 => $item2){
             if (is_integer($key2)){
-                if ($data = parseApiAnnotation($project_root.'controller/'.$item1.'/'.$item2)){
+                if ($data = parseApiAnnotation(APP_PATH.'controller/'.$item1.'/'.$item2)){
                     if ($version!='' && !in_array($version, $data['version'])){
                         continue;
                     }
@@ -170,10 +170,10 @@ foreach ($file_list1 as $key1 => $item1){
                 }
             }
             else{
-                $file_list3 = get_dir_and_file($project_root.'controller/'.$item1.'/'.$item2);
+                $file_list3 = get_dir_and_file(APP_PATH.'controller/'.$item1.'/'.$item2);
                 foreach ($file_list3 as $key3 => $item3){
                     if (is_integer($key3)){
-                        if ($data = parseApiAnnotation($project_root.'controller/'.$item1.'/'.$item2.'/'.$item3)){
+                        if ($data = parseApiAnnotation(APP_PATH.'controller/'.$item1.'/'.$item2.'/'.$item3)){
                             if ($version!='' && !in_array($version, $data['version'])){
                                 continue;
                             }
@@ -207,7 +207,7 @@ if (!$current_api){
 }
 
 //模板文件存放在 /template/api_docs.php
-return_result('api_docs', [
+return result('api_docs', [
     //非必须的参数如果没有则不会返回此字段
     'version' => $version,
     'version_list' => $version_list,
@@ -242,8 +242,8 @@ function showVisitApiDosLoginUI(){
 //            ],
 //        ],
 function parseApiAnnotation($file){
-    global $version_list, $app;
-    $keyword = $app->input->get_trim('keyword', '');
+    global $version_list;
+    $keyword = input::I()->get_trim('keyword', '');
     if ($keyword){
         $in_search = false;
     }

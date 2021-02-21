@@ -8,21 +8,21 @@
  * @return HTML
  */
 
-if (!$app->logic_permission->check_permission('user_center:edit_menu')) {
-    return_code(100, $app->lang('not_authorized'));
+if (!logic_permission::I()->check_permission('user_center:edit_menu')) {
+    return code(100, YiluPHP::I()->lang('not_authorized'));
 }
 
-if(!$id = $app->input->get_int('id')){
+if(!$id = input::I()->get_int('id')){
     throw404();
 }
-if(!$menu_info = $app->model_menus->find_table(['id'=>$id])){
+if(!$menu_info = model_menus::I()->find_table(['id'=>$id])){
     throw404();
 }
 
-return_result('menus/edit',
+return result('menus/edit',
     [
         'menu_info' => $menu_info,
-        'parent_menus' => $app->model_menus->select_all(
+        'parent_menus' => model_menus::I()->select_all(
             ['parent_menu'=>0],
             ' position DESC, weight ASC, ctime DESC ',
             'id,lang_key,position'

@@ -27,11 +27,11 @@
  *  8
  */
 
-if (!$app->logic_permission->check_permission('user_center:view_project_lang_list')) {
-    return_code(100, $app->lang('not_authorized'));
+if (!logic_permission::I()->check_permission('user_center:view_project_lang_list')) {
+    throw new validate_exception(YiluPHP::I()->lang('not_authorized'),100);
 }
 
-$params = $app->input->validate(
+$params = input::I()->validate(
     [
         'project_id' => 'required|integer|min:1|return',
     ],
@@ -42,26 +42,26 @@ $params = $app->input->validate(
         'project_id.*' => 2,
     ]);
 
-if (!$project_info =$app->model_language_project->find_table(['id' => $params['project_id']])){
+if (!$project_info =model_language_project::I()->find_table(['id' => $params['project_id']])){
     unset($params,$project_info);
-    return_code(3,'项目不存在');
+    return code(3,'项目不存在');
 }
 $project_info['language_types'] = explode(',', $project_info['language_types']);
 
-$page = $app->input->get_int('page',1);
-$page_size = $app->input->get_int('page_size',15);
+$page = input::I()->get_int('page',1);
+$page_size = input::I()->get_int('page_size',15);
 $page_size>500 && $page_size = 500;
 $page_size<1 && $page_size = 1;
-$keyword = $app->input->get_trim('keyword',null);
+$keyword = input::I()->get_trim('keyword',null);
 
 $data_list = [];
 $data_count = 0;
 //获取项目的去重后的、已排序好的语言键名
-if ($language_key_list = $app->model_language_value->paging_select_project_distinct_language_key($project_info['project_key'], $page, $page_size, $keyword)){
+if ($language_key_list = model_language_value::I()->paging_select_project_distinct_language_key($project_info['project_key'], $page, $page_size, $keyword)){
     $language_key_list = array_column($language_key_list, 'language_key');
     //获取各语言的内容
     foreach ($project_info['language_types'] as $lang){
-        $value_list = $app->model_language_value->select_all([
+        $value_list = model_language_value::I()->select_all([
             'project_key' => $project_info['project_key'],
             'language_type' => $lang,
             'language_key' => [
@@ -98,12 +98,12 @@ if ($language_key_list = $app->model_language_value->paging_select_project_disti
             }
         }
     }
-    $data_count = $app->model_language_value->count_project_distinct_language_key($project_info['project_key'], $keyword);
+    $data_count = model_language_value::I()->count_project_distinct_language_key($project_info['project_key'], $keyword);
     unset($value_list);
 }
 
 unset($params, $where, $keyword);
-return_result('language/table', [
+return result('language/table', [
     'project_info' => $project_info,
     'data_list' => $data_list,
     'data_count' => $data_count,

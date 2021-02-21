@@ -1,9 +1,9 @@
 <?php
 /*
  * 语言包的翻译内容模型类
- * YiluPHP vision 1.0
+ * YiluPHP vision 2.0
  * User: Jim.Wu
- * Date: 19/10/13
+ * * Date: 2021/01/23
  * Time: 20:16
  */
 
@@ -39,14 +39,14 @@ class model_language_value extends model
         $sql .= implode(',', $sql_arr);
         unset($sql_arr);
         $connection = $this->sub_connection();
-        $stmt = $GLOBALS['app']->mysql($connection)->prepare($sql);
+        $stmt = mysql::I($connection)->prepare($sql);
         foreach($data as $key => $value){
             $stmt->bindValue(':'.$key, $value, is_numeric($value)?PDO::PARAM_INT:(is_string($value)?PDO::PARAM_STR:
                 (is_bool($value)?PDO::PARAM_BOOL:(is_null($value)?PDO::PARAM_NULL:PDO::PARAM_STR))));
         }
         $stmt->execute();
         unset($data, $sql, $stmt, $keys, $key_str, $value_key_str);
-        return $GLOBALS['app']->mysql($connection)->lastInsertId();
+        return mysql::I($connection)->lastInsertId();
     }
 
     /**
@@ -67,7 +67,7 @@ class model_language_value extends model
         }
         $sql .= ' ORDER BY language_key ASC LIMIT :start, :page_size';
         $connection = $this->sub_connection();
-        $stmt = $GLOBALS['app']->mysql($connection)->prepare($sql);
+        $stmt = mysql::I($connection)->prepare($sql);
         $stmt->bindValue(':project_key', $project_key, PDO::PARAM_STR);
         $stmt->bindValue(':start', $start, PDO::PARAM_INT);
         $stmt->bindValue(':page_size', $page_size, PDO::PARAM_INT);
@@ -94,7 +94,7 @@ class model_language_value extends model
             $sql .= ' AND (language_key LIKE :language_key OR language_value LIKE :language_value)';
         }
         $connection = $this->sub_connection();
-        $stmt = $GLOBALS['app']->mysql($connection)->prepare($sql);
+        $stmt = mysql::I($connection)->prepare($sql);
         $stmt->bindValue(':project_key', $project_key, PDO::PARAM_STR);
         if ($keyword){
             $stmt->bindValue(':language_key', '%'.$keyword.'%', PDO::PARAM_STR);

@@ -1,9 +1,9 @@
 <?php
 /*
  * 邮件验证码发送记录模型类
- * YiluPHP vision 1.0
+ * YiluPHP vision 2.0
  * User: Jim.Wu
- * Date: 19/11/11
+ * * Date: 2021/01/23
  * Time: 21:33
  */
 

@@ -25,11 +25,11 @@
  *  7 项目不存在
  */
 
-if (!$app->logic_permission->check_permission('user_center:edit_lang_project')) {
-    return_code(100, $app->lang('not_authorized'));
+if (!logic_permission::I()->check_permission('user_center:edit_lang_project')) {
+    return code(100, YiluPHP::I()->lang('not_authorized'));
 }
 
-$params = $app->input->validate(
+$params = input::I()->validate(
     [
         'project_id' => 'required|integer|min:1|return',
         'language_key' => 'required|trim|string|min:2|max:200|return',
@@ -48,7 +48,7 @@ $params = $app->input->validate(
 
 if (preg_match('/^[a-zA-Z0-9_]{3,200}$/', $params['language_key'], $matches)==false){
     unset($params, $matches);
-    return_code(5,'语言键名填写有误，语言键名只能包含字母、数字、下划线组成，3-200个字');
+    return code(5,'语言键名填写有误，语言键名只能包含字母、数字、下划线组成，3-200个字');
 }
 unset($matches);
 
@@ -60,7 +60,7 @@ foreach ($output_type as $value){
     }
     else if (trim($value)!=''){
         unset($params, $output_type);
-        return_code(6,'可输出类型参数有误');
+        return code(6,'可输出类型参数有误');
     }
 }
 if ($params['output_type']){
@@ -70,9 +70,9 @@ else{
     $params['output_type'] = '';
 }
 
-if (!$project_info = $app->model_language_project->find_table(['id' => $params['project_id']])){
+if (!$project_info = model_language_project::I()->find_table(['id' => $params['project_id']])){
     unset($params, $project_info);
-    return_code(7,'项目不存在');
+    return code(7,'项目不存在');
 }
 $project_info['language_types'] = explode(',', $project_info['language_types']);
 
@@ -85,12 +85,12 @@ foreach ($project_info['language_types'] as $language_type) {
         'ctime' => time(),
     ];
     //保存入库
-    if (false === $app->model_language_value->insert_language_value($data)) {
+    if (false === model_language_value::I()->insert_language_value($data)) {
         unset($params, $data, $project_info);
-        return_code(1, '保存失败');
+        return code(1, '保存失败');
     }
 }
 
 unset($params, $data, $project_info);
 //返回结果
-return_json(0,'保存成功');
+return json(0,'保存成功');

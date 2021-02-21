@@ -24,7 +24,7 @@
  *  8 密码错误
  */
 
-$params = $app->input->validate(
+$params = input::I()->validate(
     [
         'avatar' => 'required|string|min:50|return',
     ],
@@ -41,35 +41,35 @@ $img = str_replace(' ', '+', $img);
 $data = base64_decode($img);
 
 $path = '/avatar/'.date('Y').'/'.date('md').'/'.date('H').'/';
-if (!is_dir($project_root.'static'.$path)) {
-    mkdir($project_root.'static'.$path, 0777, true);
+if (!is_dir(APP_PATH.'static'.$path)) {
+    mkdir(APP_PATH.'static'.$path, 0777, true);
 }
 $file_name = '300x300WxH'.md5(uniqid().microtime().uniqid()).'.png';
-$fp = fopen($project_root.'static'.$path.$file_name, 'w');
+$fp = fopen(APP_PATH.'static'.$path.$file_name, 'w');
 fwrite($fp, $data);
 fclose($fp);
 
 $avatar = $path.$file_name;
 if (!empty($GLOBALS['config']['oss']['aliyun'])) {
-    $avatar = $app->tool_oss->upload_file($project_root . 'static/' . substr($avatar, 1));
+    $avatar = tool_oss::I()->upload_file(APP_PATH . 'static/' . substr($avatar, 1));
 }
 $data = [
     'avatar'=>$avatar,
 ];
 $where = ['uid'=>$self_info['uid']];
 //保存入库
-if(!$app->logic_user->update_user_info($where, $data)){
+if(!logic_user::I()->update_user_info($where, $data)){
     if (!empty($GLOBALS['config']['oss']['aliyun'])) {
-        $avatar = $app->tool_oss->delete_file($avatar);
+        $avatar = tool_oss::I()->delete_file($avatar);
     }
     unset($params, $where, $data, $path, $file_name, $img, $fp, $avatar);
-    return_code(1, '保存失败');
+    return code(1, '保存失败');
 }
 if (!empty($GLOBALS['config']['oss']['aliyun'])) {
-    $avatar = $app->tool_oss->delete_file($self_info['avatar']);
+    $avatar = tool_oss::I()->delete_file($self_info['avatar']);
 }
 //更新当前登录者的session信息
-$app->logic_user->update_current_user_info($data);
+logic_user::I()->update_current_user_info($data);
 unset($params, $where, $data, $path, $file_name, $img, $fp, $avatar);
 //返回结果
-return_json(CODE_SUCCESS,'保存成功');
+return json(CODE_SUCCESS,'保存成功');

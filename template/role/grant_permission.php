@@ -2,12 +2,12 @@
 <?php
 if ($page_name == 'role_permission'){
     $head_info = [
-        'title' => $app->lang('permission_of_role', ['role_name'=>$role_info['role_name']]),
+        'title' => YiluPHP::I()->lang('permission_of_role', ['role_name'=>$role_info['role_name']]),
     ];
 }
 else if($page_name=='user_permission'){
     $head_info = [
-        'title' => $app->lang('permission_of_user', ['nickname'=>$user_info['nickname']]),
+        'title' => YiluPHP::I()->lang('permission_of_user', ['nickname'=>$user_info['nickname']]),
     ];
 }
 ?>
@@ -33,9 +33,9 @@ else if($page_name=='user_permission'){
         <tr>
             <th></th>
             <th>ID</th>
-            <th><?php echo $app->lang('permission_name'); ?></th>
-            <th><?php echo $app->lang('permission_key'); ?></th>
-            <th><?php echo $app->lang('description'); ?></th>
+            <th><?php echo YiluPHP::I()->lang('permission_name'); ?></th>
+            <th><?php echo YiluPHP::I()->lang('permission_key'); ?></th>
+            <th><?php echo YiluPHP::I()->lang('description'); ?></th>
         </tr>
         </thead>
         <tbody>
@@ -59,7 +59,7 @@ else if($page_name=='user_permission'){
 
         <?php if(empty($app_permission_list)): ?>
             <tr>
-                <td colspan="5" class="pt-5 pb-5"><center><?php echo $app->lang('no_data'); ?></center></td>
+                <td colspan="5" class="pt-5 pb-5"><center><?php echo YiluPHP::I()->lang('no_data'); ?></center></td>
             </tr>
         <?php endif; ?>
         </tbody>

@@ -1,9 +1,9 @@
 <?php
 /*
  * 用户模型类
- * YiluPHP vision 1.0
+ * YiluPHP vision 2.0
  * User: Jim.Wu
- * Date: 19/10/04
+ * * Date: 2021/01/23
  * Time: 20:16
  */
 
@@ -47,7 +47,7 @@ class model_user extends model
 		$tmp = $nickname;
 		$isok = true;
 		$time = 1;
-		while($time<100 && $GLOBALS['app']->redis()->hexists(REDIS_KEY_ALL_NICKNAME, md5($tmp))){
+		while($time<100 && redis_y::I()->hexists(REDIS_KEY_ALL_NICKNAME, md5($tmp))){
 			$tmp = $nickname.'_'.mt_rand(1, 999999);
 			$time++;
 			$isok =false;
@@ -56,8 +56,8 @@ class model_user extends model
 			$tmp = $nickname.'_'.ten_to_54(str_replace('.','',microtime(true)).mt_rand(1,9999));
 		}
 		//存入缓存中,后期使用一个定时任务检查昵称是否已经被使用,如果没使用则还原
-		$GLOBALS['app']->redis()->hset(REDIS_KEY_ALL_NICKNAME, md5($tmp), 1);
-		$GLOBALS['app']->redis()->hset(REDIS_KEY_NEW_NICKNAME, md5($tmp), $tmp);
+		redis_y::I()->hset(REDIS_KEY_ALL_NICKNAME, md5($tmp), 1);
+		redis_y::I()->hset(REDIS_KEY_NEW_NICKNAME, md5($tmp), $tmp);
 		unset($nickname, $time, $isok);
 		return $tmp;
 
@@ -75,7 +75,6 @@ class model_user extends model
 	 */
 	function paging_select_search_user(array $where, int $page=1, int $page_size=10, $field_value=null, $fields=null)
 	{
-        global $app;
         $table_name = $this->sub_table($field_value);
         $connection = $this->sub_connection($field_value);
         if (isset($where['identity'])){
@@ -91,7 +90,7 @@ class model_user extends model
             $sql = 'SELECT '.$fields.' FROM `'.$table_name.'` AS u ';
         }
         if (isset($where['identity'])){
-            $table_name = $app->model_user_identity->sub_table($field_value);
+            $table_name = model_user_identity::I()->sub_table($field_value);
             $sql .= ', `'.$table_name.'` AS i ';
         }
         $where_array = [];
@@ -154,7 +153,7 @@ class model_user extends model
         $start<0 && $start = 0;
         $bind_value[':start'] = $start;
         $bind_value[':page_size'] = $page_size;
-        $stmt = $app->mysql($connection)->prepare($sql);
+        $stmt = mysql::I($connection)->prepare($sql);
         foreach ($bind_value as $key => $value){
             //第三个参数data_type，使用 PDO::PARAM_* 常量明确地指定参数的类型，如：
             //PDO::PARAM_INT、PDO::PARAM_STR、PDO::PARAM_BOOL、PDO::PARAM_NULL
@@ -183,13 +182,12 @@ class model_user extends model
      */
     function select_user_info_by_multi_uids(array $uids, string $fields='*', $field_value=null)
     {
-        global $app;
         $table_name = $this->sub_table($field_value);
         $connection = $this->sub_connection($field_value);
         $plist = ':uid_'.implode(',:uid_', array_keys($uids));
         $params = array_combine(explode(',', $plist), $uids);
         $sql = 'SELECT '.$fields.' FROM `'.$table_name.'` WHERE uid IN('.$plist.')';
-        $stmt = $app->mysql($connection)->prepare($sql);
+        $stmt = mysql::I($connection)->prepare($sql);
         $stmt->execute($params);
         $res = $stmt->fetchAll(PDO::FETCH_ASSOC);
         unset($app, $fields, $field_value, $table_name, $connection, $sql, $params, $plist, $stmt);
@@ -205,7 +203,6 @@ class model_user extends model
      * @return array 数据列表
      */
     function select_user_by_uid_or_nickname(string $keyword, string $fields='*', $limit=500){
-        global $app;
         if (empty($GLOBALS['config']['split_table']) || empty($this->_split_method)){
             $table_name = $this->sub_table();
             $connection = $this->sub_connection();
@@ -214,7 +211,7 @@ class model_user extends model
                 ':uid' => $keyword,
                 ':nickname' => '%'.$keyword.'%',
             ];
-            $stmt = $app->mysql($connection)->prepare($sql);
+            $stmt = mysql::I($connection)->prepare($sql);
             $stmt->execute($params);
             $res = $stmt->fetchAll(PDO::FETCH_ASSOC);
             return $res;
@@ -230,7 +227,7 @@ class model_user extends model
                 $connection = $this->sub_connection($i);
                 $left_limit = $limit-count($res);
                 $sql = 'SELECT '.$fields.' FROM '.$table_name.' WHERE uid=:uid OR nickname LIKE :nickname LIMIT '.$left_limit;
-                $stmt = $app->mysql($connection)->prepare($sql);
+                $stmt = mysql::I($connection)->prepare($sql);
                 $stmt->execute($params);
                 if($tmp = $stmt->fetchAll(PDO::FETCH_ASSOC)){
                     $res = array_merge($res, $tmp);

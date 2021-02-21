@@ -1,28 +1,27 @@
 <?php
 /**
  * @group 用户
- * @name 账号设置
- * @desc 修改自己的资料、绑定邮箱、登录账号
+ * @name 获取当前登录用户的详细信息
+ * @desc
  * @method GET
  * @uri /setting/user_info
- * @return HTML
+ * @return HTML|JSON
  */
 
-$user_info = $app->model_user->find_table(['uid'=>$self_info['uid']]);
-$identity = $app->model_user_identity->select_all(['uid'=>$self_info['uid']], '', 'type,identity', $self_info['uid']);
+$user_info = model_user::I()->find_table(['uid'=>$self_info['uid']]);
+$identity = model_user_identity::I()->select_all(['uid'=>$self_info['uid']], '', 'type,identity', $self_info['uid']);
 foreach ($identity as $item){
     if ($item['type']=='INNER'){
-        $user_info[$app->logic_user->get_identity_type($item['identity'])] = $item['identity'];
+        $user_info[logic_user::I()->get_identity_type($item['identity'])] = $item['identity'];
     }
     else{
         $user_info[$item['type']] = $item['identity'];
     }
 }
 unset($identity, $item, $user_info['password'], $user_info['salt']);
-
-return_result('setting/user_info',
+return result('setting/user_info',
     [
         'user_info' => $user_info,
-        'country_lang_keys' => $app->lib_address->selectCountryLangKeys(),
+        'country_lang_keys' => lib_address::I()->selectCountryLangKeys(),
     ]
 );

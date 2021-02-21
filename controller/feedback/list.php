@@ -13,19 +13,19 @@
  * @return HTML
  */
 
-if (!$app->logic_permission->check_permission('user_center:view_feedback')) {
-    return_code(100, $app->lang('not_authorized'));
+if (!logic_permission::I()->check_permission('user_center:view_feedback')) {
+    throw new validate_exception(YiluPHP::I()->lang('not_authorized'),100);
 }
 
-$params = $app->input->validate(
+$params = input::I()->validate(
     [
         'status' => 'integer|min:0|max:2|return',
         'keyword' => 'trim|string|return',
         'user' => 'trim|string|return',
     ]);
 
-$page = $app->input->get_int('page',1);
-$page_size = $app->input->get_int('page_size',10);
+$page = input::I()->get_int('page',1);
+$page_size = input::I()->get_int('page_size',10);
 $page_size>500 && $page_size = 500;
 $page_size<1 && $page_size = 1;
 
@@ -39,12 +39,12 @@ if (isset($params['keyword']) && $params['keyword']!=='' && $params['keyword']!=
 
 if (isset($params['user']) && $params['user']!=='' && $params['user']!==null){
     //根据昵称或用户ID搜索投诉人用户
-    if($users = $app->model_user->select_user_by_uid_or_nickname($params['user'], 'uid')){
+    if($users = model_user::I()->select_user_by_uid_or_nickname($params['user'], 'uid')){
         $where['uids'] = array_column($users, 'uid');
     }
     else{
         unset($users, $params, $where);
-        return_result('feedback/list', [
+        return result('feedback/list', [
             'data_list' => [],
             'data_count' => 0,
             'page' => $page,
@@ -54,10 +54,10 @@ if (isset($params['user']) && $params['user']!=='' && $params['user']!==null){
     unset($users);
 }
 
-$res = $app->model_user_feedback->paging_select_user_feedback($where, $page, $page_size);
+$res = model_user_feedback::I()->paging_select_user_feedback($where, $page, $page_size);
 if ($res['count']>0) {
     $uids = array_column($res['data'], 'uid');
-    $user_info = $app->logic_user->select_user_info_by_multi_uids($uids, 'uid,nickname,avatar');
+    $user_info = logic_user::I()->select_user_info_by_multi_uids($uids, 'uid,nickname,avatar');
     foreach ($res['data'] as $key => $item){
         if (isset($user_info[$item['uid']])) {
             $res['data'][$key]['nickname'] = $user_info[$item['uid']]['nickname'];
@@ -72,7 +72,7 @@ if ($res['count']>0) {
 }
 
 unset($user_info, $params);
-return_result('feedback/list', [
+return result('feedback/list', [
     'data_list' => $res['data'],
     'data_count' => $res['count'],
     'page' => $page,

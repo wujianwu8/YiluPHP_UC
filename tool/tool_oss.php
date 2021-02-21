@@ -1,21 +1,21 @@
 <?php
 /*
  * OSS文件上传类
- * YiluPHP vision 1.0
+ * YiluPHP vision 2.0
  * User: Jim.Wu
- * Date: 19/10/15
+ * * Date: 2021/01/23
  * Time: 21:31
  */
 
 use OSS\OssClient;
 use OSS\Core\OssException;
 
-class tool_oss
+class tool_oss extends base_class
 {
 	public function __construct()
 	{
 	    if (empty($GLOBALS['config']['oss'])){
-	        return_code(CODE_NOT_CONFIG_SMS_PLAT, '未配置OSS文件上传的平台');
+            throw new validate_exception('未配置OSS文件上传的平台', CODE_NOT_CONFIG_SMS_PLAT);
         }
 	}
 
@@ -29,7 +29,7 @@ class tool_oss
     {
         $this->check_aliyun_config();
         if (empty($object)){
-            $object = explode($GLOBALS['project_root'].'static/', $local_file);
+            $object = explode(APP_PATH.'static/', $local_file);
             if (empty($object[1])){
                 $object = date('Y/md/H/').basename($local_file);
             }
@@ -66,7 +66,7 @@ class tool_oss
         }
 
         if (strpos($object, '/')===0){
-            $object = $GLOBALS['project_root'].'static'.$object;
+            $object = APP_PATH.'static'.$object;
             if (file_exists($object)){
                 unlink($object);
                 return true;
@@ -104,7 +104,7 @@ class tool_oss
         if (empty($GLOBALS['config']['oss']['aliyun']) || empty($GLOBALS['config']['oss']['aliyun']['accessKeyId'])
             || empty($GLOBALS['config']['oss']['aliyun']['accessKeySecret']) || empty($GLOBALS['config']['oss']['aliyun']['endpoint'])
             || empty($GLOBALS['config']['oss']['aliyun']['bucketName']) || empty($GLOBALS['config']['oss']['aliyun']['visit_host'])) {
-            return_code(CODE_NOT_CONFIG_SMS_PLAT, '未配置阿里云的OSS文件上传的平台，可配置信息不完整');
+            throw new validate_exception('未配置阿里云的OSS文件上传的平台，可配置信息不完整', CODE_NOT_CONFIG_SMS_PLAT);
         }
         return true;
     }

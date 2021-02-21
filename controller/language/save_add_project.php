@@ -31,11 +31,11 @@
  * 10 JS语言包目录参数有误
  */
 
-if (!$app->logic_permission->check_permission('user_center:add_lang_project')) {
-    return_code(100, $app->lang('not_authorized'));
+if (!logic_permission::I()->check_permission('user_center:add_lang_project')) {
+    return code(100, YiluPHP::I()->lang('not_authorized'));
 }
 
-$params = $app->input->validate(
+$params = input::I()->validate(
     [
         'project_key' => 'required|trim|string|min:3|max:30|return',
         'project_name' => 'required|trim|string|min:2|max:40|return',
@@ -63,25 +63,25 @@ $params = $app->input->validate(
 
 if (preg_match('/^[a-zA-Z0-9_]{3,30}$/', $params['project_key'], $matches)==false){
     unset($params,$matches);
-    return_code(7,'项目键名只能使用字母、数字、下划线，长度在3-30个字');
+    return code(7,'项目键名只能使用字母、数字、下划线，长度在3-30个字');
 }
 
 if (preg_match('/^[a-zA-Z0-9\-,_]{2,200}$/', $params['language_types'], $matches)==false){
     unset($params,$matches);
-    return_code(8,'语言种类设置错误，语言种类只能使用字母、数字、下划线、中横线，半角逗号，长度在2-200个字，多个语种使用半角逗号分隔，如：zh,en');
+    return code(8,'语言种类设置错误，语言种类只能使用字母、数字、下划线、中横线，半角逗号，长度在2-200个字，多个语种使用半角逗号分隔，如：zh,en');
 }
 
-if ($app->model_language_project->find_table(['project_key' => $params['project_key']])){
+if (model_language_project::I()->find_table(['project_key' => $params['project_key']])){
     unset($params,$matches);
-    return_code(9,'项目键名已经存在，换一个吧');
+    return code(9,'项目键名已经存在，换一个吧');
 }
 
 //保存入库
-if(false === $role_id=$app->model_language_project->insert_table($params)){
+if(false === $role_id=model_language_project::I()->insert_table($params)){
     unset($params,$matches);
-    return_code(1, '保存失败');
+    return code(1, '保存失败');
 }
 
 unset($params,$matches);
 //返回结果
-return_json(CODE_SUCCESS,'保存成功');
+return json(CODE_SUCCESS,'保存成功');

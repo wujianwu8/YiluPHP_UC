@@ -1,7 +1,7 @@
 <!--{use_layout layout/main}-->
 <?php
 $head_info = [
-    'title' => $app->lang('menu_account_setting'),
+    'title' => YiluPHP::I()->lang('menu_account_setting'),
 ];
 ?>
 
@@ -9,33 +9,33 @@ $head_info = [
 <form class="needs-validation title_content" novalidate="" method="post" id="setting_user_info">
     <div class="row mb-2">
         <div class="col-sm-3 title">
-            <label for="nickname"><?php echo $app->lang('nickname'); ?></label>
+            <label for="nickname"><?php echo YiluPHP::I()->lang('nickname'); ?></label>
         </div>
         <div class="col-sm-7">
             <input type="text" class="form-control" id="nickname" name="nickname" value="<?php echo $user_info['nickname']; ?>" required>
             <div class="invalid-feedback">
-                <?php echo $app->lang('please_input_xxx', ['field'=>strtolower($app->lang('nickname'))]); ?>
+                <?php echo YiluPHP::I()->lang('please_input_xxx', ['field'=>strtolower(YiluPHP::I()->lang('nickname'))]); ?>
             </div>
         </div>
     </div>
     <div class="row mb-2">
         <div class="col-sm-3 title">
-            <label for="gender"><?php echo $app->lang('gender'); ?></label>
+            <label for="gender"><?php echo YiluPHP::I()->lang('gender'); ?></label>
         </div>
         <div class="col-sm-7">
             <select class="custom-select d-block w-100" id="gender" name="gender" required>
                 <option value="male" <?php echo $user_info['gender']=='male'?'selected' : ''; ?> >
-                    <?php echo $app->lang('gender_male'); ?>
+                    <?php echo YiluPHP::I()->lang('gender_male'); ?>
                 </option>
                 <option value="female" <?php echo $user_info['gender']=='female'?'selected' : ''; ?> >
-                    <?php echo $app->lang('gender_female'); ?>
+                    <?php echo YiluPHP::I()->lang('gender_female'); ?>
                 </option>
             </select>
         </div>
     </div>
     <div class="row mb-2">
         <div class="col-sm-3 title">
-            <label for="username"><?php echo $app->lang('birthday'); ?></label>
+            <label for="username"><?php echo YiluPHP::I()->lang('birthday'); ?></label>
         </div>
         <div class="col-sm-7">
             <input type="date" class="form-control" id="birthday" name="birthday" value="<?php echo $user_info['birthday']; ?>" >
@@ -43,18 +43,18 @@ $head_info = [
     </div>
     <div class="row mb-2">
         <div class="col-sm-3 title">
-            <label for="country"><?php echo $app->lang('country'); ?></label>
+            <label for="country"><?php echo YiluPHP::I()->lang('country'); ?></label>
         </div>
         <div class="col-sm-7">
             <select class="custom-select d-block w-100" id="country" name="country">
-                <?php if(array_search($user_info['country'], $country_lang_keys===false)){ ?>
+                <?php if(array_search($user_info['country'], $country_lang_keys)===false){ ?>
                 <option value="<?php echo $user_info['country']; ?>">
                     <?php echo $user_info['country']; ?>
                 </option>
                 <?php } ?>
                 <?php foreach ($country_lang_keys as $key){ ?>
                 <option value="<?php echo $key; ?>" <?php echo $user_info['country']==$key?'selected':''; ?>>
-                    <?php echo $app->lang($key); ?>
+                    <?php echo YiluPHP::I()->lang($key); ?>
                 </option>
                 <?php } ?>
             </select>
@@ -62,7 +62,7 @@ $head_info = [
     </div>
     <div class="row mb-2">
         <div class="col-sm-3 title">
-            <label for="province"><?php echo $app->lang('province'); ?></label>
+            <label for="province"><?php echo YiluPHP::I()->lang('province'); ?></label>
         </div>
         <div class="col-sm-7">
             <input type="text" class="form-control" id="province" name="province" value="<?php echo $user_info['province']; ?>" >
@@ -70,7 +70,7 @@ $head_info = [
     </div>
     <div class="row mb-2">
         <div class="col-sm-3 title">
-            <label for="city"><?php echo $app->lang('city'); ?></label>
+            <label for="city"><?php echo YiluPHP::I()->lang('city'); ?></label>
         </div>
         <div class="col-sm-7">
             <input type="text" class="form-control" id="city" name="city" value="<?php echo $user_info['city']; ?>" >
@@ -79,7 +79,7 @@ $head_info = [
 
     <div class="row mb-2">
         <div class="col-sm-3 title">
-            <label><?php echo $app->lang('login_mobile'); ?></label>
+            <label><?php echo YiluPHP::I()->lang('login_mobile'); ?></label>
         </div>
         <div class="col-sm-7">
             <?php echo $user_info['mobile']; ?>
@@ -87,13 +87,13 @@ $head_info = [
     </div>
     <div class="row mb-2">
         <div class="col-sm-3 title">
-            <label for="username"><?php echo $app->lang('login_username'); ?></label>
+            <label for="username"><?php echo YiluPHP::I()->lang('login_username'); ?></label>
         </div>
         <div class="col-sm-7">
             <?php if(empty($user_info['username'])){ ?>
-                <input type="text" class="form-control" id="username" name="username" placeholder="<?php echo $app->lang('cannot_be_modified_after_setting'); ?>">
+                <input type="text" class="form-control" id="username" name="username" placeholder="<?php echo YiluPHP::I()->lang('cannot_be_modified_after_setting'); ?>">
                 <div class="text-info">
-                    <?php echo $app->lang('username_rule_notice'); ?>
+                    <?php echo YiluPHP::I()->lang('username_rule_notice'); ?>
                 </div>
             <?php }else{ ?>
                 <?php echo $user_info['username']; ?>
@@ -102,90 +102,90 @@ $head_info = [
     </div>
     <div class="row mb-2">
         <div class="col-sm-3 title">
-            <label><?php echo $app->lang('login_email'); ?></label>
+            <label><?php echo YiluPHP::I()->lang('login_email'); ?></label>
         </div>
         <div class="col-sm-7">
             <?php if(empty($user_info['email'])){ ?>
                 <a href="/setting/bind_email" class="btn btn-sm btn-outline-primary ajax_main_content">
-                    <?php echo $app->lang('set_login_email'); ?>
+                    <?php echo YiluPHP::I()->lang('set_login_email'); ?>
                 </a>
             <?php }else{ ?>
                 <?php echo $user_info['email']; ?>
                 <a href="/setting/bind_email" class="ml-2 ajax_main_content">
-                    <?php echo $app->lang('change_login_email'); ?>
+                    <?php echo YiluPHP::I()->lang('change_login_email'); ?>
                 </a>
             <?php } ?>
         </div>
     </div>
     <div class="row mb-2">
         <div class="col-sm-3 title">
-            <label><?php echo $app->lang('bind_wechat'); ?></label>
+            <label><?php echo YiluPHP::I()->lang('bind_wechat'); ?></label>
         </div>
         <div class="col-sm-7">
             <?php if(empty($user_info['WX'])){ ?>
                 <a href="javascript:weixinLogin(1);" class="btn btn-sm btn-outline-primary">
-                    <?php echo $app->lang('bind_now'); ?>
+                    <?php echo YiluPHP::I()->lang('bind_now'); ?>
                 </a>
                 <div class="text-info">
-                    <?php echo $app->lang('after_binding_can_login_use_xxx', [
-                            'field' => $app->lang('user_identity_type_WX')
+                    <?php echo YiluPHP::I()->lang('after_binding_can_login_use_xxx', [
+                            'field' => YiluPHP::I()->lang('user_identity_type_WX')
                     ]); ?>
                 </div>
             <?php }else{ ?>
-                <?php echo $app->lang('bind_already'); ?>
+                <?php echo YiluPHP::I()->lang('bind_already'); ?>
                 <a href="/setting/unbind_wechat" class="ml-2 unbind_wechat">
-                    <?php echo $app->lang('unbind'); ?>
+                    <?php echo YiluPHP::I()->lang('unbind'); ?>
                 </a>
             <?php } ?>
         </div>
     </div>
     <div class="row mb-2">
         <div class="col-sm-3 title">
-            <label><?php echo $app->lang('bind_qq'); ?></label>
+            <label><?php echo YiluPHP::I()->lang('bind_qq'); ?></label>
         </div>
         <div class="col-sm-7">
             <?php if(empty($user_info['QQ'])){ ?>
                 <a href="/sign/qq_login/for_bind/1" class="btn btn-sm btn-outline-primary">
-                    <?php echo $app->lang('bind_now'); ?>
+                    <?php echo YiluPHP::I()->lang('bind_now'); ?>
                 </a>
                 <div class="text-info">
-                    <?php echo $app->lang('after_binding_can_login_use_xxx', [
-                        'field' => $app->lang('user_identity_type_QQ')
+                    <?php echo YiluPHP::I()->lang('after_binding_can_login_use_xxx', [
+                        'field' => YiluPHP::I()->lang('user_identity_type_QQ')
                     ]); ?>
                 </div>
             <?php }else{ ?>
-                <?php echo $app->lang('bind_already'); ?>
+                <?php echo YiluPHP::I()->lang('bind_already'); ?>
                 <a href="/setting/unbind_qq" class="ml-2 unbind_qq">
-                    <?php echo $app->lang('unbind'); ?>
+                    <?php echo YiluPHP::I()->lang('unbind'); ?>
                 </a>
             <?php } ?>
         </div>
     </div>
     <div class="row mb-2">
         <div class="col-sm-3 title">
-            <label><?php echo $app->lang('bind_alipay'); ?></label>
+            <label><?php echo YiluPHP::I()->lang('bind_alipay'); ?></label>
         </div>
         <div class="col-sm-7">
             <?php if(empty($user_info['ALIPAY'])){ ?>
                 <a href="/sign/alipay_login/for_bind/1" class="btn btn-sm btn-outline-primary">
-                    <?php echo $app->lang('bind_now'); ?>
+                    <?php echo YiluPHP::I()->lang('bind_now'); ?>
                 </a>
                 <div class="text-info">
-                    <?php echo $app->lang('after_binding_can_login_use_xxx', [
-                        'field' => $app->lang('user_identity_type_ALIPAY')
+                    <?php echo YiluPHP::I()->lang('after_binding_can_login_use_xxx', [
+                        'field' => YiluPHP::I()->lang('user_identity_type_ALIPAY')
                     ]); ?>
                 </div>
             <?php }else{ ?>
-                <?php echo $app->lang('bind_already'); ?>
+                <?php echo YiluPHP::I()->lang('bind_already'); ?>
                 <a href="/setting/unbind_alipay" class="ml-2 unbind_alipay">
-                    <?php echo $app->lang('unbind'); ?>
+                    <?php echo YiluPHP::I()->lang('unbind'); ?>
                 </a>
             <?php } ?>
         </div>
     </div>
 
 
-    <button class="btn btn-primary btn-lg btn-block" type="submit"><?php echo $app->lang('save'); ?></button>
+    <button class="btn btn-primary btn-lg btn-block" type="submit"><?php echo YiluPHP::I()->lang('save'); ?></button>
 </form>
 <div class="mb-5"></div>
 

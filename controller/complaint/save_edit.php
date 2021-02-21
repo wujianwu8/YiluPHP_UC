@@ -21,11 +21,11 @@
  *  3 投诉不存在
  */
 
-if (!$app->logic_permission->check_permission('user_center:deal_with_complaint')) {
-    return_code(100, $app->lang('not_authorized'));
+if (!logic_permission::I()->check_permission('user_center:deal_with_complaint')) {
+    return code(100, YiluPHP::I()->lang('not_authorized'));
 }
 
-$params = $app->input->validate(
+$params = input::I()->validate(
     [
         'id' => 'required|integer|return',
         'status' => 'trim|string|return',
@@ -39,8 +39,8 @@ $params = $app->input->validate(
     ]);
 //检查操作权限
 
-if(!$check_info = $app->model_user_complaint->find_table(['id'=>$params['id']])){
-    return_code(3,'投诉不存在');
+if(!$check_info = model_user_complaint::I()->find_table(['id'=>$params['id']])){
+    return code(3,'投诉不存在');
 }
 unset($check_info);
 $where = ['id'=>$params['id']];
@@ -53,15 +53,15 @@ if (isset($params['remark'])){
     $data['remark'] = $params['remark'];
 }
 if(count($data)==0){
-    return_json(CODE_SUCCESS,'保存成功');
+    return json(CODE_SUCCESS,'保存成功');
 }
 
 //保存入库
-if(!$app->model_user_complaint->update_table($where, $data)){
+if(!model_user_complaint::I()->update_table($where, $data)){
     unset($params, $where, $data);
-    return_code(1, '保存失败');
+    return code(1, '保存失败');
 }
 
 unset($params, $where, $data);
 //返回结果
-return_json(CODE_SUCCESS,'保存成功');
+return json(CODE_SUCCESS,'保存成功');

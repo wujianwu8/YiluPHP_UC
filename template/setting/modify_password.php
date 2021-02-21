@@ -1,7 +1,7 @@
 <!--{use_layout layout/main}-->
 <?php
 $head_info = [
-    'title' => $app->lang('menu_change_password'),
+    'title' => YiluPHP::I()->lang('menu_change_password'),
 ];
 ?>
 
@@ -11,39 +11,39 @@ $head_info = [
 <form class="needs-validation title_content" novalidate="" method="post">
     <div class="row mb-3">
         <div class="col-sm-3 title">
-            <label for="email"><?php echo $app->lang('new_password'); ?></label>
+            <label for="email"><?php echo YiluPHP::I()->lang('new_password'); ?></label>
         </div>
         <div class="col-sm-7">
-            <input type="password" class="form-control" id="password" name="password" placeholder="<?php echo $app->lang('new_password'); ?>" required>
+            <input type="password" class="form-control" id="password" name="password" placeholder="<?php echo YiluPHP::I()->lang('new_password'); ?>" required>
             <div class="invalid-feedback">
-                <?php echo $app->lang('please_input_xxx', ['field'=>strtolower($app->lang('new_password'))]); ?>
+                <?php echo YiluPHP::I()->lang('please_input_xxx', ['field'=>strtolower(YiluPHP::I()->lang('new_password'))]); ?>
             </div>
         </div>
     </div>
     <div class="row mb-3">
         <div class="col-sm-3 title">
-            <label for="confirm_password"><?php echo $app->lang('confirm_new_password'); ?></label>
+            <label for="confirm_password"><?php echo YiluPHP::I()->lang('confirm_new_password'); ?></label>
         </div>
         <div class="col-sm-7">
-            <input type="password" class="form-control" id="confirm_password" name="confirm_password" placeholder="<?php echo $app->lang('confirm_new_password'); ?>" required>
+            <input type="password" class="form-control" id="confirm_password" name="confirm_password" placeholder="<?php echo YiluPHP::I()->lang('confirm_new_password'); ?>" required>
             <div class="invalid-feedback">
-                <?php echo $app->lang('confirm_new_password_please'); ?>
+                <?php echo YiluPHP::I()->lang('confirm_new_password_please'); ?>
             </div>
         </div>
     </div>
     <div class="row mb-3">
         <div class="col-sm-3 title">
-            <label for="password"><?php echo $app->lang('current_password'); ?></label>
+            <label for="password"><?php echo YiluPHP::I()->lang('current_password'); ?></label>
         </div>
         <div class="col-sm-7">
-            <input type="password" class="form-control" id="current_password" name="current_password" placeholder="<?php echo $app->lang('current_password'); ?>" required>
+            <input type="password" class="form-control" id="current_password" name="current_password" placeholder="<?php echo YiluPHP::I()->lang('current_password'); ?>" required>
             <div class="invalid-feedback">
-                <?php echo $app->lang('please_input_xxx', ['field'=>strtolower($app->lang('current_password'))]); ?>
+                <?php echo YiluPHP::I()->lang('please_input_xxx', ['field'=>strtolower(YiluPHP::I()->lang('current_password'))]); ?>
             </div>
         </div>
     </div>
 
-    <button class="btn btn-primary btn-lg btn-block" type="submit"><?php echo $app->lang('save'); ?></button>
+    <button class="btn btn-primary btn-lg btn-block" type="submit"><?php echo YiluPHP::I()->lang('save'); ?></button>
 </form>
 <div class="mb-5"></div>
 <script>

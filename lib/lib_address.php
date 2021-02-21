@@ -1,15 +1,15 @@
 <?php
 /*
  * 地址库
- * YiluPHP vision 1.0
+ * YiluPHP vision 2.0
  * User: Jim.Wu
- * Date: 19/10/06
+ * Date: 2021/01/21
  * Time: 18:56
  */
 
-class lib_address
+class lib_address extends base_class
 {
-	public function __construct()
+    public function __construct()
 	{
 	}
 
@@ -45,7 +45,7 @@ class lib_address
     }
 
     /**
-     * @name 获取所有国家的语言键名
+     * @name 根据所有国家的语言键名
      * @desc
      * @return array
      */

@@ -3,7 +3,7 @@
  * @group 用户
  * @name 用户退出登录
  * @desc
- * @method GET
+ * @method POST
  * @uri /sign/out
  * @return 直接跳转到登录页或json
  * {
@@ -15,13 +15,13 @@
  *  0 退出成功
  */
 
-$app->logic_user->destroy_login_session();
+logic_user::I()->destroy_login_session();
 if( isset($_REQUEST['dtype']) && in_array(strtolower($_REQUEST['dtype']), ['json', 'jsonp']) ){
     if(strtolower($_REQUEST['dtype'])=='jsonp'){
-        return_jsonp(CODE_SUCCESS, $app->lang('sign_out_successfully'));
+        return jsonp(CODE_SUCCESS, YiluPHP::I()->lang('sign_out_successfully'));
     }
     else{
-        return_json(CODE_SUCCESS, $app->lang('sign_out_successfully'));
+        return json(CODE_SUCCESS, YiluPHP::I()->lang('sign_out_successfully'));
     }
 }
 $redirect_uri = '/sign/in';

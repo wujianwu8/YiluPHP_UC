@@ -10,14 +10,14 @@
  */
 
 if ($self_info){
-    if($app->logic_user->get_login_user_info_by_uid($self_info['uid'])) {
-        $tlt = $app->logic_user->create_login_tlt($self_info['uid'], client_ip());
-        $app->logic_user->auto_jump(false, $tlt);
+    if(logic_user::I()->get_login_user_info_by_uid($self_info['uid'])) {
+        $tlt = logic_user::I()->create_login_tlt($self_info['uid'], client_ip());
+        logic_user::I()->auto_jump(false, $tlt);
     }
 }
 
 $params = [
-    'area_list' => $app->lib_ip->getAutoAreaList(),
+    'area_list' => lib_ip::getAutoAreaList(),
 ];
 
-return_result('sign/in', $params);
+return result('sign/in', $params);

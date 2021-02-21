@@ -2,13 +2,17 @@
 
 /**
  * 设置头信息
- * YiluPHP vision 1.0
+ * YiluPHP vision 2.0
  * User: Jim.Wu
- * Date: 19/12/30
- * Time: 19:43
+ * * Date: 2021/01/23
+ * Time: 09:43
  */
-class hook_header_setter
+class hook_header_setter extends hook
 {
+    public function run()
+    {
+    }
+
     public function __construct()
     {
     }

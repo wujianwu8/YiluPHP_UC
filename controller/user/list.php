@@ -21,75 +21,75 @@
  * @return HTML
  */
 
-if (!$app->logic_permission->check_permission('user_center:view_user_list')) {
-    return_code(100, $app->lang('not_authorized'));
+if (!logic_permission::I()->check_permission('user_center:view_user_list')) {
+    throw new validate_exception(YiluPHP::I()->lang('not_authorized'),100);
 }
 
-$page = $app->input->get_int('page',1);
-$page_size = $app->input->get_int('page_size',10);
+$page = input::I()->get_int('page',1);
+$page_size = input::I()->get_int('page_size',10);
 $page_size>500 && $page_size = 500;
 $page_size<1 && $page_size = 1;
 
 $where = [];
-$gender = $app->input->get_trim('gender',null);
+$gender = input::I()->get_trim('gender',null);
 if($gender){
     $where['gender'] = $gender;
 }
-$nickname = $app->input->get_trim('nickname',null);
+$nickname = input::I()->get_trim('nickname',null);
 if($nickname){
     $where['nickname'] = $nickname;
 }
-$position = $app->input->get_trim('position',null);
+$position = input::I()->get_trim('position',null);
 if($position){
     $where['position'] = $position;
 }
-$uid = $app->input->get_trim('uid',null);
+$uid = input::I()->get_trim('uid',null);
 if($uid){
     $where['uid'] = $uid;
 }
 
-$birthday_1 = $app->input->get_trim('birthday_1',null);
+$birthday_1 = input::I()->get_trim('birthday_1',null);
 if($birthday_1){
     $where['birthday_1'] = $birthday_1;
 }
-$birthday_2 = $app->input->get_trim('birthday_2',null);
+$birthday_2 = input::I()->get_trim('birthday_2',null);
 if($birthday_2){
     $where['birthday_2'] = $birthday_2;
 }
 
-$reg_time_1 = $app->input->get_trim('reg_time_1',null);
+$reg_time_1 = input::I()->get_trim('reg_time_1',null);
 if($reg_time_1){
     $where['reg_time_1'] = strtotime($reg_time_1);
 }
-$reg_time_2 = $app->input->get_trim('reg_time_2',null);
+$reg_time_2 = input::I()->get_trim('reg_time_2',null);
 if($reg_time_2){
     $where['reg_time_2'] = strtotime($reg_time_2.' 23:59:59');
 }
 
-$last_active_1 = $app->input->get_trim('last_active_1',null);
+$last_active_1 = input::I()->get_trim('last_active_1',null);
 if($last_active_1){
     $where['last_active_1'] = strtotime($last_active_1);
 }
-$last_active_2 = $app->input->get_trim('last_active_2',null);
+$last_active_2 = input::I()->get_trim('last_active_2',null);
 if($last_active_2){
     $where['last_active_2'] = strtotime($last_active_2);
 }
 
-$identity = $app->input->get_trim('identity',null);
+$identity = input::I()->get_trim('identity',null);
 if($identity){
     $where['identity'] = $identity;
 }
 
-$status = $app->input->get_trim('status',null);
+$status = input::I()->get_trim('status',null);
 if($status!==null){
     $where['status'] = $status;
 }
 
-$user_list = $app->logic_user->paging_select_search_user($where, $page, $page_size);
+$user_list = logic_user::I()->paging_select_search_user($where, $page, $page_size);
 
-return_result('user/list', [
+return result('user/list', [
     'user_list' => $user_list,
-    'data_count' => $app->model_user_identity->get_user_count(),
+    'data_count' => model_user_identity::I()->get_user_count(),
     'page' => $page,
     'page_size' => $page_size,
 ]);

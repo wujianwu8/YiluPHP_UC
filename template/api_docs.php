@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
     <link rel="icon" href="/favicon.ico">
     <title>Api Documents</title>
-    <link href="https://www.yiluphp.com/css/vendor/bootstrap.min.css" rel="stylesheet">
+    <link href="<?php echo $config['website_index']; ?>/css/vendor/bootstrap.min.css" rel="stylesheet">
     <style>
         body{
             padding: 0 0 6rem 0;
@@ -143,11 +143,11 @@
             overflow: visible;
         }
     </style>
-    <link href="https://www.yiluphp.com/css/vendor/dialog.css" rel="stylesheet">
-    <link href="https://www.yiluphp.com/jsonFormater/jsonFormater.css" rel="stylesheet">
-    <script src="https://www.yiluphp.com/js/vendor/jquery-3.4.1.min.js"></script>
-    <script src="https://www.yiluphp.com/js/vendor/dialog.diy.js" type="text/javascript"></script>
-    <script src="https://www.yiluphp.com/jsonFormater/jsonFormater.js"></script>
+    <link href="<?php echo $config['website_index']; ?>/css/vendor/dialog.css" rel="stylesheet">
+    <link href="<?php echo $config['website_index']; ?>/jsonFormater/jsonFormater.css" rel="stylesheet">
+    <script src="<?php echo $config['website_index']; ?>/js/vendor/jquery-3.4.1.min.js"></script>
+    <script src="<?php echo $config['website_index']; ?>/js/vendor/dialog.diy.js" type="text/javascript"></script>
+    <script src="<?php echo $config['website_index']; ?>/jsonFormater/jsonFormater.js"></script>
 </head>
 
 <body>
@@ -291,7 +291,7 @@
     <div class="container">
         <div>
             Technical support:
-            <a target="_blank" href="https://www.yiluphp.com/">www.yiluphp.com</a>
+            <a target="_blank" href="<?php echo $config['website_index']; ?>">www.yiluphp.com</a>
         </div>
     </div>
 </footer>

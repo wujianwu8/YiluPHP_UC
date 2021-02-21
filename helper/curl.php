@@ -1,13 +1,13 @@
 <?php
 /*
  * CURL方法类
- * YiluPHP vision 1.0
+ * YiluPHP vision 2.0
  * User: Jim.Wu
- * Date: 19/10/08
+ * Date: 2021/01/21
  * Time: 22:55
  */
 
-class curl
+class curl extends base_class
 {
     private $_ch;
     private $response;

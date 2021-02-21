@@ -1,13 +1,13 @@
 <?php
 /*
  * 用户类
- * YiluPHP vision 1.0
+ * YiluPHP vision 2.0
  * User: Jim.Wu
- * Date: 19/10/17
+ * * Date: 2021/01/23
  * Time: 21:19
  */
 
-class logic_user
+class logic_user extends base_class
 {
 	public function __construct()
 	{
@@ -26,24 +26,24 @@ class logic_user
      */
     public function create_user(&$data)
     {
-		if (!empty($GLOBALS['config']['split_table']) && !isset($data[$GLOBALS['app']->model_user->get_split_by_field()])){
-			throw new Exception('用户的MODEL中缺少分表用的字段值:'.$GLOBALS['app']->model_user->get_split_by_field(), CODE_ERROR_IN_MODEL);
+		if (!empty($GLOBALS['config']['split_table']) && !isset($data[model_user::I()->get_split_by_field()])){
+			throw new Exception('用户的MODEL中缺少分表用的字段值:'.model_user::I()->get_split_by_field(), CODE_ERROR_IN_MODEL);
 		}
-		if (!empty($GLOBALS['config']['split_table']) && !isset($data[$GLOBALS['app']->model_user_identity->get_split_by_field()])){
-			throw new Exception('用户身份的MODEL中缺少分表用的字段值:'.$GLOBALS['app']->model_user_identity->get_split_by_field(), CODE_ERROR_IN_MODEL);
+		if (!empty($GLOBALS['config']['split_table']) && !isset($data[model_user_identity::I()->get_split_by_field()])){
+			throw new Exception('用户身份的MODEL中缺少分表用的字段值:'.model_user_identity::I()->get_split_by_field(), CODE_ERROR_IN_MODEL);
 		}
 
-		$connections = [ $GLOBALS['app']->model_user->get_connection() ];
-		if(false === array_search($GLOBALS['app']->model_user_identity->get_connection(), $connections)){
+		$connections = [ model_user::I()->get_connection() ];
+		if(false === array_search(model_user_identity::I()->get_connection(), $connections)){
 			//把用户身份主表的数据库连接名存入数组
-			$connections[] = $GLOBALS['app']->model_user_identity->get_connection();
+			$connections[] = model_user_identity::I()->get_connection();
 		}
 
 		$field_value = null;
 		if ( !empty($GLOBALS['config']['split_table']) ){
-			$field_value = $data[$GLOBALS['app']->model_user->get_split_by_field()];
+			$field_value = $data[model_user::I()->get_split_by_field()];
 		}
-		$connection = $GLOBALS['app']->model_user->sub_connection($field_value);
+		$connection = model_user::I()->sub_connection($field_value);
 		if(false === array_search($connection, $connections)){
 			//把用户分表的数据库连接名存入数组
 			$connections[] = $connection;
@@ -51,16 +51,16 @@ class logic_user
 
 		$field_value = null;
 		if ( !empty($GLOBALS['config']['split_table']) ){
-			$field_value = $data[$GLOBALS['app']->model_user_identity->get_split_by_field()];
+			$field_value = $data[model_user_identity::I()->get_split_by_field()];
 		}
-		$connection = $GLOBALS['app']->model_user_identity->sub_connection($field_value);
+		$connection = model_user_identity::I()->sub_connection($field_value);
 		if(false === array_search($connection, $connections)){
 			//把用户身份分表的数据库连接名存入数组
 			$connections[] = $connection;
 		}
 
 		if(empty($data['uid'])) {
-			if (!$data['uid'] = $GLOBALS['app']->uuid->newUserId()) {
+			if (!$data['uid'] = uuid::I()->newUserId()) {
 				throw new Exception('生成用户ID失败', CODE_FAIL_TO_GENERATE_UID);
 			}
 		}
@@ -69,7 +69,7 @@ class logic_user
 			$time = time();
 			foreach($connections as $connection) {
 				//开始事务
-				$GLOBALS['app']->mysql($connection)->beginTransaction();
+				mysql::I($connection)->beginTransaction();
 				unset($connection);
 			}
 			$info = [
@@ -89,7 +89,7 @@ class logic_user
 				}
 				unset($item);
 			}
-			$GLOBALS['app']->model_user->insert_table($info);
+			model_user::I()->insert_table($info);
 
 			$info = [
 					'uid' => $data['uid'],
@@ -105,11 +105,11 @@ class logic_user
 				unset($item);
 			}
 
-            $GLOBALS['app']->model_user_identity->insert_identity($info);
+            model_user_identity::I()->insert_identity($info);
 
 			foreach($connections as $connection) {
 				//开始事务
-				$GLOBALS['app']->mysql($connection)->commit();
+				mysql::I($connection)->commit();
 				unset($connection);
 			}
 			unset($time, $fields, $info, $connections, $item);
@@ -118,7 +118,7 @@ class logic_user
 		catch(Exception $e){
 			foreach($connections as $connection) {
 				//开始事务
-				$GLOBALS['app']->mysql($connection)->rollBack();
+				mysql::I($connection)->rollBack();
 			}
 			unset($time, $fields, $info, $connections, $item);
 			throw new Exception('创建账户失败:'.$e->getMessage(), $e->getCode());
@@ -136,7 +136,7 @@ class logic_user
 		if(!$uid){
 			throw new Exception('参数UID错误:'.$uid, CODE_ERROR_IN_SERVICE);
 		}
-		if(!$user_info = $GLOBALS['app']->model_user->find_table(['uid'=>$uid], '*', $uid)){
+		if(!$user_info = model_user::I()->find_table(['uid'=>$uid], '*', $uid)){
 			throw new Exception('用户信息不存在:'.$uid, CODE_ERROR_IN_SERVICE);
 		}
 
@@ -152,7 +152,7 @@ class logic_user
      * @throws
      */
     public function find_user_safe_info($uid){
-        return $GLOBALS['app']->model_user->find_table(['uid'=>$uid],
+        return model_user::I()->find_table(['uid'=>$uid],
             'uid,nickname,gender,birthday,status,avatar,country,province,city,last_active,ctime', $uid);
     }
 
@@ -168,10 +168,10 @@ class logic_user
         }
         if(!empty($vk)) {
             $cache_key_vk = REDIS_KEY_LOGIN_USER_INFO_BY_VK.$vk;
-            if($info = $GLOBALS['app']->redis()->hgetall($cache_key_vk)){
+            if($info = redis_y::I()->hgetall($cache_key_vk)){
                 $cache_key_uid = REDIS_KEY_LOGIN_USER_INFO_BY_UID.$info['uid'];
-                $GLOBALS['app']->redis()->del($cache_key_vk);
-                $GLOBALS['app']->redis()->del($cache_key_uid);
+                redis_y::I()->del($cache_key_vk);
+                redis_y::I()->del($cache_key_uid);
             }
         }
         session_destroy();
@@ -202,19 +202,24 @@ class logic_user
         $vk = $_COOKIE['vk'];
         $cache_key_vk = REDIS_KEY_LOGIN_USER_INFO_BY_VK.$vk;
         $cache_key_uid = REDIS_KEY_LOGIN_USER_INFO_BY_UID.$user_info['uid'];
-        $GLOBALS['app']->redis()->hmset($cache_key_vk, $arr);
+        redis_y::I()->hmset($cache_key_vk, $arr);
         $arr['vk'] = $vk;
-        $GLOBALS['app']->redis()->hmset($cache_key_uid, $arr);
-		if($remember_me){
-            $GLOBALS['app']->redis()->expire($cache_key_vk, TIME_60_DAY);
-            $GLOBALS['app']->redis()->expire($cache_key_uid, TIME_60_DAY);
+        redis_y::I()->hmset($cache_key_uid, $arr);
+        if (!empty($_SERVER['HTTP_CLIENTTYPE']) && in_array($_SERVER['HTTP_CLIENTTYPE'], [3,4])) {
+            //请求头信息中还有一个参数：clienttype，表示客户端类型，1PC浏览器，2手机浏览器，3安卓原生调接口，4ios原生调接口，3安卓webview，4 ios webview，5微信小程序调接口
+            $expire = TIME_60_DAY;
+        }
+		else if($remember_me){
+            $expire = TIME_60_DAY;
 		}
 		//登录时长跟随浏览器状态和session的时长
 		else {
-            $GLOBALS['app']->redis()->expire($cache_key_vk, TIME_30_MIN);
-            $GLOBALS['app']->redis()->expire($cache_key_uid, TIME_30_MIN);
+            $expire = TIME_30_MIN;
 		}
+        redis_y::I()->expire($cache_key_vk, $expire);
+        redis_y::I()->expire($cache_key_uid, $expire);
         $user_info['tlt'] = $this->create_login_tlt($user_info['uid'], client_ip());
+        $user_info['vk'] = $vk;
 		unset($arr);
 		return true;
 	}
@@ -234,8 +239,8 @@ class logic_user
             'uid' => $uid,
             'client_ip' => $client_ip
         ];
-        $GLOBALS['app']->redis()->set($cache_key, json_encode($arr));
-        $GLOBALS['app']->redis()->expire($cache_key, TIME_30_SEC);
+        redis_y::I()->set($cache_key, json_encode($arr));
+        redis_y::I()->expire($cache_key, TIME_30_SEC);
         unset($cache_key, $arr);
         return $tlt;
     }
@@ -252,7 +257,7 @@ class logic_user
             return null;
         }
         $vk = $_COOKIE['vk'];
-        return $GLOBALS['app']->redis()->hgetall(REDIS_KEY_LOGIN_USER_INFO_BY_VK.$vk);
+        return redis_y::I()->hgetall(REDIS_KEY_LOGIN_USER_INFO_BY_VK.$vk);
     }
 
     /**
@@ -264,7 +269,7 @@ class logic_user
      */
     public function get_login_user_info_by_vk($vk)
     {
-        return $GLOBALS['app']->redis()->hgetall(REDIS_KEY_LOGIN_USER_INFO_BY_VK.$vk);
+        return redis_y::I()->hgetall(REDIS_KEY_LOGIN_USER_INFO_BY_VK.$vk);
     }
 
     /**
@@ -276,7 +281,7 @@ class logic_user
      */
     public function get_login_user_info_by_uid($uid)
     {
-        return $GLOBALS['app']->redis()->hgetall(REDIS_KEY_LOGIN_USER_INFO_BY_UID.$uid);
+        return redis_y::I()->hgetall(REDIS_KEY_LOGIN_USER_INFO_BY_UID.$uid);
     }
 
     /**
@@ -292,16 +297,16 @@ class logic_user
     {
         $time = time();
         if ($uid){
-            $GLOBALS['app']->redis()->hset(REDIS_KEY_LOGIN_USER_INFO_BY_UID.$uid, 'last_active', $time);
-            $GLOBALS['app']->redis()->expire(REDIS_KEY_LOGIN_USER_INFO_BY_UID.$uid, $expire);
+            redis_y::I()->hset(REDIS_KEY_LOGIN_USER_INFO_BY_UID.$uid, 'last_active', $time);
+            redis_y::I()->expire(REDIS_KEY_LOGIN_USER_INFO_BY_UID.$uid, $expire);
             $where = ['uid'=>$uid];
             $data = ['last_active'=>$time];
-            $GLOBALS['app']->model_user->update_table($where, $data);
+            model_user::I()->update_table($where, $data);
             unset($where, $data);
         }
         if ($vk){
-            $GLOBALS['app']->redis()->hset(REDIS_KEY_LOGIN_USER_INFO_BY_VK.$vk, 'last_active', $time);
-            $GLOBALS['app']->redis()->expire(REDIS_KEY_LOGIN_USER_INFO_BY_VK.$vk, $expire);
+            redis_y::I()->hset(REDIS_KEY_LOGIN_USER_INFO_BY_VK.$vk, 'last_active', $time);
+            redis_y::I()->expire(REDIS_KEY_LOGIN_USER_INFO_BY_VK.$vk, $expire);
         }
         unset($uid, $vk, $expire, $time);
         return true;
@@ -322,17 +327,17 @@ class logic_user
         }
         $vk = $_COOKIE['vk'];
         $cache_key_vk = REDIS_KEY_LOGIN_USER_INFO_BY_VK.$vk;
-        if($current_infor = $GLOBALS['app']->redis()->hgetall($cache_key_vk)){
+        if($current_infor = redis_y::I()->hgetall($cache_key_vk)){
             isset($data['nickname']) && $current_infor['nickname'] = $data['nickname'];
             isset($data['avatar']) && $current_infor['avatar'] = $data['avatar'];
             isset($data['gender']) && $current_infor['gender'] = $data['gender'];
-            $GLOBALS['app']->redis()->hmset($cache_key_vk, $current_infor);
+            redis_y::I()->hmset($cache_key_vk, $current_infor);
             $cache_key_uid = REDIS_KEY_LOGIN_USER_INFO_BY_UID.$current_infor['uid'];
-            if($infor = $GLOBALS['app']->redis()->hgetall($cache_key_uid)){
+            if($infor = redis_y::I()->hgetall($cache_key_uid)){
                 isset($data['nickname']) && $infor['nickname'] = $data['nickname'];
                 isset($data['avatar']) && $infor['avatar'] = $data['avatar'];
                 isset($data['gender']) && $infor['gender'] = $data['gender'];
-                $GLOBALS['app']->redis()->hmset($cache_key_uid, $infor);
+                redis_y::I()->hmset($cache_key_uid, $infor);
             }
             unset($cache_key_uid, $infor);
         }
@@ -369,8 +374,8 @@ class logic_user
 	 */
 	public function update_user_info(&$where, $data)
 	{
-		if (!empty($GLOBALS['config']['split_table']) && !isset($where[$GLOBALS['app']->model_user->get_split_by_field()])){
-			throw new Exception('用户的MODEL中缺少分表用的字段值:'.$GLOBALS['app']->model_user->get_split_by_field(), CODE_ERROR_IN_SERVICE);
+		if (!empty($GLOBALS['config']['split_table']) && !isset($where[model_user::I()->get_split_by_field()])){
+			throw new Exception('用户的MODEL中缺少分表用的字段值:'.model_user::I()->get_split_by_field(), CODE_ERROR_IN_SERVICE);
 		}
 		if(isset($data['password'])){
 			if(!isset($data['salt'])){
@@ -378,9 +383,7 @@ class logic_user
 			}
 			$data['password'] = md5($data['password'].$data['salt']);
 		}
-
-		global $app;
-		return $app->model_user->update_table($where, $data);
+		return model_user::I()->update_table($where, $data);
 	}
 
     /**
@@ -484,11 +487,10 @@ class logic_user
 	 */
 	function paging_select_search_user(array $where, int $page=1, int $page_size=10)
 	{
-		global $app;
-		$total_user_count = $app->model_user_identity->get_user_count();
+		$total_user_count = model_user_identity::I()->get_user_count();
         $user_list = [];
         if (empty($GLOBALS['config']['split_table']) || (!empty($GLOBALS['config']['split_table']) && count($where)==0 && $page*$page_size<=$total_user_count) ) {
-            $user_list = $app->model_user->paging_select_search_user($where, $page, $page_size);
+            $user_list = model_user::I()->paging_select_search_user($where, $page, $page_size);
         }
         else if (!empty($GLOBALS['config']['split_table'])) {
             $start = ($page-1)*$page_size;
@@ -496,30 +498,30 @@ class logic_user
             $end = $start+$page_size;
             //如果有分表，则分表中搜索
             $cache_key = REDIS_KEY_SEARCH_USER_RESULT.md5(json_encode($where));
-            if (!$app->redis()->exists($cache_key)){
-                $app->redis()->del($cache_key);
+            if (!redis_y::I()->exists($cache_key)){
+                redis_y::I()->del($cache_key);
                 $step = 1000000;
                 $have_data = false;
                 for ($i=0; $i<100; $i++){
                     do{
-                        $user_list = $app->model_user->paging_select_search_user($where, $page, $step, $i, ' u.uid, u.ctime ');
+                        $user_list = model_user::I()->paging_select_search_user($where, $page, $step, $i, ' u.uid, u.ctime ');
                         if ($have_data === false && $user_list){
                             $have_data = true;
                         }
                         foreach ($user_list as $item){
-                            $app->redis()->zadd($cache_key, $item['ctime'].mt_rand(10000,99999), $item['uid']);
+                            redis_y::I()->zadd($cache_key, $item['ctime'].mt_rand(10000,99999), $item['uid']);
                         }
                     }
                     while(count($user_list)>=$step);
                 }
                 if ($have_data){
-                    $app->redis()->EXPIRE($cache_key, TIME_10_MIN);
+                    redis_y::I()->EXPIRE($cache_key, TIME_10_MIN);
                 }
                 else{
                     return [];
                 }
             }
-            if(!$user_ids = $app->redis()->zrange($cache_key, $start, $end)){
+            if(!$user_ids = redis_y::I()->zrange($cache_key, $start, $end)){
                 return [];
             }
 
@@ -554,9 +556,8 @@ class logic_user
      */
     function select_user_info_by_multi_uids(array $uids, string $fields='*')
     {
-        global $app;
         if (empty($GLOBALS['config']['split_table'])) {
-            $users = $app->model_user->select_user_info_by_multi_uids($uids, $fields);
+            $users = model_user::I()->select_user_info_by_multi_uids($uids, $fields);
         }
         else{
             //分类用户ID
@@ -572,7 +573,7 @@ class logic_user
             }
             $users = [];
             foreach ($classify_uids as $suffix => $uid_arr) {
-                $tmp = $app->model_user->select_user_info_by_multi_uids($uid_arr, $fields, $suffix);
+                $tmp = model_user::I()->select_user_info_by_multi_uids($uid_arr, $fields, $suffix);
                 foreach ($tmp as $user){
                     $users[$user['uid']] = $user;
                 }
@@ -590,9 +591,8 @@ class logic_user
      */
     function select_user_identity_by_multi_uids(array $uids, string $fields='*')
     {
-        global $app;
         if (empty($GLOBALS['config']['split_table'])) {
-            $users = $app->model_user->select_user_info_by_multi_uids($uids, $fields);
+            $users = model_user::I()->select_user_info_by_multi_uids($uids, $fields);
         }
         else{
             //分类用户ID
@@ -608,7 +608,7 @@ class logic_user
             }
             $users = [];
             foreach ($classify_uids as $suffix => $uid_arr) {
-                if($tmp = $app->model_user_identity->select_user_identity_by_multi_uids($uid_arr, $fields, $suffix)){
+                if($tmp = model_user_identity::I()->select_user_identity_by_multi_uids($uid_arr, $fields, $suffix)){
                     $users = array_merge($users, $tmp);
                 }
             }
@@ -625,49 +625,48 @@ class logic_user
      * @return array 数据列表
      */
     function bind_outer_account($identity_type, $identity, $return_json=false){
-        global $app;
 
         if (empty($GLOBALS['self_info']['uid'])) {
             $msg = '您未登录或登录已超时，请重新登录';
             if ($return_json){
-                return_json(31, $msg);
+                throw new validate_exception($msg, 31,['dtype'=>'json']);
             }
-            return_code(CODE_UNDEFINED_ERROR_TYPE,$msg);
+            throw new validate_exception($msg, CODE_UNDEFINED_ERROR_TYPE);
         }
 
         //如果该第三方用户已经绑定其它账号
-        if($uid = $app->model_user_identity->find_uid_by_identity($identity_type, $identity)) {
+        if($uid = model_user_identity::I()->find_uid_by_identity($identity_type, $identity)) {
             if ($uid == $GLOBALS['self_info']['uid']){
                 if ($return_json){
-                    return_json(34, '绑定成功');
+                    throw new validate_exception('绑定成功', 34,['dtype'=>'json']);
                 }
                 header('Location: /setting/user_info');
                 unset($uid, $identity_data, $identity_type, $identity, $self_uid);
                 exit;
             }
-            $user_info = $app->model_user->find_table(['uid' => $uid], 'nickname',$uid);
-            $msg = '该'.$app->lang('identity_type_user_'.$identity_type).'已经绑定到用户：'
+            $user_info = model_user::I()->find_table(['uid' => $uid], 'nickname',$uid);
+            $msg = '该'.YiluPHP::I()->lang('identity_type_user_'.$identity_type).'已经绑定到用户：'
                 .$user_info['nickname'].'，不可以再绑定到其他用户';
             if ($return_json){
-                return_json(30, $msg);
+                throw new validate_exception($msg, 30,['dtype'=>'json']);
             }
-            return_code(CODE_UNDEFINED_ERROR_TYPE,$msg);
+            throw new validate_exception($msg, CODE_UNDEFINED_ERROR_TYPE);
         }
         $self_uid = $GLOBALS['self_info']['uid'];
         //检查当时登录用户是否已经绑定第三方账号
         //检查当前内部用户是否已经绑定过相同类型的外部账户
-        if($app->model_user_identity->find_table(
+        if(model_user_identity::I()->find_table(
             [
                 'uid' => $self_uid,
                 'type' => $identity_type
             ],
             'uid', $self_uid)){
             unset($uid, $self_uid);
-            $msg = '您已经绑定其它'.$app->lang('identity_type_user_'.$identity_type).',不能再绑定';
+            $msg = '您已经绑定其它'.YiluPHP::I()->lang('identity_type_user_'.$identity_type).',不能再绑定';
             if ($return_json){
-                return_json(32, $msg);
+                throw new validate_exception($msg, 32,['dtype'=>'json']);
             }
-            return_code(CODE_UNDEFINED_ERROR_TYPE,$msg);
+            throw new validate_exception($msg, CODE_UNDEFINED_ERROR_TYPE);
         }
         //绑定到当前登录用户
         $identity_data = [
@@ -676,10 +675,10 @@ class logic_user
             'identity' => $identity,
             'ctime' => time(),
         ];
-        $app->model_user_identity->insert_identity($identity_data);
+        model_user_identity::I()->insert_identity($identity_data);
 
         if ($return_json){
-            return_json(33, '绑定成功');
+            throw new validate_exception('绑定成功', 33,['dtype'=>'json']);
         }
         header('Location: /setting/user_info');
         unset($uid, $identity_data, $identity_type, $identity, $self_uid);

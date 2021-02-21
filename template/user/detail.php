@@ -33,7 +33,7 @@
     </div>
     <div class="row mb-2">
         <div class="col-sm-3 pr-2">
-            <?php echo $app->lang('user_id'); ?>:
+            <?php echo YiluPHP::I()->lang('user_id'); ?>:
         </div>
         <div class="col-sm-9">
             <?php echo $user_info['uid']; ?>
@@ -41,7 +41,7 @@
     </div>
     <div class="row mb-2">
         <div class="col-sm-3 pr-2">
-            <?php echo $app->lang('nickname'); ?>:
+            <?php echo YiluPHP::I()->lang('nickname'); ?>:
         </div>
         <div class="col-sm-9">
             <?php echo $user_info['nickname']; ?>
@@ -49,15 +49,15 @@
     </div>
     <div class="row mb-2">
         <div class="col-sm-3 pr-2">
-            <?php echo $app->lang('gender'); ?>:
+            <?php echo YiluPHP::I()->lang('gender'); ?>:
         </div>
         <div class="col-sm-9">
-            <?php echo $app->lang('gender_'.$user_info['gender']); ?>
+            <?php echo YiluPHP::I()->lang('gender_'.$user_info['gender']); ?>
         </div>
     </div>
     <div class="row mb-2">
         <div class="col-sm-3 pr-2">
-            <?php echo $app->lang('birthday'); ?>:
+            <?php echo YiluPHP::I()->lang('birthday'); ?>:
         </div>
         <div class="col-sm-9">
             <?php echo $user_info['birthday']; ?>
@@ -65,25 +65,25 @@
     </div>
     <div class="row mb-2">
         <div class="col-sm-3 pr-2">
-            <?php echo $app->lang('status'); ?>:
+            <?php echo YiluPHP::I()->lang('status'); ?>:
         </div>
         <div class="col-sm-9">
-            <?php echo $app->lang('user_status_'.$user_info['status']); ?>
+            <?php echo YiluPHP::I()->lang('user_status_'.$user_info['status']); ?>
         </div>
     </div>
     <div class="row mb-2">
         <div class="col-sm-3 pr-2">
-            <?php echo $app->lang('geo_position'); ?>:
+            <?php echo YiluPHP::I()->lang('geo_position'); ?>:
         </div>
         <div class="col-sm-9">
-            <?php echo $app->lang($user_info['country']); ?>
+            <?php echo YiluPHP::I()->lang($user_info['country']); ?>
             <?php echo $user_info['province']; ?>
             <?php echo $user_info['city']; ?>
         </div>
     </div>
     <div class="row mb-2">
         <div class="col-sm-3 pr-2">
-            <?php echo $app->lang('sign_up_time'); ?>:
+            <?php echo YiluPHP::I()->lang('sign_up_time'); ?>:
         </div>
         <div class="col-sm-9">
             <?php echo date('Y-m-d H:i:s', $user_info['ctime']); ?>
@@ -91,7 +91,7 @@
     </div>
     <div class="row mb-2">
         <div class="col-sm-3 pr-2">
-            <?php echo $app->lang('last_active_time'); ?>:
+            <?php echo YiluPHP::I()->lang('last_active_time'); ?>:
         </div>
         <div class="col-sm-9">
             <?php echo date('Y-m-d H:i:s', $user_info['last_active']); ?>
@@ -99,13 +99,13 @@
     </div>
     <div class="row mb-2">
         <div class="col-sm-3 pr-2">
-            <?php echo $app->lang('login_account'); ?>:
+            <?php echo YiluPHP::I()->lang('login_account'); ?>:
         </div>
         <div class="col-sm-9">
             <?php foreach($user_identity as $item): ?>
                 <div class="row">
                     <div class="col-sm-4 pr-2">
-                        <?php echo $app->lang('user_identity_type_'.$item['type']); ?>
+                        <?php echo YiluPHP::I()->lang('user_identity_type_'.$item['type']); ?>
                     </div>
                     <div class="col-sm-8">
                         <?php echo $item['identity']; ?><br>
@@ -117,18 +117,18 @@
     </div>
     <div class="row mb-2">
         <div class="col-sm-3 pr-2">
-            <?php echo $app->lang('complain_others'); ?>:
+            <?php echo YiluPHP::I()->lang('complain_others'); ?>:
         </div>
         <div class="col-sm-9">
-            <?php echo $app->lang('numeral_time_s', ['numeral'=>['value'=>$complaint_count]]); ?>
+            <?php echo YiluPHP::I()->lang('numeral_time_s', ['numeral'=>['value'=>$complaint_count]]); ?>
         </div>
     </div>
     <div class="row mb-2">
         <div class="col-sm-3 pr-2">
-            <?php echo $app->lang('be_complained_by_others'); ?>:
+            <?php echo YiluPHP::I()->lang('be_complained_by_others'); ?>:
         </div>
         <div class="col-sm-9">
-            <?php echo $app->lang('numeral_time_s', ['numeral'=>['value'=>$respondent_count]]); ?>
+            <?php echo YiluPHP::I()->lang('numeral_time_s', ['numeral'=>['value'=>$respondent_count]]); ?>
         </div>
     </div>
     <div class="row mb-2">
@@ -136,7 +136,7 @@
         <div class="col-sm-9">
             <input type="button" class="btn btn-primary btn-sm pl-5 pr-5 pt-2 pb-2"
                    id="user_detail_btn_change_status" status="<?php echo $user_info['status']; ?>"
-                   value="<?php echo $user_info['status']?$app->lang('block_account'):$app->lang('enable_account'); ?>" >
+                   value="<?php echo $user_info['status']?YiluPHP::I()->lang('block_account'):YiluPHP::I()->lang('enable_account'); ?>" >
         </div>
     </div>
 </div>

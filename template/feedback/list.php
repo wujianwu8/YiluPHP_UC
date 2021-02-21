@@ -9,38 +9,38 @@ $head_info = [
     <div class="row mb-2">
         <div class="col-md-2">
             <select class="custom-select d-block w-100" name="status">
-                <option value=""><?php echo $app->lang('status'); ?></option>
+                <option value=""><?php echo YiluPHP::I()->lang('status'); ?></option>
                 <option value="0"<?php echo isset($_REQUEST['status'])&&$_REQUEST['status']=='0'? ' selected':''; ?>>
-                    <?php echo $app->lang('feedback_status_0'); ?>
+                    <?php echo YiluPHP::I()->lang('feedback_status_0'); ?>
                 </option>
                 <option value="1"<?php echo isset($_REQUEST['status'])&&$_REQUEST['status']=='1'? ' selected':''; ?>>
-                    <?php echo $app->lang('feedback_status_1'); ?>
+                    <?php echo YiluPHP::I()->lang('feedback_status_1'); ?>
                 </option>
                 <option value="2"<?php echo isset($_REQUEST['status'])&&$_REQUEST['status']=='2'? ' selected':''; ?>>
-                    <?php echo $app->lang('feedback_status_2'); ?>
+                    <?php echo YiluPHP::I()->lang('feedback_status_2'); ?>
                 </option>
             </select>
         </div>
         <div class="col-md-4">
-            <input type="text" class="form-control" name="keyword" placeholder="<?php echo $app->lang('search_keyword'); ?>" value="<?php echo isset($_REQUEST['keyword'])? $_REQUEST['keyword']:''; ?>">
+            <input type="text" class="form-control" name="keyword" placeholder="<?php echo YiluPHP::I()->lang('search_keyword'); ?>" value="<?php echo isset($_REQUEST['keyword'])? $_REQUEST['keyword']:''; ?>">
         </div>
         <div class="col-md-3">
-            <input type="text" class="form-control" name="complaint_user" placeholder="<?php echo $app->lang('feedback_user'); ?>" value="<?php echo isset($_REQUEST['user'])? $_REQUEST['user']:''; ?>">
+            <input type="text" class="form-control" name="complaint_user" placeholder="<?php echo YiluPHP::I()->lang('feedback_user'); ?>" value="<?php echo isset($_REQUEST['user'])? $_REQUEST['user']:''; ?>">
         </div>
     </div>
     <div class="row mb-3">
-        <button class="btn btn-primary btn-sm ml-3 pl-5 pr-5" type="submit"><?php echo $app->lang('search'); ?></button>
-        <button class="btn btn-primary btn-sm ml-4" type="button" id="clear_form"><?php echo $app->lang('clean_up'); ?></button>
+        <button class="btn btn-primary btn-sm ml-3 pl-5 pr-5" type="submit"><?php echo YiluPHP::I()->lang('search'); ?></button>
+        <button class="btn btn-primary btn-sm ml-4" type="button" id="clear_form"><?php echo YiluPHP::I()->lang('clean_up'); ?></button>
         <select class="ml-4" name="page_size">
-            <option value="10">10<?php echo $app->lang('data_number_per_page'); ?></option>
-            <option value="15"<?php echo isset($_REQUEST['page_size'])&&$_REQUEST['page_size']=='15'? ' selected':''; ?>>15<?php echo $app->lang('data_number_per_page'); ?></option>
-            <option value="20"<?php echo isset($_REQUEST['page_size'])&&$_REQUEST['page_size']=='20'? ' selected':''; ?>>20<?php echo $app->lang('data_number_per_page'); ?></option>
-            <option value="30"<?php echo isset($_REQUEST['page_size'])&&$_REQUEST['page_size']=='30'? ' selected':''; ?>>30<?php echo $app->lang('data_number_per_page'); ?></option>
-            <option value="40"<?php echo isset($_REQUEST['page_size'])&&$_REQUEST['page_size']=='40'? ' selected':''; ?>>40<?php echo $app->lang('data_number_per_page'); ?></option>
-            <option value="50"<?php echo isset($_REQUEST['page_size'])&&$_REQUEST['page_size']=='50'? ' selected':''; ?>>50<?php echo $app->lang('data_number_per_page'); ?></option>
-            <option value="100"<?php echo isset($_REQUEST['page_size'])&&$_REQUEST['page_size']=='100'? ' selected':''; ?>>100<?php echo $app->lang('data_number_per_page'); ?></option>
-            <option value="200"<?php echo isset($_REQUEST['page_size'])&&$_REQUEST['page_size']=='200'? ' selected':''; ?>>200<?php echo $app->lang('data_number_per_page'); ?></option>
-            <option value="500"<?php echo isset($_REQUEST['page_size'])&&$_REQUEST['page_size']=='500'? ' selected':''; ?>>500<?php echo $app->lang('data_number_per_page'); ?></option>
+            <option value="10">10<?php echo YiluPHP::I()->lang('data_number_per_page'); ?></option>
+            <option value="15"<?php echo isset($_REQUEST['page_size'])&&$_REQUEST['page_size']=='15'? ' selected':''; ?>>15<?php echo YiluPHP::I()->lang('data_number_per_page'); ?></option>
+            <option value="20"<?php echo isset($_REQUEST['page_size'])&&$_REQUEST['page_size']=='20'? ' selected':''; ?>>20<?php echo YiluPHP::I()->lang('data_number_per_page'); ?></option>
+            <option value="30"<?php echo isset($_REQUEST['page_size'])&&$_REQUEST['page_size']=='30'? ' selected':''; ?>>30<?php echo YiluPHP::I()->lang('data_number_per_page'); ?></option>
+            <option value="40"<?php echo isset($_REQUEST['page_size'])&&$_REQUEST['page_size']=='40'? ' selected':''; ?>>40<?php echo YiluPHP::I()->lang('data_number_per_page'); ?></option>
+            <option value="50"<?php echo isset($_REQUEST['page_size'])&&$_REQUEST['page_size']=='50'? ' selected':''; ?>>50<?php echo YiluPHP::I()->lang('data_number_per_page'); ?></option>
+            <option value="100"<?php echo isset($_REQUEST['page_size'])&&$_REQUEST['page_size']=='100'? ' selected':''; ?>>100<?php echo YiluPHP::I()->lang('data_number_per_page'); ?></option>
+            <option value="200"<?php echo isset($_REQUEST['page_size'])&&$_REQUEST['page_size']=='200'? ' selected':''; ?>>200<?php echo YiluPHP::I()->lang('data_number_per_page'); ?></option>
+            <option value="500"<?php echo isset($_REQUEST['page_size'])&&$_REQUEST['page_size']=='500'? ' selected':''; ?>>500<?php echo YiluPHP::I()->lang('data_number_per_page'); ?></option>
         </select>
     </div>
 </form>
@@ -51,13 +51,13 @@ $head_info = [
         <tr>
             <th>ID</th>
             <th></th>
-            <th><?php echo $app->lang('feedback_user'); ?></th>
-            <th><?php echo $app->lang('title'); ?></th>
-            <th><?php echo $app->lang('content'); ?></th>
-            <th><?php echo $app->lang('status'); ?></th>
-            <th><?php echo $app->lang('remark'); ?></th>
-            <th><?php echo $app->lang('feedback_time'); ?></th>
-            <th><?php echo $app->lang('operation'); ?></th>
+            <th><?php echo YiluPHP::I()->lang('feedback_user'); ?></th>
+            <th><?php echo YiluPHP::I()->lang('title'); ?></th>
+            <th><?php echo YiluPHP::I()->lang('content'); ?></th>
+            <th><?php echo YiluPHP::I()->lang('status'); ?></th>
+            <th><?php echo YiluPHP::I()->lang('remark'); ?></th>
+            <th><?php echo YiluPHP::I()->lang('feedback_time'); ?></th>
+            <th><?php echo YiluPHP::I()->lang('operation'); ?></th>
         </tr>
         </thead>
         <tbody>
@@ -75,13 +75,13 @@ $head_info = [
             <td>
                 <select name="status" last_value="<?php echo $item['status']; ?>">
                     <option value="0"<?php echo $item['status']=='0'? ' selected':''; ?>>
-                        <?php echo $app->lang('feedback_status_0'); ?>
+                        <?php echo YiluPHP::I()->lang('feedback_status_0'); ?>
                     </option>
                     <option value="1"<?php echo $item['status']=='1'? ' selected':''; ?>>
-                        <?php echo $app->lang('feedback_status_1'); ?>
+                        <?php echo YiluPHP::I()->lang('feedback_status_1'); ?>
                     </option>
                     <option value="2"<?php echo $item['status']=='2'? ' selected':''; ?>>
-                        <?php echo $app->lang('feedback_status_2'); ?>
+                        <?php echo YiluPHP::I()->lang('feedback_status_2'); ?>
                     </option>
                 </select>
             </td>
@@ -97,22 +97,22 @@ $head_info = [
 
         <?php if(empty($data_list)): ?>
             <tr>
-                <td colspan="11" class="pt-5 pb-5"><center><?php echo $app->lang('no_data'); ?></center></td>
+                <td colspan="11" class="pt-5 pb-5"><center><?php echo YiluPHP::I()->lang('no_data'); ?></center></td>
             </tr>
         <?php endif; ?>
         </tbody>
     </table>
 </div>
 
-<?php echo $app->pager->display_pages([
+<?php echo pager::I()->display_pages([
     'data_count' => $data_count,
     'page' => $page,
     'page_size' => $page_size,
     'a_class' => 'ajax_main_content',
-    'first_page_text' => $app->lang('first_page'),
-    'pre_page_text' => $app->lang('previous_page'),
-    'next_page_text' => $app->lang('next_page'),
-    'last_page_text' => $app->lang('last_page'),
+    'first_page_text' => YiluPHP::I()->lang('first_page'),
+    'pre_page_text' => YiluPHP::I()->lang('previous_page'),
+    'next_page_text' => YiluPHP::I()->lang('next_page'),
+    'last_page_text' => YiluPHP::I()->lang('last_page'),
 ]); ?>
 
 

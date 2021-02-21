@@ -1,6 +1,6 @@
 <?php
 
-class helper_demo
+class helper_demo extends base_class
 {
 	public function __construct()
 	{

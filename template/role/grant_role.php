@@ -1,7 +1,7 @@
 <!--{use_layout layout/main}-->
 <?php
     $head_info = [
-        'title' => $app->lang('role_of_user', ['nickname'=>$user_info['nickname']]),
+        'title' => YiluPHP::I()->lang('role_of_user', ['nickname'=>$user_info['nickname']]),
     ];
 ?>
 
@@ -42,7 +42,7 @@
     <?php endforeach; ?>
 
     <?php if(empty($role_list)): ?>
-        <div class="pt-5 pb-5"><center><?php echo $app->lang('no_data'); ?>></center></div>
+        <div class="pt-5 pb-5"><center><?php echo YiluPHP::I()->lang('no_data'); ?>></center></div>
     <?php endif; ?>
 </div>
 

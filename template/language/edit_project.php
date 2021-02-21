@@ -1,7 +1,7 @@
 <!--{use_layout layout/main}-->
 <?php
 $head_info = [
-    'title' => $app->lang('edit_lang_pack_project_info'),
+    'title' => YiluPHP::I()->lang('edit_lang_pack_project_info'),
 ];
 ?>
 
@@ -10,7 +10,7 @@ $head_info = [
     <input type="hidden" name="id" value="<?php echo $project_info['id']; ?>">
     <div class="row mb-2">
         <div class="col-sm-3 title">
-            <?php echo $app->lang('project_key'); ?>
+            <?php echo YiluPHP::I()->lang('project_key'); ?>
         </div>
         <div class="col-sm-9">
             <?php echo $project_info['project_key']; ?>
@@ -18,59 +18,59 @@ $head_info = [
     </div>
     <div class="row mb-2">
         <div class="col-sm-3 title">
-            <?php echo $app->lang('translation'); ?>
+            <?php echo YiluPHP::I()->lang('translation'); ?>
         </div>
         <div class="col-sm-9">
-            <?php echo $app->lang($project_info['project_name']); ?>
+            <?php echo YiluPHP::I()->lang($project_info['project_name']); ?>
         </div>
     </div>
 
     <div class="row mb-2">
         <div class="col-sm-3 title">
-            <label for="project_name"><?php echo $app->lang('project_name'); ?></label>
+            <label for="project_name"><?php echo YiluPHP::I()->lang('project_name'); ?></label>
         </div>
         <div class="col-sm-9">
             <input type="text" class="form-control" id="project_name" name="project_name"
-                   placeholder="<?php echo $app->lang('can_be_a_language_key_name'); ?>" required="" maxlength="40" value="<?php echo $project_info['project_name']; ?>">
+                   placeholder="<?php echo YiluPHP::I()->lang('can_be_a_language_key_name'); ?>" required="" maxlength="40" value="<?php echo $project_info['project_name']; ?>">
         </div>
     </div>
 
     <div class="row mb-2">
         <div class="col-sm-3 title">
-            <label for="file_dir"><?php echo $app->lang('lang_pack_storage_dir', ['type'=>'PHP']); ?></label>
+            <label for="file_dir"><?php echo YiluPHP::I()->lang('lang_pack_storage_dir', ['type'=>'PHP']); ?></label>
         </div>
         <div class="col-sm-9">
             <input type="text" class="form-control" id="file_dir" name="file_dir"
-                   placeholder="<?php echo $app->lang('lang_pack_storage_dir', ['type'=>'PHP']); ?>" required="" maxlength="200" value="<?php echo $project_info['file_dir']; ?>">
+                   placeholder="<?php echo YiluPHP::I()->lang('lang_pack_storage_dir', ['type'=>'PHP']); ?>" required="" maxlength="200" value="<?php echo $project_info['file_dir']; ?>">
         </div>
     </div>
 
     <div class="row mb-2">
         <div class="col-sm-3 title">
-            <label for="js_file_dir"><?php echo $app->lang('lang_pack_storage_dir', ['type'=>'JS']); ?></label>
+            <label for="js_file_dir"><?php echo YiluPHP::I()->lang('lang_pack_storage_dir', ['type'=>'JS']); ?></label>
         </div>
         <div class="col-sm-9">
             <input type="text" class="form-control" id="js_file_dir" name="js_file_dir"
-                   placeholder="<?php echo $app->lang('lang_pack_storage_dir', ['type'=>'JS']); ?>" required="" maxlength="200" value="<?php echo $project_info['js_file_dir']; ?>">
+                   placeholder="<?php echo YiluPHP::I()->lang('lang_pack_storage_dir', ['type'=>'JS']); ?>" required="" maxlength="200" value="<?php echo $project_info['js_file_dir']; ?>">
         </div>
     </div>
 
     <div class="row mb-2">
         <div class="col-sm-3 title">
-            <label for="language_types"><?php echo $app->lang('supported_language_types'); ?></label>
+            <label for="language_types"><?php echo YiluPHP::I()->lang('supported_language_types'); ?></label>
         </div>
         <div class="col-sm-9">
             <input type="text" class="form-control" id="language_types" name="language_types"
-                   placeholder="<?php echo $app->lang('support_lang_type_rule_brief_notice'); ?>" required="" maxlength="200" value="<?php echo $project_info['language_types']; ?>">
+                   placeholder="<?php echo YiluPHP::I()->lang('support_lang_type_rule_brief_notice'); ?>" required="" maxlength="200" value="<?php echo $project_info['language_types']; ?>">
             <div class="invalid-feedback">
-                <?php echo $app->lang('support_lang_type_rule_notice'); ?>
+                <?php echo YiluPHP::I()->lang('support_lang_type_rule_notice'); ?>
             </div>
         </div>
     </div>
 
     <div class="row mb-2">
         <div class="col-sm-3 title">
-            <label for="description"><?php echo $app->lang('description'); ?></label>
+            <label for="description"><?php echo YiluPHP::I()->lang('description'); ?></label>
         </div>
         <div class="col-sm-9">
             <textarea class="form-control" id="description" name="description" maxlength="200"><?php echo $project_info['description']; ?></textarea>
@@ -78,7 +78,7 @@ $head_info = [
     </div>
 
     <hr class="mb-4">
-    <button class="btn btn-primary btn-lg btn-block" type="submit"><?php echo $app->lang('save'); ?></button>
+    <button class="btn btn-primary btn-lg btn-block" type="submit"><?php echo YiluPHP::I()->lang('save'); ?></button>
 </form>
 <div class="mb-5"></div>
 <script>

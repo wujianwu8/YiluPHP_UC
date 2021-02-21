@@ -32,7 +32,7 @@
  *   2 keep_alive参数错误
  */
 
-$params = $app->input->validate(
+$params = input::I()->validate(
     [
         'uid' => 'required|integer|min:1|return',
         'keep_alive' => 'integer|min:0|max:1|return',
@@ -46,24 +46,24 @@ $params = $app->input->validate(
         'keep_alive.*' => 2,
     ]);
 
-if($user_info = $app->logic_user->get_login_user_info_by_uid($params['uid'])){
+if($user_info = logic_user::I()->get_login_user_info_by_uid($params['uid'])){
     if (!empty($params['keep_alive'])){
         $time = time();
         //延长登录状态的有效期
         if (isset($user_info['last_active']) && $time-$user_info['last_active']>300){
             //5分钟内只更新一次
-            $app->logic_user->keep_login_user_alive($user_info['uid'], $user_info['vk'],
+            logic_user::I()->keep_login_user_alive($user_info['uid'], $user_info['vk'],
                 empty($user_info['remember'])?TIME_30_MIN:TIME_60_DAY );
         }
         $user_info['keep_alive'] = $time;
         unset($time);
     }
     unset($params);
-    return_json(0, $app->lang('already_logged_in'),
+    return json(0, YiluPHP::I()->lang('already_logged_in'),
         [
             'user_info' => $user_info,
         ]
     );
 }
 unset($user_info, $params);
-return_json(-1, $app->lang('not_logged_in'));
+return json(-1, YiluPHP::I()->lang('not_logged_in'));

@@ -5,7 +5,7 @@
  * 使用redis列表实现
  * Created by PhpStorm.
  * User: WuJianwu
- * Date: 19/12/24
+ * Date: 2021/01/21
  * Time: 18:45
  */
 
@@ -29,8 +29,7 @@ class queue{
         }
 
         $this->redis_key = 'yiluphp_queue'.$this->queue_name;
-        global $app;
-        if(!$app->redis()->hexists('yiluphp_queue_list_for_manage', $this->queue_name)){
+        if(!redis_y::I()->hexists('yiluphp_queue_list_for_manage', $this->queue_name)){
             echo "消息队列的管理列表中不存在此队列：".$this->queue_name."\r\n";
             write_applog('ERROR', '消息队列的管理列表中不存在此队列：'.$this->queue_name);
             return;
@@ -73,7 +72,7 @@ class queue{
         $empty_times = 0;
         while($this->queue_name){
             try {
-                $queue_info = $app->redis()->hget('yiluphp_queue_list_for_manage', $this->queue_name);
+                $queue_info = redis_y::I()->hget('yiluphp_queue_list_for_manage', $this->queue_name);
                 $queue_info && $queue_info=json_decode($queue_info, true);
                 if($queue_info && isset($queue_info['status'])){
                     if($queue_info['status']=='stop') {
@@ -88,9 +87,9 @@ class queue{
                     }
                 }
                 //Blpop命令移出并获取列表的第一个元素， 如果列表没有元素会阻塞列表直到等待超时或发现可弹出元素为止。超时返回空数组
-//            $first_msg = $app->redis()->blpop($this->redis_key, 60); //60秒超时
+//            $first_msg = redis_y::I()->blpop($this->redis_key, 60); //60秒超时
                 //Blpop命令移出并获取列表的第一个元素， 如果列表没有元素会阻塞列表直到等待超时或发现可弹出元素为止。超时返回false
-                $first_msg = $app->redis()->brpoplpush($this->redis_key, 'doing' . $this->redis_key, 10); //10秒超时
+                $first_msg = redis_y::I()->brpoplpush($this->redis_key, 'doing' . $this->redis_key, 10); //10秒超时
                 if ($first_msg) {
                     $msg = json_decode($first_msg, true);
                     //$msg中包含创建消息的时间ctime,消息内容data(由用户添加消息时加入)
@@ -99,13 +98,13 @@ class queue{
                             if(empty($msg['class_name'])){
                                 //写错误日志
                                 write_applog('ERROR', '队列消息数据不完整,缺少class_name值:' . $first_msg);
-                                if (!$app->redis()->lrem('doing' . $this->redis_key, $first_msg, 1)) {
+                                if (!redis_y::I()->lrem('doing' . $this->redis_key, $first_msg, 1)) {
                                     //如果删除失败,则写错误日志
                                     write_applog('ERROR', '从处理中的列表中删除元素失败:' . $first_msg);
                                 }
                                 continue;
                             }
-                            $file = $GLOBALS['project_root'].'cli/queue/'.$msg['class_name'].'.php';
+                            $file = APP_PATH.'cli/queue/'.$msg['class_name'].'.php';
                             $res = false;
                             if(!file_exists($file)){
                                 write_applog('ERROR', '未找到消息列表的实现文件:'.$file."\r\n");
@@ -128,10 +127,10 @@ class queue{
                                 //加入处理成功的时间
                                 $msg['dtime'] = time();
                                 //把已经处理过的元素存入另一个备份的列表
-                                $count = $app->redis()->lpush('bak' . $this->redis_key, json_encode($msg));
+                                $count = redis_y::I()->lpush('bak' . $this->redis_key, json_encode($msg));
                                 //如果备份的数量超限,则删除旧的数据
                                 if ($count > $this->backups_num) {
-                                    $app->redis()->ltrim('bak' . $this->redis_key, 0, $this->backups_num - 1);
+                                    redis_y::I()->ltrim('bak' . $this->redis_key, 0, $this->backups_num - 1);
                                 }
                             } else {
                                 //如果处理失败,则把这个消息移回到列表的最后面
@@ -149,11 +148,11 @@ class queue{
                                     //重试10次失败后,每1分钟重试一次
                                     $msg['delay'] = time()+60;
                                 }
-                                $count = $app->redis()->rpush($this->redis_key, json_encode($msg));
+                                $count = redis_y::I()->rpush($this->redis_key, json_encode($msg));
                             }
                             if ($count) {
                                 //从处理中的列表中删除该元素
-                                if (!$app->redis()->lrem('doing' . $this->redis_key, $first_msg, 1)) {
+                                if (!redis_y::I()->lrem('doing' . $this->redis_key, $first_msg, 1)) {
                                     //如果删除失败,则写错误日志
                                     write_applog('ERROR', '从处理中的列表中删除元素失败:' . $first_msg);
                                 }
@@ -162,12 +161,12 @@ class queue{
                         }
                         else if (isset($msg['delay'])){
                             //需要延迟的消息,且没到时间的继续放回到队列的最后面
-                            $app->redis()->rpush($this->redis_key, $first_msg);
+                            redis_y::I()->rpush($this->redis_key, $first_msg);
                         }
                         else{
                             //写错误日志
                             write_applog('ERROR', '队列消息异常:' . $first_msg);
-                            if (!$app->redis()->lrem('doing' . $this->redis_key, $first_msg, 1)) {
+                            if (!redis_y::I()->lrem('doing' . $this->redis_key, $first_msg, 1)) {
                                 //如果删除失败,则写错误日志
                                 write_applog('ERROR', '从处理中的列表中删除元素失败:' . $first_msg);
                             }
@@ -176,7 +175,7 @@ class queue{
                     else{
                         //写错误日志
                         write_applog('ERROR', '解析队列消息失败:' . $first_msg);
-                        if (!$app->redis()->lrem('doing' . $this->redis_key, $first_msg, 1)) {
+                        if (!redis_y::I()->lrem('doing' . $this->redis_key, $first_msg, 1)) {
                             //如果删除失败,则写错误日志
                             write_applog('ERROR', '从处理中的列表中删除元素失败:' . $first_msg);
                         }
@@ -242,11 +241,11 @@ class queue{
         if(!in_array($status, ['stop','pause', 'delete', 'running'] )){
             return false;
         }
-        $res = $GLOBALS['app']->redis()->hget('yiluphp_queue_list_for_manage', $this->queue_name);
+        $res = redis_y::I()->hget('yiluphp_queue_list_for_manage', $this->queue_name);
         $res && $res=json_decode($res, true);
         if($res){
             $res['status'] = $status;
-            $count = $GLOBALS['app']->redis()->hset('yiluphp_queue_list_for_manage', $this->queue_name, json_encode($res) );
+            $count = redis_y::I()->hset('yiluphp_queue_list_for_manage', $this->queue_name, json_encode($res) );
             if(in_array($count, [0,1])){
                 return true;
             }
@@ -265,7 +264,7 @@ class queue{
      **/
     static public function get_doing_list($queue_name, $page=1, $page_size=10){
         $start = ($page-1)*$page_size;
-        $data = $GLOBALS['app']->redis()->lrange('doing_yiluphp_queue'.$queue_name, $start, $start+$page_size);
+        $data = redis_y::I()->lrange('doing_yiluphp_queue'.$queue_name, $start, $start+$page_size);
         $data = !$data ? []:$data;
         return $data;
     }
@@ -279,7 +278,7 @@ class queue{
     static public function get_dealt_list($queue_name, $page=1, $page_size=10){
         $start = ($page-1)*$page_size;
         $start = ($page-1)*$page_size;
-        $data = $GLOBALS['app']->redis()->lrange('backup_yiluphp_queue'.$queue_name, $start, $start+$page_size);
+        $data = redis_y::I()->lrange('backup_yiluphp_queue'.$queue_name, $start, $start+$page_size);
         $data = !$data ? []:$data;
         return $data;
     }
@@ -294,16 +293,16 @@ class queue{
         $step = 100;
         $total = 0;
         do{
-            $data_list = $GLOBALS['app']->redis()->lrange('doing_yiluphp_queue'.$queue_name, $start, $start+$step);
+            $data_list = redis_y::I()->lrange('doing_yiluphp_queue'.$queue_name, $start, $start+$step);
             if($data_list){
                 foreach($data_list as $msg){
                     $tmp = json_decode($msg, true);
                     if($tmp && (time()-$tmp['ctime']) > $time_ago ){
                         //插入消息队列最后面
-                        $count = $GLOBALS['app']->redis()->rpush('yiluphp_queue'.$queue_name, $msg);
+                        $count = redis_y::I()->rpush('yiluphp_queue'.$queue_name, $msg);
                         if($count>0){
                             //从正在执行中删除
-                            if (!$GLOBALS['app']->redis()->lrem('doing_yiluphp_queue'.$queue_name, $msg, 1)) {
+                            if (!redis_y::I()->lrem('doing_yiluphp_queue'.$queue_name, $msg, 1)) {
                                 //如果删除失败,则写错误日志
                                 write_applog('ERROR', '从正在执行中删除元素失败,$queue_name:'.$queue_name.',:' . $msg);
                             }

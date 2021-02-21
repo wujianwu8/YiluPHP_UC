@@ -19,29 +19,29 @@
  */
 
 if (!isset($_FILES['image'])){
-    return_code(1, '缺少参数名为image的文件');
+    return code(1, '缺少参数名为image的文件');
 }
 
 if (tool_file_uploader::check_one($_FILES['image'])){
-    return_code(2, tool_file_uploader::$error);
+    return code(2, tool_file_uploader::$error);
 }
 $path = '/upload/image/'.date('Y').'/'.date('md').'/'.date('H').'/';
-if (!$file_name = tool_file_uploader::upload_one($_FILES['image'], $project_root.'static'.$path)){
-    return_code(3, tool_file_uploader::$error);
+if (!$file_name = tool_file_uploader::upload_one($_FILES['image'], APP_PATH.'static'.$path)){
+    return code(3, tool_file_uploader::$error);
 }
 
 $file_url = $path.$file_name;
 if (!empty($GLOBALS['config']['oss']['aliyun'])) {
-    $file_url = $app->tool_oss->upload_file($project_root . 'static/' . substr($file_url, 1));
+    $file_url = tool_oss::I()->upload_file(APP_PATH . 'static/' . substr($file_url, 1));
 }
-$with = $app->input->request_int('with', 1000);
-$quality = $app->input->request_int('quality', 80);
+$with = input::I()->request_int('with', 1000);
+$quality = input::I()->request_int('quality', 80);
 $data = [
     'original_url'=>$file_url,
-    'file_url'=>$app->tool_oss->aliyun_thumb_image($file_url, $with, null, $quality, 'webp'),
+    'file_url'=>tool_oss::I()->aliyun_thumb_image($file_url, $with, null, $quality, 'webp'),
 ];
 
 //文件上传记录保存入库
 
 //返回结果
-return_json(0,'上传成功', $data);
+return json(0,'上传成功', $data);

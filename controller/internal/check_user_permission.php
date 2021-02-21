@@ -26,7 +26,7 @@
  *   2 tlt参数错误
  */
 
-$params = $app->input->validate(
+$params = input::I()->validate(
     [
         'uid' => 'required|integer|min:1|return',
         'permission_key' => 'required|trim|string|min:1|max:256|return',
@@ -38,7 +38,7 @@ $params = $app->input->validate(
         'permission_key.*' => 2,
     ]);
 
-$res = $app->model_user_permission->if_has_permission($params['uid'], $params['permission_key'], $params['app_id']);
-return_json(0, $app->lang('successful_get'), [
+$res = model_user_permission::I()->if_has_permission($params['uid'], $params['permission_key'], $params['app_id']);
+return json(0, YiluPHP::I()->lang('successful_get'), [
     'result' => $res?1:0
 ]);

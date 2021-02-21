@@ -1,9 +1,9 @@
 <?php
 /*
  * 用户-权限模型类
- * YiluPHP vision 1.0
+ * YiluPHP vision 2.0
  * User: Jim.Wu
- * Date: 19/10/09
+ * * Date: 2021/01/23
  * Time: 21:56
  */
 
@@ -27,7 +27,7 @@ class model_user_permission extends model
         else{
             $cache_key = REDIS_KEY_USER_PERMISSION.$uid.'_'.$app_id;
         }
-        if($data = $GLOBALS['app']->redis()->get($cache_key)){
+        if($data = redis_y::I()->get($cache_key)){
             unset($cache_key, $uid, $app_id);
             return json_decode($data, true);
         }
@@ -42,7 +42,7 @@ class model_user_permission extends model
         }
         $sql .= ' ORDER BY app_id ASC';
         $connection = $this->sub_connection();
-        $stmt = $GLOBALS['app']->mysql($connection)->prepare($sql);
+        $stmt = mysql::I($connection)->prepare($sql);
         $stmt->bindValue(':uid', $uid, PDO::PARAM_INT);
         $stmt->bindValue(':uid2', $uid, PDO::PARAM_INT);
         if (!empty($app_id)){
@@ -51,8 +51,8 @@ class model_user_permission extends model
         $stmt->execute();
         $data = $stmt->fetchAll(PDO::FETCH_ASSOC);
         $data = array_column($data, 'str');
-        $GLOBALS['app']->redis()->set($cache_key, json_encode($data));
-        $GLOBALS['app']->redis()->expire($cache_key, TIME_30_SEC);
+        redis_y::I()->set($cache_key, json_encode($data));
+        redis_y::I()->expire($cache_key, TIME_30_SEC);
         unset($cache_key, $uid, $app_id, $stmt, $sql, $connection);
         return $data;
     }

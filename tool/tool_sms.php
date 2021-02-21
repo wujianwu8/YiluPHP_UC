@@ -1,9 +1,9 @@
 <?php
 /*
  * 短信发送类
- * YiluPHP vision 1.0
+ * YiluPHP vision 2.0
  * User: Jim.Wu
- * Date: 19/10/07
+ * * Date: 2021/01/23
  * Time: 21:56
  */
 
@@ -11,12 +11,12 @@ use AlibabaCloud\Client\AlibabaCloud;
 use AlibabaCloud\Client\Exception\ClientException;
 use AlibabaCloud\Client\Exception\ServerException;
 
-class tool_sms
+class tool_sms extends base_class
 {
 	public function __construct()
 	{
 	    if (empty($GLOBALS['config']['sms'])){
-	        return_code(CODE_NOT_CONFIG_SMS_PLAT, '未配置发送短信的平台');
+            throw new validate_exception('未配置发送短信的平台', CODE_NOT_CONFIG_SMS_PLAT);
         }
 	}
 
@@ -32,25 +32,25 @@ class tool_sms
         //从10分钟内没有使用过的平台中选择
         foreach ($all_plat as $plat_name){
             //检查10分钟内是否使用过该平台
-            if($GLOBALS['app']->redis()->hexists($ten_min_key, $plat_name)){
+            if(redis_y::I()->hexists($ten_min_key, $plat_name)){
                 continue;
             }
-            $exists = $GLOBALS['app']->redis()->exists($ten_min_key);
-            $GLOBALS['app']->redis()->hset($ten_min_key, $plat_name, 1);
+            $exists = redis_y::I()->exists($ten_min_key);
+            redis_y::I()->hset($ten_min_key, $plat_name, 1);
             if (!$exists){
-                $GLOBALS['app']->redis()->expire($ten_min_key, TIME_10_MIN);
+                redis_y::I()->expire($ten_min_key, TIME_10_MIN);
             }
             unset($all_plat, $ten_min_key, $exists);
             return $plat_name;
         }
 
         //如果还没有选择到平台，则删除10分钟内的记录
-        $GLOBALS['app']->redis()->del($ten_min_key);
+        redis_y::I()->del($ten_min_key);
 
         //从所有平台中选择第一个
         foreach ($all_plat as $plat_name){
-            $GLOBALS['app']->redis()->hset($ten_min_key, $plat_name, 1);
-            $GLOBALS['app']->redis()->expire($ten_min_key, TIME_10_MIN);
+            redis_y::I()->hset($ten_min_key, $plat_name, 1);
+            redis_y::I()->expire($ten_min_key, TIME_10_MIN);
             unset($all_plat, $ten_min_key);
             return $plat_name;
         }
@@ -113,12 +113,10 @@ class tool_sms
             'ctime' => $time,
             'mtime' => $time,
         ];
-
-        global $app;
-        $app->curl->setHeaders(
+        curl::I()->setHeaders(
             ['Accept:application/json;charset=utf-8;', 'Content-Type:application/x-www-form-urlencoded;', 'charset=utf-8;']
         );
-        $res = $app->curl->postJson($url, $param);
+        $res = curl::I()->postJson($url, $param);
         $res = json_decode($res, true);
         unset($url, $message, $phone_number);
         if($res && $res['code']===0){
@@ -133,7 +131,7 @@ class tool_sms
             //返回：{"http_status_code":400,"code":1,"msg":"请求参数缺失","detail":"参数 apikey 必须传入"}
             //{"http_status_code":400,"code":2,"msg":"请求参数格式错误","detail":"参数 mobile 格式不正确，mobile:8615502022241"}
             $record['refuse_reason'] = json_encode($res);
-            $app->model_sms_record->insert_table($record);
+            model_sms_record::I()->insert_table($record);
             write_applog('ERROR', '调用云片发短信失败，$res：'.json_encode($res).'，param='.json_encode($param));
             unset($record, $time, $res, $param);
             return false;

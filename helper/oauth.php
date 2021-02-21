@@ -1,13 +1,13 @@
 <?php
 /*
  * 第三方登录平台
- * YiluPHP vision 1.0
+ * YiluPHP vision 2.0
  * User: Jim.Wu
- * Date: 19/10/09
+ * * Date: 2021/01/23
  * Time: 21:15
  */
 
-abstract class oauth
+abstract class oauth extends base_class
 {
     /**
      * oauth版本
@@ -201,7 +201,7 @@ abstract class oauth
      * ]
      */
     public function get_access_token($extend = null){
-        $code = $GLOBALS['app']->input->get_trim('code', '');
+        $code = input::I()->get_trim('code', '');
         $params = array(
 //            'client_id'     => $this->app_key,
 //            'client_secret' => $this->app_secret,

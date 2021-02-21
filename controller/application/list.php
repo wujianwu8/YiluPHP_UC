@@ -16,55 +16,55 @@
  * @return HTML
  */
 
-if (!$app->logic_permission->check_permission('user_center:view_application_list')) {
-    return_code(100, $app->lang('not_authorized'));
+if (!logic_permission::I()->check_permission('user_center:view_application_list')) {
+    return code(100, YiluPHP::I()->lang('not_authorized'));
 }
 
-$page = $app->input->get_int('page',1);
-$page_size = $app->input->get_int('page_size',10);
+$page = input::I()->get_int('page',1);
+$page_size = input::I()->get_int('page_size',10);
 $page_size>500 && $page_size = 500;
 $page_size<1 && $page_size = 1;
 
 $where = [];
-$app_id = $app->input->get_trim('app_id',null);
+$app_id = input::I()->get_trim('app_id',null);
 if($app_id){
     $where['app_id'] = $app_id;
 }
-$app_name = $app->input->get_trim('app_name',null);
+$app_name = input::I()->get_trim('app_name',null);
 if($app_name){
     $where['app_name'] = [
         'symbol' => 'LIKE',
         'value' => '%'.$app_name.'%',
     ];
 }
-$index_url = $app->input->get_trim('index_url',null);
+$index_url = input::I()->get_trim('index_url',null);
 if($index_url){
     $where['index_url'] = [
         'symbol' => 'LIKE',
         'value' => '%'.$index_url.'%',
     ];
 }
-$user = $app->input->get_trim('user',null);
+$user = input::I()->get_trim('user',null);
 if($user){
-    $users = $app->model_user->select_user_by_uid_or_nickname($user, 'uid', 100);
+    $users = model_user::I()->select_user_by_uid_or_nickname($user, 'uid', 100);
     $where['uid'] = [
         'symbol' => 'IN',
         'value' => array_column($users, 'uid'),
     ];;
 }
 
-$status = $app->input->get_int('status',null);
+$status = input::I()->get_int('status',null);
 if($status!==null){
     $where['status'] = $status;
 }
-$is_fixed = $app->input->get_int('is_fixed',null);
+$is_fixed = input::I()->get_int('is_fixed',null);
 if($is_fixed!==null){
     $where['is_fixed'] = $is_fixed;
 }
 
-$data_list = $app->model_application->paging_select($where, $page, $page_size, 'ctime DESC');
+$data_list = model_application::I()->paging_select($where, $page, $page_size, 'ctime DESC');
 $uids = array_column($data_list, 'uid');
-$user_infos = $app->logic_user->select_user_info_by_multi_uids($uids, 'uid, nickname');
+$user_infos = logic_user::I()->select_user_info_by_multi_uids($uids, 'uid, nickname');
 foreach ($data_list as $key=>$item){
     if (empty($item['uid'])){
         $data_list[$key]['nickname'] = '系统应用';
@@ -83,9 +83,9 @@ foreach ($data_list as $key=>$item){
         $data_list[$key]['app_white_ip'] .= ($index>0?($index%2==0 ? "\r\n":','):'').$value;
     }
 }
-return_result('application/list', [
+return result('application/list', [
     'data_list' => $data_list,
-    'data_count' => $app->model_application->count($where),
+    'data_count' => model_application::I()->count($where),
     'page' => $page,
     'page_size' => $page_size,
 ]);

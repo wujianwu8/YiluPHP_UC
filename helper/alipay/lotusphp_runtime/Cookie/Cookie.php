@@ -73,12 +73,12 @@ class LtCookie
 			{
 				foreach($_COOKIE[$name] as $k => $v)
 				{
-					setcookie($name . '[' . $k . ']', '', time() - 86400, $path, $domain);
+                    setcookie($name . '[' . $k . ']', '', time() - 86400, $path, $domain);
 				}
 			}
 			else
 			{
-				setcookie($name, '', time() - 86400, $path, $domain);
+                setcookie($name, '', time() - 86400, $path, $domain);
 			}
 		}
 	}
@@ -124,13 +124,13 @@ class LtCookie
 			foreach($value as $k => $v)
 			{
 				$v = $this->encrypt($v);
-				setcookie($name . '[' . $k . ']', $v, $expire, $path, $domain, $secure);
+                setcookie($name . '[' . $k . ']', $v, $expire, $path, $domain, $secure);
 			}
 		}
 		else
 		{
 			$value = $this->encrypt($value);
-			setcookie($name, $value, $expire, $path, $domain, $secure);
+            setcookie($name, $value, $expire, $path, $domain, $secure);
 		}
 	}
 }

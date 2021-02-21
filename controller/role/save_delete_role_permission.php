@@ -22,11 +22,11 @@
  *  5 权限不存在
  */
 
-if (!$app->logic_permission->check_permission('user_center:edit_role_permission')) {
-    return_code(100, $app->lang('not_authorized'));
+if (!logic_permission::I()->check_permission('user_center:edit_role_permission')) {
+    return code(100, YiluPHP::I()->lang('not_authorized'));
 }
 
-$params = $app->input->validate(
+$params = input::I()->validate(
     [
         'role_id' => 'required|integer|min:1|return',
         'permission_id' => 'required|integer|min:1|return',
@@ -40,20 +40,20 @@ $params = $app->input->validate(
         'permission_id.*' => 3,
     ]);
 
-if (!$check=$app->model_role->find_table(['id' => $params['role_id']], 'id')){
+if (!$check=model_role::I()->find_table(['id' => $params['role_id']], 'id')){
     unset($params, $check);
-    return_code(4,'角色不存在');
+    return code(4,'角色不存在');
 }
-if (!$check=$app->model_permission->find_table(['permission_id' => $params['permission_id']], 'app_id')){
+if (!$check=model_permission::I()->find_table(['permission_id' => $params['permission_id']], 'app_id')){
     unset($params, $check);
-    return_code(5,'权限不存在');
+    return code(5,'权限不存在');
 }
 
-$app->logic_permission->delete_user_permission_cache_by_role_id($params['role_id'], $check['app_id']);
-if (false === $app->model_role_permission->delete(['role_id'=>$params['role_id'], 'permission_id'=>$params['permission_id']])){
+logic_permission::I()->delete_user_permission_cache_by_role_id($params['role_id'], $check['app_id']);
+if (false === model_role_permission::I()->delete(['role_id'=>$params['role_id'], 'permission_id'=>$params['permission_id']])){
     unset($params, $check);
-    return_code(1,'保存失败');
+    return code(1,'保存失败');
 }
 unset($params, $check);
 //返回结果
-return_json(0,'保存成功');
+return json(0,'保存成功');

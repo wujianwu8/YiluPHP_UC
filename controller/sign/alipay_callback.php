@@ -11,8 +11,8 @@
  * @exception   会在界面上显示错误
  */
 
-if(!$auth_code = $app->input->get_trim('auth_code')){
-    return_code(CODE_UNDEFINED_ERROR_TYPE,'缺少参数：auth_code');
+if(!$auth_code = input::I()->get_trim('auth_code')){
+    return code(CODE_UNDEFINED_ERROR_TYPE,'缺少参数：auth_code');
 }
 /* *
 object(stdClass)#16 (6) {
@@ -24,17 +24,17 @@ object(stdClass)#16 (6) {
   ["user_id"]=> string(16) "2088102598764752"
 }
  * */
-$access_token = $app->oauth_alipay->get_access_token($auth_code);
+$access_token = oauth_alipay::I()->get_access_token($auth_code);
 
 //如果是登录用户绑定第三方账号，走此流程
-if ($app->input->get_int('for_bind', null)){
-    $app->logic_user->bind_outer_account('ALIPAY', $access_token->user_id);
+if (input::I()->get_int('for_bind', null)){
+    logic_user::I()->bind_outer_account('ALIPAY', $access_token->user_id);
 }
 //如果用户已经注册,则直接跳转
-if($uid = $app->model_user_identity->find_uid_by_identity('ALIPAY', $access_token->user_id)) {
+if($uid = model_user_identity::I()->find_uid_by_identity('ALIPAY', $access_token->user_id)) {
     //登录用户
-    $user_info = $app->logic_user->login_by_uid($uid);
-    $app->logic_user->auto_jump(false, $user_info['tlt']);
+    $user_info = logic_user::I()->login_by_uid($uid);
+    logic_user::I()->auto_jump(false, $user_info['tlt']);
 }
 
 /* *
@@ -57,17 +57,17 @@ if($uid = $app->model_user_identity->find_uid_by_identity('ALIPAY', $access_toke
       ["sign"]=> string(344) "PbTl0q4wWlk...gtZ0wxISEPXNItwQ=="
     }
  * */
-$user_info = $app->oauth_alipay->get_user_info($access_token->access_token);
+$user_info = oauth_alipay::I()->get_user_info($access_token->access_token);
 
 if (empty($user_info->avatar)){
     $avatar = $config['default_avatar'];
 }
 else{
     $path = 'avatar/'.date('Y').'/'.date('md').'/'.date('H').'/';
-    $avatar = $app->file->download_image($user_info->avatar, $path);
+    $avatar = file::I()->download_image($user_info->avatar, $path);
     //上传到阿里云
     if (!empty($GLOBALS['config']['oss']['aliyun'])) {
-        $avatar = $app->tool_oss->upload_file($project_root . 'static/' . substr($avatar, 1));
+        $avatar = tool_oss::I()->upload_file(APP_PATH . 'static/' . substr($avatar, 1));
     }
 }
 
@@ -91,7 +91,7 @@ $data = [
 ];
 
 //存入临时表
-$data ['id'] = $app->model_try_to_sign_in->insert_table($data);
+$data ['id'] = model_try_to_sign_in::I()->insert_table($data);
 
 //存入SESSION
 $_SESSION['temp_user_info'] = json_encode($data);

@@ -9,11 +9,11 @@
  * @return HTML
  */
 
-if (!$app->logic_permission->check_permission('user_center:view_user_detail')) {
-    return_code(100, $app->lang('not_authorized'));
+if (!logic_permission::I()->check_permission('user_center:view_user_detail')) {
+    throw new validate_exception(YiluPHP::I()->lang('not_authorized'),100);
 }
 
-$params = $app->input->validate(
+$params = input::I()->validate(
     [
         'uid' => 'required|integer|min:1|return',
     ],
@@ -24,16 +24,16 @@ $params = $app->input->validate(
         'uid.*' => 2,
     ]);
 
-if(!$user_info = $app->model_user->find_table(['uid'=>$params['uid']], '*', $params['uid'])){
-    return_code(3, '用户不存在');
+if(!$user_info = model_user::I()->find_table(['uid'=>$params['uid']], '*', $params['uid'])){
+    return code(3, '用户不存在');
 }
-$user_identity = $app->model_user_identity->select_all(['uid'=>$params['uid']], '', '*', $params['uid']);
-$complaint_count = $app->model_user_complaint->count(['complaint_uid'=>$params['uid']]);
-$complaint_count = $app->model_user_complaint->count(['complaint_uid'=>$params['uid']]);
+$user_identity = model_user_identity::I()->select_all(['uid'=>$params['uid']], '', '*', $params['uid']);
+$complaint_count = model_user_complaint::I()->count(['complaint_uid'=>$params['uid']]);
+$complaint_count = model_user_complaint::I()->count(['complaint_uid'=>$params['uid']]);
 
-return_result('user/detail', [
+return result('user/detail', [
     'user_info' => $user_info,
     'user_identity' => $user_identity,
-    'complaint_count' => $app->model_user_complaint->count(['complaint_uid'=>$params['uid']]),
-    'respondent_count' => $app->model_user_complaint->count(['respondent_uid'=>$params['uid']]),
+    'complaint_count' => model_user_complaint::I()->count(['complaint_uid'=>$params['uid']]),
+    'respondent_count' => model_user_complaint::I()->count(['respondent_uid'=>$params['uid']]),
 ]);

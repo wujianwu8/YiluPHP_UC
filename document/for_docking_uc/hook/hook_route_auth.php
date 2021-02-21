@@ -41,21 +41,21 @@ class hook_route_auth
         $tlt = isset($_GET['tlt'])?$_GET['tlt']:'';
         if ($tlt){
             //如果没有登录则登录
-            if (!$user_info = $app->model_user_center->get_current_user_info()){
-                $user_info = $app->model_user_center->check_login_by_tlt($tlt);
+            if (!$user_info = model_user_center::I()->get_current_user_info()){
+                $user_info = model_user_center::I()->check_login_by_tlt($tlt);
                 if (empty($user_info) || !is_array($user_info)){
-                    $GLOBALS['dialog_error'] = $app->lang('login_failed');
+                    $GLOBALS['dialog_error'] = YiluPHP::I()->lang('login_failed');
                 }
                 else if ($user_info['code']==-1){
-                    $GLOBALS['dialog_error'] = $app->lang('login_failed_or_timed_out');
+                    $GLOBALS['dialog_error'] = YiluPHP::I()->lang('login_failed_or_timed_out');
                 }
                 else if ($user_info['code']==0){
                     //缓存用户登录的信息
-                    $app->redis()->hmset(REDIS_LOGIN_USER_INFO.$this->vk, $user_info['data']['user_info']);
-                    $app->redis()->expire(REDIS_LOGIN_USER_INFO.$this->vk, TIME_30_SEC);
+                    redis_y::I()->hmset(REDIS_LOGIN_USER_INFO.$this->vk, $user_info['data']['user_info']);
+                    redis_y::I()->expire(REDIS_LOGIN_USER_INFO.$this->vk, TIME_30_SEC);
                     //记录当前登录用户的UID
-                    $app->redis()->set(REDIS_LAST_LOGIN_UID.$this->vk, $user_info['data']['user_info']['uid']);
-                    $app->redis()->expire(REDIS_LAST_LOGIN_UID.$this->vk, TIME_DAY);
+                    redis_y::I()->set(REDIS_LAST_LOGIN_UID.$this->vk, $user_info['data']['user_info']['uid']);
+                    redis_y::I()->expire(REDIS_LAST_LOGIN_UID.$this->vk, TIME_DAY);
 
                     //去除tlt参数后重新加载
                     header('Location:'.delete_url_params(get_host_url(), ['tlt']));
@@ -81,13 +81,13 @@ class hook_route_auth
                 if (preg_match($pattern, $_SERVER['REQUEST_URI'])) {
                     if ((in_array('get', $rules) || in_array('post', $rules)) && !in_array($method, $rules)) {
                         //请求方法错误
-                        return_code(CODE_REQUEST_METHOD_ERROR, $app->lang('request_method_error'));
+                        return_code(CODE_REQUEST_METHOD_ERROR, YiluPHP::I()->lang('request_method_error'));
                     }
                     if (in_array('check', $rules) || in_array('login', $rules)) {
                         //读出登录用户的资料
-                        $user_info = $app->model_user_center->get_current_user_info();
+                        $user_info = model_user_center::I()->get_current_user_info();
                         if (in_array('login', $rules) && !$user_info) {
-                            return_code(CODE_USER_NOT_LOGIN, $app->lang('please_login'));
+                            return_code(CODE_USER_NOT_LOGIN, YiluPHP::I()->lang('please_login'));
                         }
                         if ($user_info) {
                             //把用户信息保存在全局变量中

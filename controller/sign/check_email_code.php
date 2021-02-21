@@ -23,14 +23,14 @@
  *  11 邮箱填写有误
  */
 
-$params = $app->input->validate(
+$params = input::I()->validate(
     [
         'email' => 'required|email|min:8|max:100|rsa_encrypt|return',
         'verify_code' => 'required|string|min:6|max:6|rsa_encrypt|return',
     ],
     [
-        'email.*' => $app->lang('email_error'),
-        'verify_code.*' => $app->lang('verify_code_error'),
+        'email.*' => YiluPHP::I()->lang('email_error'),
+        'verify_code.*' => YiluPHP::I()->lang('verify_code_error'),
     ],
     [
         'email.*' => 1,
@@ -39,13 +39,13 @@ $params = $app->input->validate(
 
 $code_cache_key = REDIS_KEY_EMAIL_VERIFY_CODE.md5($params['email'].'_'.session_id());
 //检查验证码是否正确
-if(!$cache_code = $app->redis()->get($code_cache_key)){
+if(!$cache_code = redis_y::I()->get($code_cache_key)){
     unset($code_cache_key, $params, $cache_code);
-    return_code(3, $app->lang('verify_code_error_or_invalid'));
+    return code(3, YiluPHP::I()->lang('verify_code_error_or_invalid'));
 }
 if (strtolower($cache_code)!=strtolower($params['verify_code'])){
     unset($code_cache_key, $params, $cache_code);
-    return_code(4, $app->lang('verify_code_error'));
+    return code(4, YiluPHP::I()->lang('verify_code_error'));
 }
 
-return_json(0, $app->lang('verify_code_correct'));
+return json(0, YiluPHP::I()->lang('verify_code_correct'));

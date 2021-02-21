@@ -21,7 +21,7 @@
  *   0 删除成功
  */
 
-$params = $app->input->validate(
+$params = input::I()->validate(
     [
         'permission_key' => 'required|trim|string|min:2|max:40|return',
         'app_id' => 'required|string|min:1|return',
@@ -33,30 +33,30 @@ $params = $app->input->validate(
 
 if (preg_match('/^[a-zA-Z0-9_]{3,25}$/', $params['permission_key'], $matches)==false){
     unset($params,$matches);
-    return_code(6,'权限键名只能使用字母、数字、下划线，长度在3-25个字');
+    return code(6,'权限键名只能使用字母、数字、下划线，长度在3-25个字');
 }
 if (strpos($params['permission_key'], 'grant_')===0){
     unset($params);
-    return_code(7,'权限键名不能以grant_开头');
+    return code(7,'权限键名不能以grant_开头');
 }
 
 //检查权限键名是否存在
-if (!$permission_info=$app->model_permission->find_table(['permission_key' => $params['permission_key']], 'permission_id,app_id')){
+if (!$permission_info=model_permission::I()->find_table(['permission_key' => $params['permission_key']], 'permission_id,app_id')){
     unset($params, $permission_info);
-    return_code(CODE_SUCCESS,'权限不存在');
+    return code(CODE_SUCCESS,'权限不存在');
 }
 if ($permission_info['app_id'] != $params['app_id']){
-    return_code(CODE_NO_AUTHORIZED, $app->lang('无权操作'));
+    return code(CODE_NO_AUTHORIZED, YiluPHP::I()->lang('无权操作'));
 }
 
 
-$app->logic_permission->delete_user_permission_cache_by_permission_id($permission_info['permission_id'], $permission_info['app_id']);
+logic_permission::I()->delete_user_permission_cache_by_permission_id($permission_info['permission_id'], $permission_info['app_id']);
 
-if(false === $app->logic_application->delete_permission($permission_info['permission_id'], $permission_info['app_id'], $params['permission_key'])){
+if(false === logic_application::I()->delete_permission($permission_info['permission_id'], $permission_info['app_id'], $params['permission_key'])){
     unset($params);
-    return_code(1, '删除失败');
+    return code(1, '删除失败');
 }
 
 unset($params);
 //返回结果
-return_json(CODE_SUCCESS,'删除成功');
+return json(CODE_SUCCESS,'删除成功');

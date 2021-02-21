@@ -5,7 +5,7 @@
  * 执行命令：php [目录路径]queue queue_name=你加入队列时取的队列名称
  * Created by PhpStorm.
  * User: WuJianwu
- * Date: 19/10/21
+ * * Date: 2021/01/23
  * Time: 20:45
  */
 class send_sms_code{
@@ -27,8 +27,7 @@ class send_sms_code{
             write_applog('ERROR', '发短信验证码失败,参数错误,,$msg:'.json_encode($msg));
             return true;
         }
-        global $app;
-        $app->tool_sms->send_verify_code($msg['area_code'], $msg['mobile'], $msg['message'], $msg['template_code'], $msg['sign_name'], $msg['template_param']);
+        tool_sms::I()->send_verify_code($msg['area_code'], $msg['mobile'], $msg['message'], $msg['template_code'], $msg['sign_name'], $msg['template_param']);
         return true;
     }
 }

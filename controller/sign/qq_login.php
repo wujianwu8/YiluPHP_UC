@@ -10,7 +10,7 @@
  */
 
 $callback = null;
-if ($app->input->get_trim('for_bind', null)){
+if (input::I()->get_trim('for_bind', null)){
     $callback = $config['oauth_plat']['qq']['callback'].'/for_bind/1';
 }
-$app->oauth_qq->login($callback);
+oauth_qq::I()->login($callback);

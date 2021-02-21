@@ -9,4 +9,4 @@
  * @return HTML
  */
 
-$app->oauth_linkedin->login();
+oauth_linkedin::I()->login();

@@ -26,7 +26,7 @@
  *  1 uid参数错误
  */
 
-$params = $app->input->validate(
+$params = input::I()->validate(
     [
         'uid' => 'required|integer|min:1|return',
     ],
@@ -37,20 +37,20 @@ $params = $app->input->validate(
         'uid.*' => 1,
     ]);
 
-if ($menu_list = $app->logic_menus->get_all($params['uid'])) {
+if ($menu_list = logic_menus::I()->get_all($params['uid'])) {
     foreach ($menu_list as $key => $menu){
         if($menu['lang_key']!='nav-user-avatar') {
-            $menu_list[$key]['lang_key'] = $app->lang($menu['lang_key']);
+            $menu_list[$key]['lang_key'] = YiluPHP::I()->lang($menu['lang_key']);
         }
         if (!empty($menu['children'])){
             foreach ($menu['children'] as $key2 => $menu2) {
                 if($menu2['lang_key']!='nav-user-avatar') {
-                    $menu_list[$key]['children'][$key2]['lang_key'] = $app->lang($menu2['lang_key']);
+                    $menu_list[$key]['children'][$key2]['lang_key'] = YiluPHP::I()->lang($menu2['lang_key']);
                 }
                 if (!empty($menu2['children'])){
                     foreach ($menu2['children'] as $key3 => $menu3) {
                         if($menu3['lang_key']!='nav-user-avatar') {
-                            $menu_list[$key]['children'][$key2]['children'][$key3]['lang_key'] = $app->lang($menu3['lang_key']);
+                            $menu_list[$key]['children'][$key2]['children'][$key3]['lang_key'] = YiluPHP::I()->lang($menu3['lang_key']);
                         }
                     }
                 }
@@ -58,11 +58,11 @@ if ($menu_list = $app->logic_menus->get_all($params['uid'])) {
         }
     }
     unset($params);
-    return_json(0, $app->lang('successful_get'),
+    return json(0, YiluPHP::I()->lang('successful_get'),
         [
             'menu_list' => $menu_list,
         ]
     );
 }
 unset($menu_list, $params);
-return_json(2, $app->lang('failure_get'));
+return json(2, YiluPHP::I()->lang('failure_get'));

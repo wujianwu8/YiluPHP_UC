@@ -1,7 +1,7 @@
 <!--{use_layout layout/main}-->
 <?php
 $head_info = [
-    'title' => $app->lang('create_role'),
+    'title' => YiluPHP::I()->lang('create_role'),
 ];
 ?>
 
@@ -9,16 +9,16 @@ $head_info = [
 <form class="needs-validation title_content" novalidate="" method="post">
     <div class="row mb-2">
         <div class="col-sm-3 title">
-            <label for="role_name"><?php echo $app->lang('role_name'); ?></label>
+            <label for="role_name"><?php echo YiluPHP::I()->lang('role_name'); ?></label>
         </div>
         <div class="col-sm-9">
-            <input type="text" class="form-control" id="role_name" name="role_name" placeholder="<?php echo $app->lang('can_be_a_language_key_name'); ?>" required="" maxlength="40">
+            <input type="text" class="form-control" id="role_name" name="role_name" placeholder="<?php echo YiluPHP::I()->lang('can_be_a_language_key_name'); ?>" required="" maxlength="40">
         </div>
     </div>
 
     <div class="row mb-2">
         <div class="col-sm-3 title">
-            <label for="description"><?php echo $app->lang('description'); ?></label>
+            <label for="description"><?php echo YiluPHP::I()->lang('description'); ?></label>
         </div>
         <div class="col-sm-9">
             <textarea class="form-control" id="description" name="description" maxlength="200"></textarea>
@@ -26,7 +26,7 @@ $head_info = [
     </div>
 
     <hr class="mb-4">
-    <button class="btn btn-primary btn-lg btn-block" type="submit"><?php echo $app->lang('save'); ?></button>
+    <button class="btn btn-primary btn-lg btn-block" type="submit"><?php echo YiluPHP::I()->lang('save'); ?></button>
 </form>
 <div class="mb-5"></div>
 <script>

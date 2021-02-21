@@ -1,13 +1,13 @@
 <?php
 /*
  * 菜单逻辑处理类
- * YiluPHP vision 1.0
+ * YiluPHP vision 2.0
  * User: Jim.Wu
- * Date: 19/10/09
+ * * Date: 2021/01/23
  * Time: 21:39
  */
 
-class logic_menus
+class logic_menus extends base_class
 {
 	public function __construct()
 	{
@@ -26,20 +26,19 @@ class logic_menus
      */
     public function get_all($uid=null)
     {
-		global $app;
-		$app->redis()->del(REDIS_KEY_ALL_MENUS);
-		if($data = $app->redis()->get(REDIS_KEY_ALL_MENUS)){
+		redis_y::I()->del(REDIS_KEY_ALL_MENUS);
+		if($data = redis_y::I()->get(REDIS_KEY_ALL_MENUS)){
             $data = json_decode($data, true);
 		}
 
 		if (!$data) {
-            $data = $app->model_menus->select_all(['parent_menu' => 0], '`position` DESC, weight ASC, ctime DESC');
+            $data = model_menus::I()->select_all(['parent_menu' => 0], '`position` DESC, weight ASC, ctime DESC');
             foreach ($data as $key => $item) {
-                $data[$key]['children'] = $app->model_menus->select_all(['parent_menu' => $item['id']], 'weight ASC, ctime DESC');
+                $data[$key]['children'] = model_menus::I()->select_all(['parent_menu' => $item['id']], 'weight ASC, ctime DESC');
             }
             if ($data) {
-                $app->redis()->set(REDIS_KEY_ALL_MENUS, json_encode($data));
-                $app->redis()->expire(REDIS_KEY_ALL_MENUS, TIME_DAY);
+                redis_y::I()->set(REDIS_KEY_ALL_MENUS, json_encode($data));
+                redis_y::I()->expire(REDIS_KEY_ALL_MENUS, TIME_DAY);
             }
             unset($key, $item);
         }
@@ -52,7 +51,7 @@ class logic_menus
                     if (count($tmp)!=2){
                         continue;
                     }
-                    if (!$app->model_user_permission->if_has_permission($uid, $tmp[1], $tmp[0])) {
+                    if (!model_user_permission::I()->if_has_permission($uid, $tmp[1], $tmp[0])) {
                         unset($data[$key]);
                         continue;
                     }
@@ -64,7 +63,7 @@ class logic_menus
                             if (count($tmp)!=2){
                                 continue;
                             }
-                            if (!$app->model_user_permission->if_has_permission($uid, $tmp[1], $tmp[0])) {
+                            if (!model_user_permission::I()->if_has_permission($uid, $tmp[1], $tmp[0])) {
                                 unset($data[$key]['children'][$key2]);
                                 continue;
                             }

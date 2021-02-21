@@ -38,7 +38,8 @@
  *   1 tlt参数错误
  */
 
-$params = $app->input->validate(
+var_dump('00000000000000000', $params['tlt']);
+$params = input::I()->validate(
     [
         'tlt' => 'required|trim|string|min:32|max:32|return',
     ],
@@ -48,15 +49,16 @@ $params = $app->input->validate(
     [
         'tlt.*' => 1,
     ]);
-
-if($user_info = $app->redis()->get(REDIS_KEY_USER_LOGIN_TLT.$params['tlt'])){
+var_dump('00000000000000000', $params['tlt']);
+if($user_info = redis_y::I()->get(REDIS_KEY_USER_LOGIN_TLT.$params['tlt'])){
+    var_dump($user_info);
     $user_info = json_decode($user_info, true);
     if($user_info && !empty($user_info['uid'])){
         $client_ip = $user_info['client_ip'];
-        if ($user_info = $app->logic_user->find_user_safe_info($user_info['uid'])) {
+        if ($user_info = logic_user::I()->find_user_safe_info($user_info['uid'])) {
             $user_info['client_ip'] = $client_ip;
             unset($params, $client_ip);
-            return_json(0, $app->lang('already_logged_in'),
+            return json(0, YiluPHP::I()->lang('already_logged_in'),
                 [
                     'user_info' => $user_info,
                 ]
@@ -66,4 +68,4 @@ if($user_info = $app->redis()->get(REDIS_KEY_USER_LOGIN_TLT.$params['tlt'])){
 }
 
 unset($user_info, $params);
-return_json(-1, $app->lang('not_logged_in'));
+return json(-1, YiluPHP::I()->lang('not_logged_in'));

@@ -3,8 +3,8 @@
  * Created by UserCenter System
  * User: Jim
  * UID: 83
- * Date: 2019/12/19
- * Time: 23:45
+ * Date: 2021/02/19
+ * Time: 23:12
  */
 return [
     'access_required_permission' => 'Access required permission',
@@ -52,7 +52,7 @@ return [
     'city' => 'City',
     'class_not_found' => 'Class not found: ',
     'clean_up' => 'Clean Up',
-    'click_ok_to_jump_page' => 'Click \\\\\"OK\\\\\" to jump to the page',
+    'click_ok_to_jump_page' => 'Click \\\\\\\"OK\\\\\\\" to jump to the page',
     'click_to_view_secret' => 'Click to view secret',
     'close' => 'Close',
     'close_this_page' => 'Close this page',
@@ -271,7 +271,7 @@ return [
     'edit_role' => 'Edit Role',
     'email' => 'Email',
     'email_error' => 'The format of your email is incorrect',
-    'email_verify_code_body' => 'This is your verification vode: <strong style=\\\\\\\"color: #d00000;\\\\\\\">{$code}</strong>, you can copy it to the input box.',
+    'email_verify_code_body' => 'This is your verification vode: <strong style=\\\\\\\\\"color: #d00000;\\\\\\\\\">{$code}</strong>, you can copy it to the input box.',
     'email_verify_code_subject' => 'This is your verify code',
     'enable_account' => 'Activate',
     'enable_account_confirm' => 'Are you sure you want to activate {$nickname}\'s account?',
@@ -299,8 +299,8 @@ return [
     'gender_male' => 'Male',
     'geo_position' => 'Geo Position',
     'got_it' => 'OK',
-    'grant_for_grant_permission_name' => 'Grant[Grant\\\\\\\"{$name}\\\\\\\"]',
-    'grant_permission_name' => 'Grant \\\\\\\"{$name}\\\\\\\"',
+    'grant_for_grant_permission_name' => 'Grant[Grant\\\\\\\\\"{$name}\\\\\\\\\"]',
+    'grant_permission_name' => 'Grant \\\\\\\\\"{$name}\\\\\\\\\"',
     'head_menu' => 'Head Menu',
     'home_page' => 'Home',
     'icon_style_or_html_code' => 'Icon style or HTML code',
@@ -379,7 +379,7 @@ return [
     'password_reset_succeeded' => 'Password reset succeeded',
     'password_too_simple' => 'The password is too simple. The password should be 6-20 characters long and contain both upper and lower case letters, digits, and at lest one symbol in @#$!-',
     'permission_key' => 'Permission Key',
-    'permission_key_rule_notice' => '3-25 characters long limit and can only contain letters, digits and underscores. It can\'t start with \\\\\"grant_\\\\\", and the permission key name in the same application can\'t be duplicate',
+    'permission_key_rule_notice' => '3-25 characters long limit and can only contain letters, digits and underscores. It can\'t start with \\\\\\\"grant_\\\\\\\", and the permission key name in the same application can\'t be duplicate',
     'permission_name' => 'Permission Name',
     'permission_of_application' => 'Permission of Application {$app_name}',
     'permission_of_role' => 'Permission of role {$role_name}',
@@ -403,7 +403,7 @@ return [
     'project_name' => 'Project Name',
     'province' => 'Province',
     'regenerate_secret' => 'Regenerate secret',
-    'regenerate_secret_confirm' => 'After regenerating the App Secret, <span class=\\\\\"text-danger\\\\\">the old App Secret will not be available.</span> Please be careful.',
+    'regenerate_secret_confirm' => 'After regenerating the App Secret, <span class=\\\\\\\"text-danger\\\\\\\">the old App Secret will not be available.</span> Please be careful.',
     'regexp_such_as' => 'RegExp, such as: \\\\\\\\\\\\\\/menus\\\\\\\\\\\\\\/.*',
     'register_sms_verify_code' => '【YuluPHP】Your verification code is: {$code}, please do not disclose it to others.',
     'remark' => 'Remark',

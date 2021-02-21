@@ -7,7 +7,7 @@
   <meta name="author" content="">
   <link rel="icon" href="favicon.ico">
 
-  <title><?php echo $app->lang('please_login'); ?></title>
+  <title><?php echo YiluPHP::I()->lang('please_login'); ?></title>
     <!--#include virtual="/include/css_bootstrap.shtml"-->
     <!--#include virtual="/include/css_dialog.shtml"-->
     <!--#include virtual="/include/css_base.shtml"-->
@@ -25,27 +25,27 @@
 
 <body>
 <div class="language_handle">
-    <a href="javascript:changeLanguage('<?php echo $app->current_lang()=='cn' ?'selected':'cn'; ?>');" class="<?php echo $app->current_lang()=='cn' ?'selected':''; ?>" >简体中文</a>
-    <a href="javascript:changeLanguage('<?php echo $app->current_lang()=='en' ?'selected':'en'; ?>');" class="<?php echo $app->current_lang()=='en' ?'selected':''; ?>" >English</a>
+    <a href="javascript:changeLanguage('<?php echo YiluPHP::I()->current_lang()=='cn' ?'selected':'cn'; ?>');" class="<?php echo YiluPHP::I()->current_lang()=='cn' ?'selected':''; ?>" >简体中文</a>
+    <a href="javascript:changeLanguage('<?php echo YiluPHP::I()->current_lang()=='en' ?'selected':'en'; ?>');" class="<?php echo YiluPHP::I()->current_lang()=='en' ?'selected':''; ?>" >English</a>
 </div>
 
 <form class="form-signin" onsubmit="return submitLoginForm(this)" method="post">
   <div class="text-center mb-3">
-    <h1 class="h3 font-weight-normal"><?php echo $app->lang('please_login'); ?></h1>
+    <h1 class="h3 font-weight-normal"><?php echo YiluPHP::I()->lang('please_login'); ?></h1>
   </div>
 
   <div class="form-label-group">
-    <input type="text"  id="identity" name="identity" class="form-control" placeholder="<?php echo $app->lang('login_name_placeholder'); ?>" required autofocus onchange="checkIdentityType()">
-    <label for="identity"><?php echo $app->lang('login_name_placeholder'); ?></label>
+    <input type="text"  id="identity" name="identity" class="form-control" placeholder="<?php echo YiluPHP::I()->lang('login_name_placeholder'); ?>" required autofocus onchange="checkIdentityType()">
+    <label for="identity"><?php echo YiluPHP::I()->lang('login_name_placeholder'); ?></label>
   </div>
 
   <div class="form-label-group">
-    <input type="password" id="password" name="password" class="form-control" placeholder="<?php echo $app->lang('login_password'); ?>" required oninput="checkIdentityType()">
-    <label for="password"><?php echo $app->lang('login_password'); ?></label>
+    <input type="password" id="password" name="password" class="form-control" placeholder="<?php echo YiluPHP::I()->lang('login_password'); ?>" required oninput="checkIdentityType()">
+    <label for="password"><?php echo YiluPHP::I()->lang('login_password'); ?></label>
   </div>
 
   <div class="form-label-group" id="existing-area-select">
-    <div><?php echo $app->lang('your_mobile_located_in'); ?></div>
+    <div><?php echo YiluPHP::I()->lang('your_mobile_located_in'); ?></div>
     <select class="custom-select d-block w-100" name="area_code" id="area_code_1">
       <?php foreach ($area_list as $item): ?>
         <option value="<?php echo $item['code_number']; ?>" <?php if(!empty($item['recommend'])): ?>style="color: blue"<?php endif; ?> >
@@ -57,43 +57,47 @@
 
   <div class="custom-control custom-checkbox mb-3">
     <input type="checkbox" name="remember_me" class="custom-control-input" id="remember_me">
-    <label class="custom-control-label" for="remember_me"><?php echo $app->lang('stay_logged_in'); ?></label>
+    <label class="custom-control-label" for="remember_me"><?php echo YiluPHP::I()->lang('stay_logged_in'); ?></label>
   </div>
 
-  <button class="btn btn-lg btn-primary btn-block" type="submit" onfocus="this.blur();"><?php echo $app->lang('login_now'); ?></button>
+  <button class="btn btn-lg btn-primary btn-block" type="submit" onfocus="this.blur();"><?php echo YiluPHP::I()->lang('login_now'); ?></button>
   <div class="row mb-3 mt-3">
     <div class="col-6">
-      <a href="/find_password"><?php echo $app->lang('forgot_password'); ?></a>
+      <a href="/find_password"><?php echo YiluPHP::I()->lang('forgot_password'); ?></a>
     </div>
     <div class="col-6 text-right">
-      <a href="/sign/up"><?php echo $app->lang('sign_up'); ?></a>
+      <a href="/sign/up"><?php echo YiluPHP::I()->lang('sign_up'); ?></a>
     </div>
   </div>
     <?php if(true): ?>
   <div class="gray_title">
-      <?php echo $app->lang('login_use_following_platform'); ?>
+      <?php echo YiluPHP::I()->lang('login_use_following_platform'); ?>
   </div>
   <div class="checkbox">
     <a href="javascript:weixinLogin();" id="wxlogin_btn">
           <span>
             <img src="/img/icons.png" height="47" style="margin-left: -53px;">
           </span>
-    <br/><?php echo $app->lang('user_identity_type_WX'); ?>
+    <br/><?php echo YiluPHP::I()->lang('user_identity_type_WX'); ?>
     </a>
       <a href="javascript:qqLogin();" id="qqlogin_btn">
               <span>
                 <img src="/img/icons.png" height="47" style="margin-left: 4px;">
               </span>
-          <br/><?php echo $app->lang('user_identity_type_QQ'); ?>
+          <br/><?php echo YiluPHP::I()->lang('user_identity_type_QQ'); ?>
       </a>
       <a href="/sign/alipay_login" id="alipaylogin_btn">
               <span>
                 <img src="/img/icons.png" height="47" style="margin-left: -112px;">
               </span>
-          <br/><?php echo $app->lang('user_identity_type_ALIPAY'); ?>
+          <br/><?php echo YiluPHP::I()->lang('user_identity_type_ALIPAY'); ?>
       </a>
   </div>
     <?php endif; ?>
+    <div  style="color: #aaaaaa; font-size: 12px; margin-top: 20px; margin-bottom: 100px;">点击登录和注册即代表您已同意
+        《<a href="<?php echo $config['website_index']; ?>/sign/user_agreement" target="_blank" style="color: #aaaaaa">服务协议</a>》与
+        《<a href="<?php echo $config['website_index']; ?>/sign/privacy_policy" target="_blank" style="color: #aaaaaa">隐私声明</a>》。
+    </div>
 </form>
 
 <!--#include virtual="/include/js_jquery.shtml"-->
@@ -108,8 +112,7 @@
     var haveWeixinOpen = <?php echo empty($config['oauth_plat']['wechat_open']['usable'])?'false':'true'; ?>;
 </script>
 <!--#include virtual="/include/js_sign_in.shtml"-->
-<script src="/js/language/<?php echo $app->current_lang(); ?>.js"></script>
+<script src="/js/language/<?php echo YiluPHP::I()->current_lang(); ?>.js"></script>
 <script type="text/javascript">var cnzz_protocol = (("https:" == document.location.protocol) ? "https://" : "http://");document.write(unescape("%3Cspan id='cnzz_stat_icon_1278278388'%3E%3C/span%3E%3Cscript src='" + cnzz_protocol + "s4.cnzz.com/z_stat.php%3Fid%3D1278278388' type='text/javascript'%3E%3C/script%3E"));</script>
-<script type="text/javascript" src="https://tajs.qq.com/stats?sId=66496946" charset="UTF-8"></script>
 </body>
 </html>

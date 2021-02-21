@@ -30,11 +30,11 @@
  *  9 JS语言包目录参数有误
  */
 
-if (!$app->logic_permission->check_permission('user_center:edit_lang_project')) {
-    return_code(100, $app->lang('not_authorized'));
+if (!logic_permission::I()->check_permission('user_center:edit_lang_project')) {
+    throw new validate_exception(YiluPHP::I()->lang('not_authorized'),100);
 }
 
-$params = $app->input->validate(
+$params = input::I()->validate(
     [
         'id' => 'required|integer|min:1|return',
         'project_name' => 'required|trim|string|min:2|max:40|return',
@@ -63,22 +63,22 @@ $params = $app->input->validate(
 
 if (preg_match('/^[a-zA-Z0-9\-,_]{2,200}$/', $params['language_types'], $matches)==false){
     unset($params,$matches);
-    return_code(7,'语言种类设置错误，语言种类只能使用字母、数字、下划线、中横线，半角逗号，长度在2-200个字，多个语种使用半角逗号分隔，如：zh,en');
+    return code(7,'语言种类设置错误，语言种类只能使用字母、数字、下划线、中横线，半角逗号，长度在2-200个字，多个语种使用半角逗号分隔，如：zh,en');
 }
 
-if (!$app->model_language_project->find_table(['id' => $params['id']])){
+if (!model_language_project::I()->find_table(['id' => $params['id']])){
     unset($params,$matches);
-    return_code(9,'项目不存在');
+    return code(9,'项目不存在');
 }
 
 $where = ['id' => $params['id']];
 unset($params['id']);
 //保存入库
-if(false === $app->model_language_project->update_table($where, $params)){
+if(false === model_language_project::I()->update_table($where, $params)){
     unset($params,$matches,$where);
-    return_code(1, '保存失败');
+    return code(1, '保存失败');
 }
 
 unset($params,$matches,$where);
 //返回结果
-return_json(0,'保存成功');
+return json(0,'保存成功');

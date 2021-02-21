@@ -1,7 +1,7 @@
 <!--{use_layout layout/main}-->
 <?php
 $head_info = [
-    'title' => $app->lang('menu_modify_avatar'),
+    'title' => YiluPHP::I()->lang('menu_modify_avatar'),
 ];
 ?>
 
@@ -86,13 +86,12 @@ $head_info = [
 </style>
 
 <!--#include virtual="/include/css_cropper.shtml"-->
-<!--#include virtual="/include/js_cropper.shtml"-->
 
     <div class="row mb-3">
         <div class="col-sm-12">
             <div class="current_avatar">
                 <div>
-                    <?php echo $app->lang('current_avatar'); ?>
+                    <?php echo YiluPHP::I()->lang('current_avatar'); ?>
                 </div>
                 <div>
                     <img id="current_avatar" src="<?php echo $self_info['avatar']; ?>" />
@@ -100,7 +99,7 @@ $head_info = [
             </div>
             <div class="new_avatar">
                 <div>
-                    <?php echo $app->lang('new_avatar'); ?>
+                    <?php echo YiluPHP::I()->lang('new_avatar'); ?>
                     <input type="file" class="form-control" name="selectfile" id="selectfile" style="display: none" />
                 </div>
                 <div>
@@ -110,7 +109,7 @@ $head_info = [
             <div class="pic_button">
                 <a href="javascript:$('#selectfile').click();" class="btn btn-sm btn-outline-primary">
                     <i class="fa fa-plus" aria-hidden="true"></i>
-                    <?php echo $app->lang('select_a_photo'); ?>
+                    <?php echo YiluPHP::I()->lang('select_a_photo'); ?>
                 </a>
             </div>
         </div>
@@ -123,9 +122,10 @@ $head_info = [
         </div>
     </div>
 
-    <button class="btn btn-primary btn-lg btn-block" id="save_avatar_btn" type="submit"><?php echo $app->lang('save'); ?></button>
+    <button class="btn btn-primary btn-lg btn-block" id="save_avatar_btn" type="submit"><?php echo YiluPHP::I()->lang('save'); ?></button>
 
 <div class="mb-5"></div>
+<!--#include virtual="/include/js_cropper.shtml"-->
 <script>
     (function() {
         var $image = $('#crop_avatar > img');

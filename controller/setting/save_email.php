@@ -28,7 +28,7 @@
  *  10 该邮箱已经注册账号,不可以再绑定到其它账号
  */
 
-$params = $app->input->validate(
+$params = input::I()->validate(
     [
         'email' => 'required|string|min:7|rsa_encrypt|return',
         'verify_code' => 'required|trim|string|min:4|return',
@@ -48,32 +48,32 @@ $params = $app->input->validate(
 
 if (!is_email($params['email'])){
     unset($params);
-    return_code(5, '邮箱错误');
+    return code(5, '邮箱错误');
 }
 $params['email'] = strtolower($params['email']);
 
 $code_cache_key = REDIS_KEY_EMAIL_VERIFY_CODE.md5($params['email'].'_'.session_id());
 //检查验证码是否正确
-if(!$cache_code = $app->redis()->get($code_cache_key)){
+if(!$cache_code = redis_y::I()->get($code_cache_key)){
     unset($code_cache_key, $params, $cache_code);
-    return_code(6,'验证码错误或已失效');
+    return code(6,'验证码错误或已失效');
 }
 if (strtolower($cache_code)!=strtolower($params['verify_code'])){
     unset($code_cache_key, $params, $cache_code);
-    return_code(7,'验证码错误');
+    return code(7,'验证码错误');
 }
 
 //检查密码是否正确
-$user_info = $app->model_user->find_table(['uid'=>$self_info['uid']], '*', $self_info['uid']);
+$user_info = model_user::I()->find_table(['uid'=>$self_info['uid']], '*', $self_info['uid']);
 if (!$user_info || md5($params['password'].$user_info['salt'])!=$user_info['password']){
     unset($code_cache_key, $params, $cache_code, $user_info);
-    return_code(8,'密码错误');
+    return code(8,'密码错误');
 }
-$identity = $app->model_user_identity->select_all(['uid'=>$self_info['uid']], '', 'type,identity', $self_info['uid']);
+$identity = model_user_identity::I()->select_all(['uid'=>$self_info['uid']], '', 'type,identity', $self_info['uid']);
 $email = '';
 foreach ($identity as $item){
     if ($item['type']=='INNER'){
-        if('email' == $app->logic_user->get_identity_type($item['identity'])){
+        if('email' == logic_user::I()->get_identity_type($item['identity'])){
             $email = $item['identity'];
         }
     }
@@ -81,17 +81,17 @@ foreach ($identity as $item){
 unset($identity, $item);
 if ($email == $params['email']){
     unset($code_cache_key, $params, $cache_code, $user_info, $email);
-    return_code(9, '该邮箱与现在绑定的登录邮箱一样，不需要修改');
+    return code(9, '该邮箱与现在绑定的登录邮箱一样，不需要修改');
 }
 
-if ($uid = $app->model_user_identity->find_uid_by_identity('INNER', $params['email'])) {
+if ($uid = model_user_identity::I()->find_uid_by_identity('INNER', $params['email'])) {
     unset($code_cache_key, $params, $cache_code, $user_info, $email, $uid);
-    return_code(10, '该邮箱已经注册账号,不可以再绑定到其它账号');
+    return code(10, '该邮箱已经注册账号,不可以再绑定到其它账号');
 }
 
 //删除原来登录邮箱
 if ($email != ''){
-    $app->model_user_identity->delete_identity('INNER', $email, $self_info['uid']);
+    model_user_identity::I()->delete_identity('INNER', $email, $self_info['uid']);
 }
 
 $data = [
@@ -99,10 +99,10 @@ $data = [
     'type'=>'INNER',
     'identity'=>$params['email'],
 ];
-if(!$app->model_user_identity->insert_identity($data)){
+if(!model_user_identity::I()->insert_identity($data)){
     unset($code_cache_key, $params, $cache_code, $user_info, $email, $uid);
-    return_json(1,'绑定失败');
+    return json(1,'绑定失败');
 }
 unset($code_cache_key, $params, $cache_code, $user_info, $email, $uid);
 //返回结果
-return_json(CODE_SUCCESS,'绑定成功');
+return json(CODE_SUCCESS,'绑定成功');

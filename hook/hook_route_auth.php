@@ -4,7 +4,7 @@
  * 把此类名加入到配置的before_controller中就可以实现所有页面都做检查的效果
  */
 
-class hook_route_auth
+class hook_route_auth extends hook
 {
 	private $vk = null; //访问用户的标识符visit key,存在cookie
 	private $lk = null; //登录用户的标识符login key,存在cookie
@@ -20,9 +20,9 @@ class hook_route_auth
          * */
 	    'get_check' => [
             '/^\/(\?.*)*$/',
-            '/^\/sign\/out/',
             '/^\/sign\/in/',
             '/^\/sign\/up/',
+            '/^\/sign\/out/',
             '/^\/find_password/',
             '/^\/sign\/qq_callback/',
             '/^\/sign\/wechat_callback/',
@@ -130,7 +130,11 @@ class hook_route_auth
 
 	];
 
-	public function __construct()
+    public function run()
+    {
+    }
+
+    public function __construct()
 	{
 	    //检查用户的访问标识
 	    $this->check_vk();
@@ -143,14 +147,14 @@ class hook_route_auth
                 if (preg_match($pattern, $_SERVER['REQUEST_URI'])) {
                     if ((in_array('get', $rules) || in_array('post', $rules)) && !in_array($method, $rules)) {
                         //请求方法错误
-                        return_code(CODE_REQUEST_METHOD_ERROR, $GLOBALS['app']->lang('request_method_error'));
+                        throw new validate_exception(YiluPHP::I()->lang('request_method_error'), CODE_REQUEST_METHOD_ERROR);
                     }
                     if (in_array('check', $rules) || in_array('login', $rules)) {
                         //读出登录用户的资料
-                        $user_info = $GLOBALS['app']->logic_user->get_current_user_info();
+                        $user_info = logic_user::I()->get_current_user_info();
                         if (in_array('login', $rules) && !$user_info) {
                             //返回必须登录的提示
-                            return_code(CODE_USER_NOT_LOGIN, $GLOBALS['app']->lang('please_login'));
+                            throw new validate_exception(YiluPHP::I()->lang('please_login'), CODE_USER_NOT_LOGIN);
                         }
                         if ($user_info) {
                             //把用户信息保存在全局变量中
@@ -161,7 +165,7 @@ class hook_route_auth
                     foreach ($rules as $rule){
                         if (!in_array($rule, ['get','post','check','login','guest'])){
                             $class_name = 'hook_'.$rule;
-                            $GLOBALS['app']->$class_name->check();
+                            $class_name::I()->check();
                         }
                     }
                 }
@@ -175,6 +179,9 @@ class hook_route_auth
         if (!isset($_COOKIE['vk'])){
             if (!empty($_REQUEST['vk'])){
                 $vk = $_REQUEST['vk'];
+            }
+            else if(!empty($_SERVER['HTTP_VK'])){
+                $vk = $_SERVER['HTTP_VK'];
             }
             else{
                 $vk = create_unique_key();

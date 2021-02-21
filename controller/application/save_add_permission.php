@@ -30,11 +30,11 @@
  * 11 权限键名已经存在，请更换一个吧
  */
 
-if (!$app->logic_permission->check_permission('user_center:add_app_permission')) {
-    return_code(100, $app->lang('not_authorized'));
+if (!logic_permission::I()->check_permission('user_center:add_app_permission')) {
+    return code(100, YiluPHP::I()->lang('not_authorized'));
 }
 
-$params = $app->input->validate(
+$params = input::I()->validate(
     [
         'app_id' => 'required|trim|string|min:3|max:20|return',
         'permission_name' => 'required|trim|string|min:2|max:40|return',
@@ -56,30 +56,30 @@ $params = $app->input->validate(
 
 if (preg_match('/^[a-zA-Z0-9_]{3,25}$/', $params['permission_key'], $matches)==false){
     unset($params,$matches);
-    return_code(6,'权限键名只能使用字母、数字、下划线，长度在3-25个字');
+    return code(6,'权限键名只能使用字母、数字、下划线，长度在3-25个字');
 }
 if (strpos($params['permission_key'], 'grant_')===0){
     unset($params);
-    return_code(7,'权限键名不能以grant_开头');
+    return code(7,'权限键名不能以grant_开头');
 }
 if (preg_match('/^[a-zA-Z0-9_]{3,20}$/', $params['app_id'], $matches)==false){
     unset($params,$matches);
-    return_code(8,'应用ID有误');
+    return code(8,'应用ID有误');
 }
 unset($matches);
 if (strpos($params['app_id'], 'grant_')===0){
     unset($params);
-    return_code(9,'应用ID有误');
+    return code(9,'应用ID有误');
 }
-if (!$check=$app->model_application->find_table(['app_id' => $params['app_id']], 'app_id')){
+if (!$check=model_application::I()->find_table(['app_id' => $params['app_id']], 'app_id')){
     unset($params, $check);
-    return_code(10,'应用不存在');
+    return code(10,'应用不存在');
 }
 unset($check);
 //检查相同的权限键名是否存在
-if ($check=$app->model_permission->find_table(['app_id' => $params['app_id'], 'permission_key' => $params['permission_key']], 'app_id')){
+if ($check=model_permission::I()->find_table(['app_id' => $params['app_id'], 'permission_key' => $params['permission_key']], 'app_id')){
     unset($params, $check);
-    return_code(11,'权限键名已经存在，请更换一个吧');
+    return code(11,'权限键名已经存在，请更换一个吧');
 }
 unset($check);
 
@@ -90,11 +90,11 @@ $data = [
     'permission_name' => $params['permission_name'],
     'description' => isset($params['description'])?$params['description']:'',
 ];
-if(false === $app->logic_application->add_permission($data, $self_info['uid'])){
+if(false === logic_application::I()->add_permission($data, $self_info['uid'])){
     unset($params, $data);
-    return_code(1, '保存失败');
+    return code(1, '保存失败');
 }
 
 unset($params, $data);
 //返回结果
-return_json(0,'保存成功');
+return json(0,'保存成功');

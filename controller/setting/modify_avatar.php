@@ -8,4 +8,4 @@
  * @return HTML
  */
 
-return_result('setting/modify_avatar');
+return result('setting/modify_avatar');

@@ -362,7 +362,7 @@ CREATE TABLE `user_identity` (
 --  Records of `user_identity`
 -- ----------------------------
 BEGIN;
-INSERT INTO `user_identity` VALUES ('1', 'INNER', 'jim', '', '0', '', '1570364470');
+INSERT INTO `user_identity` VALUES ('1', 'INNER', 'admin', '', '0', '', '1570364470');
 COMMIT;
 
 -- ----------------------------

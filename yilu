@@ -1,0 +1,34 @@
+<?php
+/*
+ * CLI命令入口
+ * 运行方式如：/usr/local/php7/bin/php yilu 命令名 "query string形式的参数"
+ * OneWayPHP vision 2.0
+ * User: Jim.Wu
+ * Date: 2021/01/27
+ * Time: 21:46
+ */
+
+if(!isset($_SERVER['REQUEST_URI'])){
+    $the_argv = $argv;
+    unset($the_argv[0]);
+    $_SERVER['REQUEST_URI'] = 'php '.$argv[0].' "'.implode('" "', $the_argv).'"';
+}
+include_once('public'.DIRECTORY_SEPARATOR.'index.php');
+if (!isset($argv[1]) || trim($argv[1])==''){
+    exit("缺少命令名，即命令的文件名。\r\n正确格式：php yilu 命令名 \"query string形式的参数\"\r\n\r\n");
+}
+$commend = trim($argv[1]);
+if(strtolower($commend)=='swoole'){
+    $file = SYSTEM_PATH.'cli'.DIRECTORY_SEPARATOR.$commend.'.php';
+}
+else{
+    $file = APP_PATH.'cli'.DIRECTORY_SEPARATOR.$commend.'.php';
+}
+if (!file_exists($file)){
+    exit("缺失命令文件：$file \r\n\r\n");
+}
+if(isset($_GET[$commend])){
+    unset($_GET[$commend]);
+}
+include_once($file);
+echo "完成了\r\n";

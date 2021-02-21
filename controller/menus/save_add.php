@@ -40,11 +40,11 @@
  *  15 nav_user_avatar为保留字段，不可使用
  */
 
-if (!$app->logic_permission->check_permission('user_center:add_menu')) {
-    return_code(100, $app->lang('not_authorized'));
+if (!logic_permission::I()->check_permission('user_center:add_menu')) {
+    return code(100, YiluPHP::I()->lang('not_authorized'));
 }
 
-$params = $app->input->validate(
+$params = input::I()->validate(
     [
         'position' => 'required|trim|string|min:3|return',
         'parent_menu' => 'required|integer|return',
@@ -77,41 +77,41 @@ $params = $app->input->validate(
 //检查位置的有效性
 if(!in_array($params['position'], ['TOP','LEFT'])){
     unset($params);
-    return_code(8,'菜单位置参数错误');
+    return code(8,'菜单位置参数错误');
 }
 if (strtolower($params['lang_key']) == 'nav_user_avatar'){
     unset($params);
-    return_code(15,'nav_user_avatar为保留字段，不可使用');
+    return code(15,'nav_user_avatar为保留字段，不可使用');
 }
 //检查匹配规则的有效性
 if($params['active_preg']) {
     try {
         if(@preg_match('/' . $params['active_preg'] . '/', 'test', $match) === false){
-            return_code(9, '选中状态匹配规则设置错误,请填写符合正则表达式规则的字符');
+            return code(9, '选中状态匹配规则设置错误,请填写符合正则表达式规则的字符');
         }
     } catch (Exception $e) {
-        return_code(10, '选中状态匹配规则设置错误,请填写符合正则表达式规则的字符');
+        return code(10, '选中状态匹配规则设置错误,请填写符合正则表达式规则的字符');
     }
 }
 else{
     $params['active_preg'] = '';
 }
 //检查父级菜单的有效性
-if(!empty($params['parent_menu']) && !$parent = $app->model_menus->find_table(['id'=>$params['parent_menu']])){
+if(!empty($params['parent_menu']) && !$parent = model_menus::I()->find_table(['id'=>$params['parent_menu']])){
     unset($params, $parent);
-    return_code(11,'父级菜单不存在');
+    return code(11,'父级菜单不存在');
 }
 if(!empty($parent['parent_menu'])){
     unset($params, $parent);
-    return_code(12,'父级菜单必须是首级菜单');
+    return code(12,'父级菜单必须是首级菜单');
 }
 //检查权限是否存在
 if (isset($params['permission'])) {
     if (!empty($params['permission'])) {
         $temp = explode(':', $params['permission']);
-        if (count($temp)!=2 || !$permission = $app->model_permission->find_table(['app_id' => $temp[0], 'permission_key' => $temp[1]], 'permission_id')) {
+        if (count($temp)!=2 || !$permission = model_permission::I()->find_table(['app_id' => $temp[0], 'permission_key' => $temp[1]], 'permission_id')) {
             unset($permission, $params, $parent, $data, $temp);
-            return_code(13, '设置的权限不存在');
+            return code(13, '设置的权限不存在');
         }
         unset($permission, $temp);
         $data['permission'] = $params['permission'];
@@ -124,14 +124,14 @@ if (isset($params['permission'])) {
 //保存入库
 $params['type'] = 'CUSTOMIZE';
 $params['ctime'] = time();
-if(!$app->model_menus->insert_table($params)){
+if(!model_menus::I()->insert_table($params)){
     unset($params, $parent);
-    return_code(14, '保存失败');
+    return code(14, '保存失败');
 }
 
 //删除所有菜单的缓存
-$app->redis()->del(REDIS_KEY_ALL_MENUS);
+redis_y::I()->del(REDIS_KEY_ALL_MENUS);
 
 unset($params, $parent);
 //返回结果
-return_json(CODE_SUCCESS,'保存成功');
+return json(CODE_SUCCESS,'保存成功');

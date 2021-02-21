@@ -9,11 +9,11 @@
  * @return HTML
  */
 
-if (!$app->logic_permission->check_permission('user_center:add_app_permission')) {
-    return_code(100, $app->lang('not_authorized'));
+if (!logic_permission::I()->check_permission('user_center:add_app_permission')) {
+    return code(100, YiluPHP::I()->lang('not_authorized'));
 }
 
-$params = $app->input->validate(
+$params = input::I()->validate(
     [
         'app_id' => 'required|trim|string|min:3|max:20|return',
     ],
@@ -26,17 +26,17 @@ $params = $app->input->validate(
 
 if (preg_match('/^[a-zA-Z0-9_]{3,20}$/', $params['app_id'], $matches)==false){
     unset($params);
-    return_code(3,'应用ID不正确');
+    return code(3,'应用ID不正确');
 }
 if (strpos($params['app_id'], 'grant_')===0){
     unset($params);
-    return_code(4,'应用ID不正确');
+    return code(4,'应用ID不正确');
 }
-if (!$application_info=$app->model_application->find_table(['app_id' => $params['app_id']])){
+if (!$application_info=model_application::I()->find_table(['app_id' => $params['app_id']])){
     unset($params, $application_info);
-    return_code(5,'应用不存在');
+    return code(5,'应用不存在');
 }
 
-return_result('application/add_permission', [
+return result('application/add_permission', [
     'application_info' => $application_info,
 ]);

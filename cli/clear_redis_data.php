@@ -1,9 +1,9 @@
 <?php
 /*
  * 清除所有REDIS缓存
- * OneWayPHP vision 1.0
+ * YiluPHP vision 2.0
  * User: Jim.Wu
- * Date: 19/10/24
+ * * Date: 2021/01/23
  * Time: 21:45
  */
 if(!isset($_SERVER['REQUEST_URI'])){
@@ -11,14 +11,18 @@ if(!isset($_SERVER['REQUEST_URI'])){
     unset($the_argv[0]);
     $_SERVER['REQUEST_URI'] = 'php '.$argv[0].' "'.implode('" "', $the_argv).'"';
 }
-$project_root = explode('/cli/', __FILE__);
-$project_root = $project_root[0].'/';
-include_once($project_root.'public/index.php');
+if (!defined('APP_PATH')){
+    $project_root = explode(DIRECTORY_SEPARATOR.'cli'.DIRECTORY_SEPARATOR, __FILE__);
+    //项目的根目录，最后包含一个斜杠
+    define('APP_PATH', $project_root[0].DIRECTORY_SEPARATOR);
+    unset($project_root);
+}
+include_once(APP_PATH.'public'.DIRECTORY_SEPARATOR.'index.php');
 
 //删除所有已用的Nickname
-$app->redis()->del(REDIS_KEY_ALL_NICKNAME);
+redis_y::I()->del(REDIS_KEY_ALL_NICKNAME);
 
 //删除所有已用的身份
-$app->redis()->del(REDIS_KEY_ALL_IDENTITY);
+redis_y::I()->del(REDIS_KEY_ALL_IDENTITY);
 
 exit("\r\n完成\r\n\r\n");

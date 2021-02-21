@@ -5,7 +5,7 @@
  * 执行命令：php [目录路径]queue queue_name=你加入队列时取的队列名称
  * Created by PhpStorm.
  * User: WuJianwu
- * Date: 19/10/21
+ * * Date: 2021/01/23
  * Time: 20:45
  */
 class send_email_code{
@@ -31,14 +31,14 @@ class send_email_code{
         }
 
         try {
-            $GLOBALS['app']->tool_mailer->to_alias = $msg['to_alias'];
-            $GLOBALS['app']->tool_mailer->to_email = $msg['to_email'];
-            $GLOBALS['app']->tool_mailer->subject = $msg['subject'];
-            $GLOBALS['app']->tool_mailer->html_body = $msg['html_body'];
-            $GLOBALS['app']->tool_mailer->auto_send();
+            tool_mailer::I()->to_alias = $msg['to_alias'];
+            tool_mailer::I()->to_email = $msg['to_email'];
+            tool_mailer::I()->subject = $msg['subject'];
+            tool_mailer::I()->html_body = $msg['html_body'];
+            tool_mailer::I()->auto_send();
         }
         catch (Exception $exception){
-            return_code($exception->getCode(), $exception->getMessage().'，$msg:'.json_encode($msg));
+            write_applog('ERROR', $exception->getMessage().'，$msg:'.json_encode($msg).', code:'.$exception->getCode());
         }
         return true;
     }

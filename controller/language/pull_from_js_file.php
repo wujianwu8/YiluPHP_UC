@@ -23,11 +23,11 @@
  *  7 解析JS中的数据失败
  */
 
-if (!$app->logic_permission->check_permission('user_center:pull_lang_from_js_file')) {
-    return_code(100, $app->lang('not_authorized'));
+if (!logic_permission::I()->check_permission('user_center:pull_lang_from_js_file')) {
+    throw new validate_exception(YiluPHP::I()->lang('not_authorized'),100);
 }
 
-$params = $app->input->validate(
+$params = input::I()->validate(
     [
         'project_id' => 'required|integer|min:1|return',
     ],
@@ -39,18 +39,18 @@ $params = $app->input->validate(
     ]);
 
 
-if (!$project_info =$app->model_language_project->find_table(['id' => $params['project_id']])){
+if (!$project_info =model_language_project::I()->find_table(['id' => $params['project_id']])){
     unset($params,$project_info);
-    return_code(3,'项目不存在');
+    return code(3,'项目不存在');
 }
 if (empty($project_info['js_file_dir'])){
     unset($params,$project_info);
-    return_code(4,'JS语言包目录设置不正确');
+    return code(4,'JS语言包目录设置不正确');
 }
 //读取语言包文件
 if (!is_dir($project_info['js_file_dir'])){
     unset($params,$project_info);
-    return_code(5,'JS语言包目录不存在');
+    return code(5,'JS语言包目录不存在');
 }
 $project_info['language_types'] = explode(',', $project_info['language_types']);
 $file_list = get_dir_and_file($project_info['js_file_dir'], 'file');
@@ -76,7 +76,7 @@ foreach ($file_list as $file){
             if ($lang_arr = json_decode($matches[0], true)) {
                 foreach ($lang_arr as $lang_key => $lang_value) {
                     $output_type = '-JS-';
-                    if ($check = $app->model_language_value->find_table([
+                    if ($check = model_language_value::I()->find_table([
                         'project_key' => $project_info['project_key'],
                         'language_type' => $file_info['filename'],
                         'language_key' => $lang_key,
@@ -97,14 +97,14 @@ foreach ($file_list as $file){
                         'ctime' => time(),
                     ];
                     //保存入库
-                    if (false === $app->model_language_value->insert_language_value($data)) {
+                    if (false === model_language_value::I()->insert_language_value($data)) {
                         unset($params, $project_info, $data, $file_info, $file, $lang_arr, $lang_key, $lang_value);
-                        return_code(6, '保存语言内容入库时出错');
+                        return code(6, '保存语言内容入库时出错');
                     }
                 }
             } else {
                 unset($params, $project_info, $data, $file_info, $file, $lang_arr, $lang_key, $lang_value);
-                return_code(7, '解析JS中的数据失败');
+                return code(7, '解析JS中的数据失败');
             }
         }
         unset($lang_arr);
@@ -114,4 +114,4 @@ foreach ($file_list as $file){
 
 unset($params,$where);
 //返回结果
-return_json(CODE_SUCCESS,'从JS文件中拉取语言内容成功');
+return json(CODE_SUCCESS,'从JS文件中拉取语言内容成功');

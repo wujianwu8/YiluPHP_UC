@@ -20,11 +20,11 @@
  *  3 用户不存在
  */
 
-if (!$app->logic_permission->check_permission('user_center:edit_user_status')) {
-    return_code(100, $app->lang('not_authorized'));
+if (!logic_permission::I()->check_permission('user_center:edit_user_status')) {
+    throw new validate_exception(YiluPHP::I()->lang('not_authorized'),100);
 }
 
-$params = $app->input->validate(
+$params = input::I()->validate(
     [
         'uid' => 'required|integer|min:1|return',
         'status' => 'required|integer|min:0|max:1|return',
@@ -38,8 +38,8 @@ $params = $app->input->validate(
         'status.*' => 2,
     ]);
 
-if(!$user_info = $app->model_user->find_table(['uid'=>$params['uid']], '*', $params['uid'])){
-    return_code(2, '用户不存在');
+if(!$user_info = model_user::I()->find_table(['uid'=>$params['uid']], '*', $params['uid'])){
+    return code(2, '用户不存在');
 }
 
 $where = [
@@ -48,6 +48,6 @@ $where = [
 $data = [
     'status' => $params['status'],
 ];
-$app->logic_user->update_user_info($where, $data);
+logic_user::I()->update_user_info($where, $data);
 
-return_json(CODE_SUCCESS, '操作成功');
+return json(CODE_SUCCESS, '操作成功');

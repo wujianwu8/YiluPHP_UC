@@ -23,11 +23,11 @@
  *  5 角色不存在
  */
 
-if (!$app->logic_permission->check_permission('user_center:edit_role')) {
-    return_code(100, $app->lang('not_authorized'));
+if (!logic_permission::I()->check_permission('user_center:edit_role')) {
+    throw new validate_exception(YiluPHP::I()->lang('not_authorized'),100);
 }
 
-$params = $app->input->validate(
+$params = input::I()->validate(
     [
         'role_id' => 'required|integer|min:1|return',
         'role_name' => 'required|trim|string|min:2|max:40|return',
@@ -44,9 +44,9 @@ $params = $app->input->validate(
         'description.*' => 4,
     ]);
 
-if (!$check=$app->model_role->find_table(['id' => $params['role_id']], 'id')){
+if (!$check=model_role::I()->find_table(['id' => $params['role_id']], 'id')){
     unset($params, $check);
-    return_code(5,'角色不存在');
+    return code(5,'角色不存在');
 }
 unset($check);
 
@@ -57,10 +57,10 @@ $data = [
     'role_name' => $params['role_name'],
     'description' => $params['description'],
 ];
-if (false===$app->model_role->update_table($where, $data)){
+if (false===model_role::I()->update_table($where, $data)){
     unset($params, $where, $data);
-    return_code(1,'保存失败');
+    return code(1,'保存失败');
 }
 unset($params, $where, $data);
 //返回结果
-return_json(0,'保存成功');
+return json(0,'保存成功');

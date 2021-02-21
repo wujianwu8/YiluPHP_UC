@@ -34,9 +34,9 @@ class ErrorCase{
         }
 
         if($description == "$"){
-            return_code($code, $this->errorMsg[$code]);
+            return_error($code, $this->errorMsg[$code]);
         }else{
-            return_code($code, $description);
+            return_error($code, $description);
         }
     }
     public function showTips($code, $description = '$'){

@@ -1,9 +1,9 @@
 <?php
 /*
  * 用户模型类
- * YiluPHP vision 1.0
+ * YiluPHP vision 2.0
  * User: Jim.Wu
- * Date: 19/10/05
+ * * Date: 2021/01/23
  * Time: 22:16
  */
 
@@ -30,7 +30,7 @@ class model_user_identity extends model
 	 */
 	public function get_user_count()
 	{
-		return $GLOBALS['app']->redis()->hlen(REDIS_KEY_MOBILE_UID);
+		return redis_y::I()->hlen(REDIS_KEY_MOBILE_UID);
 	}
 
 	/**
@@ -54,10 +54,8 @@ class model_user_identity extends model
 			$sub_redis_name = 'default';
 		}
 		$key = md5($key);
-		global $app;
-        $GLOBALS['app'] = $app;
-		if($GLOBALS['app']->redis($sub_redis_name)->hexists(REDIS_KEY_ALL_IDENTITY, $key)){
-			return $GLOBALS['app']->redis($sub_redis_name)->hget(REDIS_KEY_ALL_IDENTITY, $key);
+		if(redis_y::I($sub_redis_name)->hexists(REDIS_KEY_ALL_IDENTITY, $key)){
+			return redis_y::I($sub_redis_name)->hget(REDIS_KEY_ALL_IDENTITY, $key);
 		}
 		return null;
 	}
@@ -85,10 +83,10 @@ class model_user_identity extends model
             $sub_redis_name = 'default';
         }
         if(preg_match("/^\d+-\d+$/", $identity)){
-            $GLOBALS['app']->redis()->hset(REDIS_KEY_MOBILE_UID, $identity, $uid);
+            redis_y::I()->hset(REDIS_KEY_MOBILE_UID, $identity, $uid);
         }
         $key = md5($key);
-        return $GLOBALS['app']->redis($sub_redis_name)->hset(REDIS_KEY_ALL_IDENTITY, $key, $uid);
+        return redis_y::I($sub_redis_name)->hset(REDIS_KEY_ALL_IDENTITY, $key, $uid);
     }
 
     /**
@@ -110,10 +108,10 @@ class model_user_identity extends model
             $sub_redis_name = 'default';
         }
         if(preg_match("/^\d+-\d+$/", $identity)){
-            $GLOBALS['app']->redis()->hdel(REDIS_KEY_MOBILE_UID, $identity);
+            redis_y::I()->hdel(REDIS_KEY_MOBILE_UID, $identity);
         }
         $key = md5($key);
-        return $GLOBALS['app']->redis($sub_redis_name)->hdel(REDIS_KEY_ALL_IDENTITY, $key);
+        return redis_y::I($sub_redis_name)->hdel(REDIS_KEY_ALL_IDENTITY, $key);
     }
 
     /**
@@ -126,13 +124,12 @@ class model_user_identity extends model
      */
     function select_user_identity_by_multi_uids(array $uids, string $fields='*', $field_value=null)
     {
-        global $app;
         $table_name = $this->sub_table($field_value);
         $connection = $this->sub_connection($field_value);
         $plist = ':uid_'.implode(',:uid_', array_keys($uids));
         $params = array_combine(explode(',', $plist), $uids);
         $sql = 'SELECT '.$fields.' FROM `'.$table_name.'` WHERE uid IN('.$plist.')';
-        $stmt = $app->mysql($connection)->prepare($sql);
+        $stmt = mysql::I($connection)->prepare($sql);
         $stmt->execute($params);
         $res = $stmt->fetchAll(PDO::FETCH_ASSOC);
         unset($app, $fields, $field_value, $table_name, $connection, $sql, $params, $plist, $stmt);

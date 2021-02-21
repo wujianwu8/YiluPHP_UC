@@ -1,13 +1,13 @@
 <?php
 /*
  * 应用逻辑处理类
- * YiluPHP vision 1.0
+ * YiluPHP vision 2.0
  * User: Jim.Wu
- * Date: 19/10/09
+ * * Date: 2021/01/23
  * Time: 21:39
  */
 
-class logic_application
+class logic_application extends base_class
 {
 	public function __construct()
 	{
@@ -26,25 +26,24 @@ class logic_application
      */
     public function delete_application($app_id)
     {
-        global $app;
         //查找出应用的所有权限
-        if($permission_ids = $app->model_permission->select_all(['app_id'=>$app_id], 'permission_id')) {
+        if($permission_ids = model_permission::I()->select_all(['app_id'=>$app_id], 'permission_id')) {
             $permission_ids = array_column($permission_ids, 'permission_id');
             //删除（包含该应用的权限的）用户权限
-            $app->model_user_permission->destroy(['permission_id' => [
+            model_user_permission::I()->destroy(['permission_id' => [
                 'symbol' => 'IN',
                 'value' => $permission_ids,
             ]]);
             //删除（包含该应用的权限的）角色权限
-            $app->model_role_permission->destroy(['permission_id' => [
+            model_role_permission::I()->destroy(['permission_id' => [
                 'symbol' => 'IN',
                 'value' => $permission_ids,
             ]]);
             //删除应用的权限
-            $app->model_permission->destroy(['app_id' => $app_id]);
+            model_permission::I()->destroy(['app_id' => $app_id]);
         }
         //删除应用信息
-        $app->model_application->delete(['app_id'=>$app_id]);
+        model_application::I()->delete(['app_id'=>$app_id]);
         unset($app, $app_id, $permission_ids);
         return true;
     }
@@ -59,14 +58,13 @@ class logic_application
      */
     public function translate_permission_name($permission_name, $permission_key){
         $permission_name = stripslashes($permission_name);
-        global $app;
         if (strpos($permission_key, 'grant_grant_')===0){
-            return $app->lang('grant_for_grant_permission_name', ['name'=>$app->lang($permission_name)]);
+            return YiluPHP::I()->lang('grant_for_grant_permission_name', ['name'=>YiluPHP::I()->lang($permission_name)]);
         }
         if (strpos($permission_key, 'grant_')===0){
-            return $app->lang('grant_permission_name', ['name'=>$app->lang($permission_name)]);
+            return YiluPHP::I()->lang('grant_permission_name', ['name'=>YiluPHP::I()->lang($permission_name)]);
         }
-        return $app->lang($permission_name);
+        return YiluPHP::I()->lang($permission_name);
     }
 
     /**
@@ -79,36 +77,35 @@ class logic_application
      */
     public function add_permission($data, $uid=0)
     {
-        global $app;
-        if(false === $app->model_permission->insert_table($data)){
+        if(false === model_permission::I()->insert_table($data)){
             unset($app, $data);
             return false;
         }
-        if($uid && $permission = $app->model_permission->find_table(['app_id' => $data['app_id'],'permission_key' => $data['permission_key']], 'permission_id')){
-            $permission_id = $app->model_user_permission->insert_table([
+        if($uid && $permission = model_permission::I()->find_table(['app_id' => $data['app_id'],'permission_key' => $data['permission_key']], 'permission_id')){
+            $permission_id = model_user_permission::I()->insert_table([
                 'uid' => $uid,
                 'permission_id' => $permission['permission_id'],
             ]);
         }
         $data['is_fixed'] = 1;
         $data['permission_key'] = 'grant_'.$data['permission_key'];
-        if(false === $app->model_permission->insert_table($data)){
+        if(false === model_permission::I()->insert_table($data)){
             unset($app, $data);
             return false;
         }
-        if($uid && $permission = $app->model_permission->find_table(['app_id' => $data['app_id'],'permission_key' => $data['permission_key']], 'permission_id')){
-            $permission_id = $app->model_user_permission->insert_table([
+        if($uid && $permission = model_permission::I()->find_table(['app_id' => $data['app_id'],'permission_key' => $data['permission_key']], 'permission_id')){
+            $permission_id = model_user_permission::I()->insert_table([
                 'uid' => $uid,
                 'permission_id' => $permission['permission_id'],
             ]);
         }
         $data['permission_key'] = 'grant_'.$data['permission_key'];
-        if(false === $app->model_permission->insert_table($data)){
+        if(false === model_permission::I()->insert_table($data)){
             unset($app, $data);
             return false;
         }
-        if($uid && $permission = $app->model_permission->find_table(['app_id' => $data['app_id'],'permission_key' => $data['permission_key']], 'permission_id')){
-            $permission_id = $app->model_user_permission->insert_table([
+        if($uid && $permission = model_permission::I()->find_table(['app_id' => $data['app_id'],'permission_key' => $data['permission_key']], 'permission_id')){
+            $permission_id = model_user_permission::I()->insert_table([
                 'uid' => $uid,
                 'permission_id' => $permission['permission_id'],
             ]);
@@ -129,7 +126,6 @@ class logic_application
      */
     public function update_permission($app_id, $permission_key, $data)
     {
-        global $app;
         $where = [
             'app_id' => $app_id,
             'permission_key' => 'grant_grant_'.$permission_key,
@@ -144,7 +140,7 @@ class logic_application
         if (count($tmp_data)==0){
             return true;
         }
-        if(false === $app->model_permission->update_table($where,$tmp_data)){
+        if(false === model_permission::I()->update_table($where,$tmp_data)){
             unset($app_id, $permission_key, $data, $where, $tmp_data);
             return false;
         }
@@ -153,7 +149,7 @@ class logic_application
             'app_id' => $app_id,
             'permission_key' => 'grant_'.$permission_key,
         ];
-        if(false === $app->model_permission->update_table($where,$tmp_data)){
+        if(false === model_permission::I()->update_table($where,$tmp_data)){
             unset($app_id, $permission_key, $data, $where, $tmp_data);
             return false;
         }
@@ -162,7 +158,7 @@ class logic_application
             'app_id' => $app_id,
             'permission_key' => $permission_key,
         ];
-        if(false === $app->model_permission->update_table($where,$tmp_data)){
+        if(false === model_permission::I()->update_table($where,$tmp_data)){
             unset($app_id, $permission_key, $data, $where, $tmp_data);
             return false;
         }
@@ -181,29 +177,28 @@ class logic_application
      */
     public function delete_permission($permission_id, $app_id, $permission_key)
     {
-        global $app;
-        if($tmp = $app->model_permission->find_table(['app_id'=>$app_id, 'permission_key'=>'grant_grant_'.$permission_key], 'permission_id')){
+        if($tmp = model_permission::I()->find_table(['app_id'=>$app_id, 'permission_key'=>'grant_grant_'.$permission_key], 'permission_id')){
             //删除（包含该权限的）用户权限
-            $app->model_user_permission->destroy(['permission_id' => $tmp['permission_id']]);
+            model_user_permission::I()->destroy(['permission_id' => $tmp['permission_id']]);
             //删除（包含该权限的）角色权限
-            $app->model_role_permission->destroy(['permission_id' => $tmp['permission_id']]);
+            model_role_permission::I()->destroy(['permission_id' => $tmp['permission_id']]);
             //删除应用的权限
-            $app->model_permission->delete(['permission_id' => $tmp['permission_id']]);
+            model_permission::I()->delete(['permission_id' => $tmp['permission_id']]);
         }
-        if($tmp = $app->model_permission->find_table(['app_id'=>$app_id, 'permission_key'=>'grant_'.$permission_key], 'permission_id')){
+        if($tmp = model_permission::I()->find_table(['app_id'=>$app_id, 'permission_key'=>'grant_'.$permission_key], 'permission_id')){
             //删除（包含该权限的）用户权限
-            $app->model_user_permission->destroy(['permission_id' => $tmp['permission_id']]);
+            model_user_permission::I()->destroy(['permission_id' => $tmp['permission_id']]);
             //删除（包含该权限的）角色权限
-            $app->model_role_permission->destroy(['permission_id' => $tmp['permission_id']]);
+            model_role_permission::I()->destroy(['permission_id' => $tmp['permission_id']]);
             //删除应用的权限
-            $app->model_permission->delete(['permission_id' => $tmp['permission_id']]);
+            model_permission::I()->delete(['permission_id' => $tmp['permission_id']]);
         }
         //删除（包含该权限的）用户权限
-        $app->model_user_permission->destroy(['permission_id' => $permission_id]);
+        model_user_permission::I()->destroy(['permission_id' => $permission_id]);
         //删除（包含该权限的）角色权限
-        $app->model_role_permission->destroy(['permission_id' => $permission_id]);
+        model_role_permission::I()->destroy(['permission_id' => $permission_id]);
         //删除应用的权限
-        $app->model_permission->delete(['permission_id' => $permission_id]);
+        model_permission::I()->delete(['permission_id' => $permission_id]);
         unset($app, $permission_id,$tmp);
         return true;
     }

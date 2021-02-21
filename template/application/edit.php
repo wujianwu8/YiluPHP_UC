@@ -50,8 +50,8 @@ $head_info = [
         </div>
         <div class="col-sm-9">
             <select class="custom-select d-block w-100" id="status" name="status">
-                <option value="0" <?php echo $app_info['status']==0?'selected':'';?> ><?php echo $app->lang('application_status_0'); ?></option>
-                <option value="1" <?php echo $app_info['status']==1?'selected':'';?> ><?php echo $app->lang('application_status_1'); ?></option>
+                <option value="0" <?php echo $app_info['status']==0?'selected':'';?> ><?php echo YiluPHP::I()->lang('application_status_0'); ?></option>
+                <option value="1" <?php echo $app_info['status']==1?'selected':'';?> ><?php echo YiluPHP::I()->lang('application_status_1'); ?></option>
             </select>
         </div>
     </div>

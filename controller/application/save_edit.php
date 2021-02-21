@@ -30,11 +30,11 @@
  * 10 应用ID填写有误
  */
 
-if (!$app->logic_permission->check_permission('user_center:edit_application')) {
-    return_code(100, $app->lang('not_authorized'));
+if (!logic_permission::I()->check_permission('user_center:edit_application')) {
+    return code(100, YiluPHP::I()->lang('not_authorized'));
 }
 
-$params = $app->input->validate(
+$params = input::I()->validate(
     [
         'app_id' => 'required|trim|string|min:3|max:20|return',
         'app_name' => 'trim|string|min:3|max:30|return',
@@ -64,7 +64,7 @@ if (!isset($params['app_white_ip']) || trim($params['app_white_ip'])=='') {
 else{
     if (preg_match('/^(\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}[\,|\r|\n]*)+$/', $params['app_white_ip'], $matches) == false) {
         unset($params);
-        return_code(8, '白名单IP设置错误，请检查');
+        return code(8, '白名单IP设置错误，请检查');
     }
 
     $tmp = preg_replace('/[\r|\n|\,]+/', ',', $params['app_white_ip']);
@@ -72,7 +72,7 @@ else{
     $tmp2 = array_unique($tmp);
     if (count($tmp) != count($tmp2)) {
         unset($params);
-        return_code(11, 'IP白名单重复了：' . implode(',', array_diff_assoc($tmp, $tmp2)));
+        return code(11, 'IP白名单重复了：' . implode(',', array_diff_assoc($tmp, $tmp2)));
     }
     unset($tmp, $tmp2);
     $data['app_white_ip'] = $params['app_white_ip'];
@@ -80,15 +80,15 @@ else{
 
 if (preg_match('/^[a-zA-Z0-9_]{3,20}$/', $params['app_id'], $matches)==false){
     unset($params);
-    return_code(9,'应用ID填写有误');
+    return code(9,'应用ID填写有误');
 }
 if (strpos($params['app_id'], 'grant_')===0){
     unset($params);
-    return_code(10,'应用ID填写有误');
+    return code(10,'应用ID填写有误');
 }
-if (!$check=$app->model_application->find_table(['app_id' => $params['app_id']])){
+if (!$check=model_application::I()->find_table(['app_id' => $params['app_id']])){
     unset($params, $check);
-    return_code(7,'应用不存在');
+    return code(7,'应用不存在');
 }
 unset($check);
 
@@ -108,14 +108,14 @@ $where = [
     'app_id' => $params['app_id']
 ];
 if (count($data)==0){
-    return_json(0,'保存成功');
+    return json(0,'保存成功');
 }
 //保存应用入库
-if(false === $app->model_application->update_table($where, $data)){
+if(false === model_application::I()->update_table($where, $data)){
     unset($params, $where, $data);
-    return_code(1, '保存失败');
+    return code(1, '保存失败');
 }
 
 unset($params, $where, $data);
 //返回结果
-return_json(0,'保存成功');
+return json(0,'保存成功');

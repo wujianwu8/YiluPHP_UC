@@ -25,19 +25,19 @@
  *  2 用户不存在
  */
 
-$params = $app->input->validate(
+$params = input::I()->validate(
     [
         'username' => 'required|string|min:1|return',
     ],
     [
-        'username.*' => $app->lang('parameter_error_xxx', ['field'=>'username']),
+        'username.*' => YiluPHP::I()->lang('parameter_error_xxx', ['field'=>'username']),
     ],
     [
         'username.*' => 1,
     ]);
-if (!$uid = $app->model_user_identity->find_uid_by_identity('INNER',$params['username'])){
+if (!$uid = model_user_identity::I()->find_uid_by_identity('INNER',$params['username'])){
     unset($params, $uid);
-    return_code(2, $app->lang('user_not_exist'));
+    return code(2, YiluPHP::I()->lang('user_not_exist'));
 }
 unset($params);
-return_json(0, $app->lang('successful_get'),['uid'=>$uid]);
+return json(0, YiluPHP::I()->lang('successful_get'),['uid'=>$uid]);

@@ -1,9 +1,9 @@
 <?php
 /*
  * Linkedin授权登录
- * YiluPHP vision 1.0
+ * YiluPHP vision 2.0
  * User: Jim.Wu
- * Date: 19/10/18
+ * * Date: 2021/01/23
  * Time: 22:19
  */
 
@@ -78,10 +78,10 @@ class oauth_linkedin extends oauth
      */
     public function check_callback(){
         $state = $this->read_session("state");
-        $get_state = $GLOBALS['app']->input->get_trim('state', '');
+        $get_state = input::I()->get_trim('state', '');
         //--------验证state防止CSRF攻击
         if(!$state || $get_state != $state){
-            return_code(CODE_ATTACKED_BY_CSRF, 'The state does not match. You may be a victim of CSRF.');
+            throw new validate_exception('The state does not match. You may be a victim of CSRF.', CODE_ATTACKED_BY_CSRF);
         }
         return true;
     }

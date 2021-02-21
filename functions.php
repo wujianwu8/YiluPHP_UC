@@ -1,9 +1,9 @@
 <?php
 /*
  * 函数库，用户可在此添加自己所需函数
- * YiluPHP vision 1.0
+ * YiluPHP vision 2.0
  * User: Jim.Wu
- * Date: 17/12/30
+ * * Date: 2021/01/23
  * Time: 09:43
  */
 
@@ -150,4 +150,11 @@ function rand_a_password(){
 	$str = '@#$!_-';
 	$password .= $str[rand(0,5)];
 	return str_shuffle($password);
+}
+
+function is_webview(){
+    if (empty($_SERVER['HTTP_CLIENTTYPE']) || !in_array($_SERVER['HTTP_CLIENTTYPE'], [3, 4])){
+        return false;
+    }
+    return true;
 }

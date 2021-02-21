@@ -11,18 +11,18 @@
  * @exception   会在界面上显示错误
  */
 
-$open = $app->input->get_int('open', 0);
-$app->oauth_wechat->check_callback();
+$open = input::I()->get_int('open', 0);
+oauth_wechat::I()->check_callback();
 if ($open){
-    $app->oauth_wechat->load_config('wechat_open');
+    oauth_wechat::I()->load_config('wechat_open');
 }
-$token = $app->oauth_wechat->get_access_token();
+$token = oauth_wechat::I()->get_access_token();
 if(!$token || isset($token['errcode'])){
-    return_code(CODE_UNDEFINED_ERROR_TYPE,'您已登录，如需再登录，请回登录页面重新操作');
+    return code(CODE_UNDEFINED_ERROR_TYPE,'您已登录，如需再登录，请回登录页面重新操作');
 }
 
 //记录下传过来的code
-$state = $app->input->get_trim('state', '');
+$state = input::I()->get_trim('state', '');
 //是否为二维码登录
 $is_qrcode = false;
 if(!empty($_SESSION['weixin_qr_login_code']) && strpos($state, 'weixin_qr_')===0){
@@ -31,11 +31,11 @@ if(!empty($_SESSION['weixin_qr_login_code']) && strpos($state, 'weixin_qr_')===0
 
 $openid = empty($token['unionid'])?$token['openid']:$token['unionid'];
 //如果是登录用户绑定第三方账号，走此流程
-if ($app->input->get_int('for_bind', null)){
-    $app->logic_user->bind_outer_account('WX', $openid);
+if (input::I()->get_int('for_bind', null)){
+    logic_user::I()->bind_outer_account('WX', $openid);
 }
 //如果用户已经注册,则直接跳转
-if($uid = $app->model_user_identity->find_uid_by_identity('WX', $openid)) {
+if($uid = model_user_identity::I()->find_uid_by_identity('WX', $openid)) {
     //更新用户access_token的值与有效期
     $where = [
         'uid' => $uid,
@@ -47,7 +47,7 @@ if($uid = $app->model_user_identity->find_uid_by_identity('WX', $openid)) {
         'expires_at' => time()+$token['expires_in'],
         'refresh_token' => $token['refresh_token'],
     ];
-    $app->model_user_identity->update_table($where, $data);
+    model_user_identity::I()->update_table($where, $data);
     if ($is_qrcode){
         $data = [
             'openid' => $openid,
@@ -59,26 +59,26 @@ if($uid = $app->model_user_identity->find_uid_by_identity('WX', $openid)) {
         ];
         $code = $_SESSION['weixin_qr_login_code'];
         $_SESSION['weixin_qr_login_code']=null;
-        $login_info = $app->redis()->get(REDIS_KEY_WEIXIN_QR_LOGIN_CODE.$code);
+        $login_info = redis_y::I()->get(REDIS_KEY_WEIXIN_QR_LOGIN_CODE.$code);
         $login_info = json_decode($login_info, true);
         $login_info['status'] = 'login';
         $login_info = $data+$login_info;
-        $app->redis()->set(REDIS_KEY_WEIXIN_QR_LOGIN_CODE.$code, json_encode($login_info));
+        redis_y::I()->set(REDIS_KEY_WEIXIN_QR_LOGIN_CODE.$code, json_encode($login_info));
         //延长二维码的有效期
-        $app->redis()->expire(REDIS_KEY_WEIXIN_QR_LOGIN_CODE.$code, TIME_30_SEC);
+        redis_y::I()->expire(REDIS_KEY_WEIXIN_QR_LOGIN_CODE.$code, TIME_30_SEC);
         unset($login_info, $data, $state, $token);
-        return_code(CODE_SUCCESS,'登录成功');
+        return code(CODE_SUCCESS,'登录成功');
     }
     else {
         //登录用户
-        $user_info = $app->logic_user->login_by_uid($uid);
+        $user_info = logic_user::I()->login_by_uid($uid);
         unset($login_info, $data, $state, $token);
-        $app->logic_user->auto_jump(false, $user_info['tlt']);
+        logic_user::I()->auto_jump(false, $user_info['tlt']);
     }
 }
 
-$app->oauth_wechat->set_access_token($token['access_token']);
-$app->oauth_wechat->set_openid($token['openid']);
+oauth_wechat::I()->set_access_token($token['access_token']);
+oauth_wechat::I()->set_openid($token['openid']);
 
 //array(9) {
 //    ["openid"]=> string(28) "ogAIxwHFVLLr-ta0QD11HqU7aykA"
@@ -92,9 +92,9 @@ $app->oauth_wechat->set_openid($token['openid']);
 //    ["headimgurl"]=> string(132) "http://thirdwx.qlogo.cn/mmopen/vi_32/rdpX04rcx6GBcCqsrfuMVtGibbb4jHhpT6jfVW1g4aowiaEDmMMEOFD7icH7sQ1LGib5C9nibtYfMNYdEhVcd0BFrcg/132"
 //    ["privilege"]=> array(0) { }
 //}
-$user_info = $app->oauth_wechat->userinfo(); //调用接口
+$user_info = oauth_wechat::I()->userinfo(); //调用接口
 if(empty($user_info['nickname'])){
-    return_code(2, '获取您的用户信息失败');
+    return code(2, '获取您的用户信息失败');
 }
 
 if (empty($user_info['headimgurl'])){
@@ -102,10 +102,10 @@ if (empty($user_info['headimgurl'])){
 }
 else{
     $path = 'avatar/'.date('Y').'/'.date('md').'/'.date('H').'/';
-    $avatar = $app->file->download_image($user_info['headimgurl'], $path);
+    $avatar = file::I()->download_image($user_info['headimgurl'], $path);
     //上传到阿里云
     if (!empty($GLOBALS['config']['oss']['aliyun'])) {
-        $avatar = $app->tool_oss->upload_file($project_root . 'static/' . substr($avatar, 1));
+        $avatar = tool_oss::I()->upload_file(APP_PATH . 'static/' . substr($avatar, 1));
     }
 }
 
@@ -129,19 +129,19 @@ $data = [
 ];
 
 //存入临时表
-$data ['id'] = $app->model_try_to_sign_in->insert_table($data);
+$data ['id'] = model_try_to_sign_in::I()->insert_table($data);
 if ($is_qrcode){
     $code = $_SESSION['weixin_qr_login_code'];
     $_SESSION['weixin_qr_login_code']=null;
-    $login_info = $app->redis()->get(REDIS_KEY_WEIXIN_QR_LOGIN_CODE.$code);
+    $login_info = redis_y::I()->get(REDIS_KEY_WEIXIN_QR_LOGIN_CODE.$code);
     $login_info = json_decode($login_info, true);
     $login_info['status'] = 'login';
     $login_info = $data+$login_info;
-    $app->redis()->set(REDIS_KEY_WEIXIN_QR_LOGIN_CODE.$code, json_encode($login_info));
+    redis_y::I()->set(REDIS_KEY_WEIXIN_QR_LOGIN_CODE.$code, json_encode($login_info));
     //延长二维码的有效期
-    $app->redis()->expire(REDIS_KEY_WEIXIN_QR_LOGIN_CODE.$code, TIME_30_SEC);
+    redis_y::I()->expire(REDIS_KEY_WEIXIN_QR_LOGIN_CODE.$code, TIME_30_SEC);
     unset($login_info, $data, $state, $token, $user_info, $qr_login, $app);
-    return_code(CODE_SUCCESS,'登录成功');
+    return code(CODE_SUCCESS,'登录成功');
 }
 else {
     //存入SESSION

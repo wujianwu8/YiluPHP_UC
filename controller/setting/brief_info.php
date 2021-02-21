@@ -6,9 +6,20 @@
  * @method GET
  * @uri /setting/brief_info
  * @return JSON
+ * {
+ *      code: 0
+ *      ,data: {
+ *          "user_info":{
+ *              'avatar':'http://www.yiluphp.com/sss..fff.jpg',
+ *              'uid':3568,
+ *              'nickname':'中国人'
+ *          }
+ *      }
+ *      ,msg: "获取成功"
+ * }
  */
 
-return_json(0, $app->lang('successful_get'),
+return json(0, YiluPHP::I()->lang('successful_get'),
     [
         'user_info' => $self_info,
     ]

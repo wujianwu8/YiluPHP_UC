@@ -1,9 +1,9 @@
 <?php
 /*
  * 角色-权限模型类
- * YiluPHP vision 1.0
+ * YiluPHP vision 2.0
  * User: Jim.Wu
- * Date: 19/10/09
+ * * Date: 2021/01/23
  * Time: 21:56
  */
 
@@ -27,7 +27,7 @@ class model_role_permission extends model
             $sql = 'SELECT permission_id FROM role_permission WHERE role_id=:role_id';
         }
         $connection = $this->sub_connection();
-        $stmt = $GLOBALS['app']->mysql($connection)->prepare($sql);
+        $stmt = mysql::I($connection)->prepare($sql);
         $stmt->bindValue(':role_id', $role_id, PDO::PARAM_INT);
         if ($app_id) {
             $stmt->bindValue(':app_id', $app_id, PDO::PARAM_STR);
@@ -46,13 +46,13 @@ class model_role_permission extends model
     public function insert_role_permission($role_id, $permission_id){
         $sql = 'INSERT INTO role_permission (role_id,permission_id) VALUES(:role_id,:permission_id) ON DUPLICATE KEY UPDATE role_id=:role_id2';
         $connection = $this->sub_connection();
-        $stmt = $GLOBALS['app']->mysql($connection)->prepare($sql);
+        $stmt = mysql::I($connection)->prepare($sql);
         $stmt->bindValue(':role_id', $role_id, PDO::PARAM_INT);
         $stmt->bindValue(':role_id2', $role_id, PDO::PARAM_INT);
         $stmt->bindValue(':permission_id', $permission_id, PDO::PARAM_INT);
         $stmt->execute();
         unset($role_id, $permission_id, $sql);
-        return $GLOBALS['app']->mysql($connection)->lastInsertId();
+        return mysql::I($connection)->lastInsertId();
     }
 
     /**
@@ -67,7 +67,7 @@ class model_role_permission extends model
                 WHERE rp.role_id=:role_id AND rp.permission_id=p.permission_id';
 
         $connection = $this->sub_connection();
-        $stmt = $GLOBALS['app']->mysql($connection)->prepare($sql);
+        $stmt = mysql::I($connection)->prepare($sql);
         $stmt->bindValue(':role_id', $role_id, PDO::PARAM_INT);
         $stmt->execute();
         $data = $stmt->fetchAll(PDO::FETCH_ASSOC);

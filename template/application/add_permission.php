@@ -1,7 +1,7 @@
 <!--{use_layout layout/main}-->
 <?php
 $head_info = [
-    'title' => $app->lang('lang_add_permission'),
+    'title' => YiluPHP::I()->lang('lang_add_permission'),
 ];
 ?>
 
@@ -9,7 +9,7 @@ $head_info = [
 <form class="needs-validation title_content" novalidate="" method="post">
     <div class="row mb-2">
         <div class="col-sm-3 title">
-            <?php echo $app->lang('application_name'); ?>
+            <?php echo YiluPHP::I()->lang('application_name'); ?>
         </div>
         <div class="col-sm-9">
             <?php echo $application_info['app_name']; ?>
@@ -19,19 +19,19 @@ $head_info = [
 
     <div class="row mb-2">
         <div class="col-sm-3 title">
-            <label for="permission_key"><?php echo $app->lang('permission_key'); ?></label>
+            <label for="permission_key"><?php echo YiluPHP::I()->lang('permission_key'); ?></label>
         </div>
         <div class="col-sm-9">
-            <input type="text" class="form-control" id="permission_key" name="permission_key" placeholder="<?php echo $app->lang('key_rule_notice'); ?>" required="" minlength="3" maxlength="25">
+            <input type="text" class="form-control" id="permission_key" name="permission_key" placeholder="<?php echo YiluPHP::I()->lang('key_rule_notice'); ?>" required="" minlength="3" maxlength="25">
             <div class="invalid-feedback">
-                <?php echo $app->lang('permission_key_rule_notice'); ?>
+                <?php echo YiluPHP::I()->lang('permission_key_rule_notice'); ?>
             </div>
         </div>
     </div>
 
     <div class="row mb-2">
         <div class="col-sm-3 title">
-            <label for="permission_name"><?php echo $app->lang('permission_name'); ?></label>
+            <label for="permission_name"><?php echo YiluPHP::I()->lang('permission_name'); ?></label>
         </div>
         <div class="col-sm-9">
             <input type="text" class="form-control" id="permission_name" name="permission_name" required="" minlength="2" maxlength="40">
@@ -40,7 +40,7 @@ $head_info = [
 
     <div class="row mb-2">
         <div class="col-sm-3 title">
-            <label for="description"><?php echo $app->lang('description'); ?></label>
+            <label for="description"><?php echo YiluPHP::I()->lang('description'); ?></label>
         </div>
         <div class="col-sm-9">
             <textarea class="form-control" id="description" name="description" maxlength="200"></textarea>
@@ -52,12 +52,12 @@ $head_info = [
         <div class="col-sm-9">
             <div class="custom-control custom-checkbox">
                 <input type="checkbox" class="custom-control-input" id="keeping_form">
-                <label class="custom-control-label" for="keeping_form"><?php echo $app->lang('no_jump_after_saving'); ?></label>
+                <label class="custom-control-label" for="keeping_form"><?php echo YiluPHP::I()->lang('no_jump_after_saving'); ?></label>
             </div>
         </div>
     </div>
 
-    <button class="btn btn-primary btn-lg btn-block" type="submit"><?php echo $app->lang('save'); ?></button>
+    <button class="btn btn-primary btn-lg btn-block" type="submit"><?php echo YiluPHP::I()->lang('save'); ?></button>
 </form>
 <div class="mb-5"></div>
 <script>

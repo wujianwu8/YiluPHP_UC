@@ -1,18 +1,32 @@
 <?php
 /*
  * IP库（17monipdb.datx）
- * YiluPHP vision 1.0
+ * YiluPHP vision 2.0
  * User: Jim.Wu
- * Date: 19/10/21
+ * Date: 2021/01/21
  * Time: 20:33
  */
 
-class lib_ip
+class lib_ip extends base_class
 {
     private static $ip     = NULL;
     private static $fp     = NULL;
     private static $offset = NULL;
     private static $index  = NULL;
+    //存储单例
+    private static $_instance = null;
+
+    /**
+     * 获取单例
+     * @return model|null 返回单例
+     */
+    public static function I(){
+        if (!static::$_instance){
+            return static::$_instance = new self();
+        }
+        return static::$_instance;
+    }
+
 
     /**
      * @name 根据语言获取国家（地区）的编码、区号和名称
@@ -128,10 +142,10 @@ class lib_ip
         $max_comp_len = self::$offset['len'] - 262144 - 4;
         for ($start = $start['len'] * 9 + 262144; $start < $max_comp_len; $start += 9)
         {
-            if (self::$index{$start} . self::$index{$start + 1} . self::$index{$start + 2} . self::$index{$start + 3} >= $nip2)
+            if (self::$index[$start] . self::$index[$start + 1] . self::$index[$start + 2] . self::$index[$start + 3] >= $nip2)
             {
-                $index_offset = unpack('Vlen', self::$index{$start + 4} . self::$index{$start + 5} . self::$index{$start + 6} . "\x0");
-                $index_length = unpack('nlen', self::$index{$start + 7} . self::$index{$start + 8});
+                $index_offset = unpack('Vlen', self::$index[$start + 4] . self::$index[$start + 5] . self::$index[$start + 6] . "\x0");
+                $index_length = unpack('nlen', self::$index[$start + 7] . self::$index[$start + 8]);
 
                 break;
             }
@@ -198,7 +212,7 @@ class lib_ip
         $have_short_code = [];
         $first_two_area = [];
         $correct_area = null;
-        $current_lang = $GLOBALS['app']->current_lang();
+        $current_lang = YiluPHP::I()->current_lang();
         //获取客户端的语言
         if(isset($_SERVER['HTTP_ACCEPT_LANGUAGE']) && $client_lang_str = $_SERVER['HTTP_ACCEPT_LANGUAGE']){
             $client_lang_str = preg_replace('/\s+/', '', $client_lang_str);
@@ -209,7 +223,7 @@ class lib_ip
                 if(empty($item) || strpos($item, 'q=')===0) {
                     continue;
                 }
-                $tmp = $GLOBALS['app']->lib_ip->getByLang($item);
+                $tmp = lib_ip::I()->getByLang($item);
                 if($tmp){
                     foreach($tmp as $value) {
                         if($tmp && !in_array($value['short_code'], $have_short_code)) {

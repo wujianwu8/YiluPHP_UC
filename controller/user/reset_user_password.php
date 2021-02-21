@@ -18,11 +18,11 @@
  *  2 用户不存在
  */
 
-if (!$app->logic_permission->check_permission('user_center:reset_user_password')) {
-    return_code(100, $app->lang('not_authorized'));
+if (!logic_permission::I()->check_permission('user_center:reset_user_password')) {
+    throw new validate_exception(YiluPHP::I()->lang('not_authorized'),100);
 }
 
-$params = $app->input->validate(
+$params = input::I()->validate(
     [
         'uid' => 'required|integer|min:1|return',
     ],
@@ -33,8 +33,8 @@ $params = $app->input->validate(
         'uid.*' => 1,
     ]);
 
-if(!$user_info = $app->model_user->find_table(['uid'=>$params['uid']], '*', $params['uid'])){
-    return_code(2, '用户不存在');
+if(!$user_info = model_user::I()->find_table(['uid'=>$params['uid']], '*', $params['uid'])){
+    return code(2, '用户不存在');
 }
 
 //随机生成一个密码
@@ -46,6 +46,6 @@ $data = [
     'password' => $password,
     'salt' => $user_info['salt'],
 ];
-$app->logic_user->update_user_info($where, $data);
+logic_user::I()->update_user_info($where, $data);
 
-return_json(CODE_SUCCESS, '重置密码成功', ['password' => $password]);
+return json(CODE_SUCCESS, '重置密码成功', ['password' => $password]);

@@ -8,8 +8,8 @@
  * @return HTML
  */
 
-if (!$app->logic_permission->check_permission('user_center:add_application')) {
-    return_code(100, $app->lang('not_authorized'));
+if (!logic_permission::I()->check_permission('user_center:add_application')) {
+    return code(100, YiluPHP::I()->lang('not_authorized'));
 }
 
-return_result('application/add');
+return result('application/add');

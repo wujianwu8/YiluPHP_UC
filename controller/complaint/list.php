@@ -14,11 +14,11 @@
  * @return HTML
  */
 
-if (!$app->logic_permission->check_permission('user_center:view_complaint_user_list')) {
-    return_code(100, $app->lang('not_authorized'));
+if (!logic_permission::I()->check_permission('user_center:view_complaint_user_list')) {
+    return code(100, YiluPHP::I()->lang('not_authorized'));
 }
 
-$params = $app->input->validate(
+$params = input::I()->validate(
     [
         'status' => 'integer|min:0|max:2|return',
         'keyword' => 'trim|string|return',
@@ -26,8 +26,8 @@ $params = $app->input->validate(
         'respondent_user' => 'trim|string|return',
     ]);
 
-$page = $app->input->get_int('page',1);
-$page_size = $app->input->get_int('page_size',10);
+$page = input::I()->get_int('page',1);
+$page_size = input::I()->get_int('page_size',10);
 $page_size>500 && $page_size = 500;
 $page_size<1 && $page_size = 1;
 
@@ -41,12 +41,12 @@ if (isset($params['keyword']) && $params['keyword']!=='' && $params['keyword']!=
 
 if (isset($params['complaint_user']) && $params['complaint_user']!=='' && $params['complaint_user']!==null){
     //根据昵称或用户ID搜索投诉人用户
-    if($users = $app->model_user->select_user_by_uid_or_nickname($params['complaint_user'], 'uid')){
+    if($users = model_user::I()->select_user_by_uid_or_nickname($params['complaint_user'], 'uid')){
         $where['complaint_uids'] = array_column($users, 'uid');
     }
     else{
         unset($users, $params, $where);
-        return_result('complaint/list', [
+        return result('complaint/list', [
             'data_list' => [],
             'data_count' => 0,
             'page' => $page,
@@ -57,12 +57,12 @@ if (isset($params['complaint_user']) && $params['complaint_user']!=='' && $param
 }
 if (isset($params['respondent_user']) && $params['respondent_user']!=='' && $params['respondent_user']!==null){
     //根据昵称或用户ID搜索投诉人用户
-    if($users = $app->model_user->select_user_by_uid_or_nickname($params['respondent_user'], 'uid')){
+    if($users = model_user::I()->select_user_by_uid_or_nickname($params['respondent_user'], 'uid')){
         $where['respondent_uids'] = array_column($users, 'uid');
     }
     else{
         unset($users, $params, $where);
-        return_result('complaint/list', [
+        return result('complaint/list', [
             'data_list' => [],
             'data_count' => 0,
             'page' => $page,
@@ -72,10 +72,10 @@ if (isset($params['respondent_user']) && $params['respondent_user']!=='' && $par
     unset($users);
 }
 
-$res = $app->model_user_complaint->paging_select_user_complaint($where, $page, $page_size);
+$res = model_user_complaint::I()->paging_select_user_complaint($where, $page, $page_size);
 if ($res['count']>0) {
     $uids = array_merge(array_column($res['data'], 'respondent_uid'), array_column($res['data'], 'complaint_uid'));
-    $user_info = $app->logic_user->select_user_info_by_multi_uids($uids, 'uid,nickname,avatar');
+    $user_info = logic_user::I()->select_user_info_by_multi_uids($uids, 'uid,nickname,avatar');
     foreach ($res['data'] as $key => $item){
         if (isset($user_info[$item['respondent_uid']])) {
             $res['data'][$key]['respondent_nickname'] = $user_info[$item['respondent_uid']]['nickname'];
@@ -98,7 +98,7 @@ if ($res['count']>0) {
 }
 
 unset($user_info, $params);
-return_result('complaint/list', [
+return result('complaint/list', [
     'data_list' => $res['data'],
     'data_count' => $res['count'],
     'page' => $page,

@@ -6,6 +6,6 @@
 <body>
 <p>欢迎使用YiluPHP框架!</p>
 <p>当前版本: <?php echo get_version(); ?></p>
-<p>官网地址: <a href="http://www.YiluPHP.com">www.YiluPHP.com</a></p>
+<p>官网地址: <a href="<?php echo $config['website_index']; ?>">www.YiluPHP.com</a></p>
 </body>
 </html>

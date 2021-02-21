@@ -29,7 +29,7 @@
  *  7 生日设置错误
  */
 
-$params = $app->input->validate(
+$params = input::I()->validate(
     [
         'nickname' => 'string|min:1|return',
         'gender' => 'trim|string|min:4|return',
@@ -57,22 +57,22 @@ if (isset($params['username']) && $params['username'] != ''){
     $params['username'] = strtolower($params['username']);
     if(!preg_match('/^[\w\d_\-\.]{3,50}$/', $params['username'], $match) || preg_match('/^\d+$/', $params['username'], $match)){
         unset($params);
-        return_code(2, '登录名错误：登录名由字母、数字、下划线、中横杆、点组成，且至少包含一个非数字，长度为3-50个字');
+        return code(2, '登录名错误：登录名由字母、数字、下划线、中横杆、点组成，且至少包含一个非数字，长度为3-50个字');
     }
     //检查当前用户是否已经设置登录名
-    $identity = $app->model_user_identity->select_all(['uid'=>$self_info['uid']], '', 'type,identity', $self_info['uid']);
+    $identity = model_user_identity::I()->select_all(['uid'=>$self_info['uid']], '', 'type,identity', $self_info['uid']);
     foreach ($identity as $item){
         if ($item['type']=='INNER'){
-            if($app->logic_user->get_identity_type($item['identity']) == 'username' ){
+            if(logic_user::I()->get_identity_type($item['identity']) == 'username' ){
                 unset($params, $identity, $item);
-                return_code(3, '已有登录名，不可修改');
+                return code(3, '已有登录名，不可修改');
             }
         }
     }
     //设置用户名
-    if (!$app->model_user_identity->insert_identity(['uid' =>$self_info['uid'], 'type'=>'INNER', 'identity'=>$params['username'] ])){
+    if (!model_user_identity::I()->insert_identity(['uid' =>$self_info['uid'], 'type'=>'INNER', 'identity'=>$params['username'] ])){
         unset($params, $identity, $item);
-        return_code(1, '保存失败');
+        return code(1, '保存失败');
     }
     unset($identity, $item);
 }
@@ -81,14 +81,14 @@ $data = [];
 if (isset($params['nickname'])){
     if (trim($params['nickname'])=='') {
         unset($params, $data);
-        return_code(4, '必须设置一个昵称');
+        return code(4, '必须设置一个昵称');
     }
     $data['nickname'] = $params['nickname'];
 }
 if (isset($params['gender'])){
     if (!in_array($params['gender'], ['male', 'female'])) {
         unset($params, $data);
-        return_code(5, '性别设置错误');
+        return code(5, '性别设置错误');
     }
     $data['gender'] = $params['gender'];
 }
@@ -97,10 +97,10 @@ if (isset($params['birthday'])){
     $data['birthday'] = $params['birthday']?$params['birthday']:null;
 }
 if (isset($params['country'])){
-    $country_lang_keys = $app->lib_address->selectCountryLangKeys();
+    $country_lang_keys = lib_address::I()->selectCountryLangKeys();
     if (array_search($params['country'], $country_lang_keys)==false){
         unset($params, $data, $country_lang_keys);
-        return_code(6, '国家设置错误');
+        return code(6, '国家设置错误');
     }
     $data['country'] = $params['country'];
 }
@@ -112,16 +112,16 @@ if (isset($params['city'])){
 }
 
 if(count($data)==0){
-    return_json(CODE_SUCCESS,'保存成功');
+    return json(CODE_SUCCESS,'保存成功');
 }
 $where = ['uid'=>$self_info['uid']];
 //保存入库
-if(!$app->logic_user->update_user_info($where, $data)){
+if(!logic_user::I()->update_user_info($where, $data)){
     unset($params, $where, $data);
-    return_code(1, '保存失败');
+    return code(1, '保存失败');
 }
 //更新当前登录者的session信息
-$app->logic_user->update_current_user_info($data);
+logic_user::I()->update_current_user_info($data);
 unset($params, $where, $data);
 //返回结果
-return_json(CODE_SUCCESS,'保存成功');
+return json(CODE_SUCCESS,'保存成功');

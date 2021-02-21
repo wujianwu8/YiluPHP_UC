@@ -8,11 +8,11 @@
  * @return HTML
  */
 
-if (!$app->logic_permission->check_permission('user_center:view_customize_menu')) {
-    return_code(100, $app->lang('not_authorized'));
+if (!logic_permission::I()->check_permission('user_center:view_customize_menu')) {
+    return code(100, YiluPHP::I()->lang('not_authorized'));
 }
 
-$data_list = $app->logic_menus->get_all();
+$data_list = logic_menus::I()->get_all();
 $top_menus = $left_menus = $parent_menus = [];
 foreach($data_list as $item){
     if($item['position'] == 'TOP'){
@@ -32,4 +32,4 @@ $params = [
 ];
 
 unset($data_list, $top_menus, $left_menus, $parent_menus);
-return_result('menus/list', $params);
+return result('menus/list', $params);

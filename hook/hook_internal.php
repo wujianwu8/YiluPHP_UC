@@ -3,8 +3,12 @@
  * 内部接口验证类
  */
 
-class hook_internal
+class hook_internal extends hook
 {
+    public function run()
+    {
+    }
+
 	public function __construct()
 	{
 	}
@@ -12,8 +16,7 @@ class hook_internal
     public function check()
     {
 //        return true;
-        global $app;
-        $params = $app->input->validate(
+        $params = input::I()->validate(
             [
                 'sign' => 'required|trim|string|min:32|max:32|return',
                 'time' => 'required|integer|min:1000000000|return',
@@ -32,21 +35,21 @@ class hook_internal
         //接口时效性验证，30秒内有效
         $diff_time = time()-$params['time'];
         if ($diff_time <= -30 ){
-            unset($diff_time, $params);
-            return_code(1003,'您的服务器时间太超前了');
+//            unset($diff_time, $params);
+            throw new validate_exception('您的服务器时间太超前了'.$diff_time.'秒', 1003);
         }
         if ($diff_time >=30 ){
             unset($diff_time, $params);
-            return_code(1004,'您的服务器时间不准确或请求已经失效');
+            throw new validate_exception('您的服务器时间不准确或请求已经失效', 1004);
         }
-        if(!$app_info = $app->model_application->find_table(['app_id'=>$params['app_id']], 'app_secret,app_white_ip,status')){
+        if(!$app_info = model_application::I()->find_table(['app_id'=>$params['app_id']], 'app_secret,app_white_ip,status')){
             unset($diff_time, $params, $app_info);
-            return_code(1005,'应用不存在');
+            throw new validate_exception('应用不存在', 1005);
         }
         unset($diff_time);
         if(empty($app_info['status'])){
             unset($params, $app_info);
-            return_code(1006,'应用不可用');
+            throw new validate_exception('应用不可用', 1006);
         }
         if(!empty($app_info['app_white_ip'])) {
             $white_ip = explode(',', $app_info['app_white_ip']);
@@ -54,7 +57,7 @@ class hook_internal
             $client_ip = client_ip();
             if (!in_array($client_ip, $white_ip)){
                 unset($params, $app_info, $white_ip, $client_ip);
-                return_code(1007,'IP白名单限制');
+                throw new validate_exception('IP白名单限制', 1007);
             }
             unset($white_ip, $client_ip);
         }
@@ -65,7 +68,7 @@ class hook_internal
         $sign = md5($params['app_id'].md5($query_string).$app_info['app_secret']);
         if ($params['sign']!==$sign){
             unset($params, $app_info, $all_params, $sign);
-            return_code(1008,'签名错误');
+            throw new validate_exception('签名错误', 1008);
         }
         unset($params, $app_info, $all_params, $sign);
         return true;

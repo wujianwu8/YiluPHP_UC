@@ -1,13 +1,13 @@
 <?php
 /*
  * 分页码类
- * YiluPHP vision 1.0
+ * YiluPHP vision 2.0
  * User: Jim.Wu
- * Date: 17/12/30
+ * * Date: 2021/01/23
  * Time: 09:22
  */
 
-class pager
+class pager extends base_class
 {
 	/**
 	 * @name 组装分页码
@@ -23,7 +23,7 @@ class pager
 		$page_num = ceil($count/$page_size);
 		$min_page = $page - ceil($button_num/2);
 		$min_page = $min_page<1 ? 1 : $min_page;
-		$max_page = $min_page + $button_num-1;
+		$max_page = $min_page + $button_num - 1;
 		if($max_page>$page_num){
 			$max_page = $page_num;
 			//再次纠正前面的页码
@@ -52,7 +52,7 @@ class pager
 	 * @desc 会判断是HTTP还是HTTPS
 	 * @return string
 	 */
-	public function get_host_url()
+	public function get_url()
 	{
 		$http_type = ((isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] == 'on') || (isset($_SERVER['HTTP_X_FORWARDED_PROTO']) && $_SERVER['HTTP_X_FORWARDED_PROTO'] == 'https')) ? 'https://' : 'http://';
 		return $http_type . $_SERVER['HTTP_HOST'] . $_SERVER['REQUEST_URI'];
@@ -81,7 +81,7 @@ class pager
 	public function display_pages($param, $return_html=false)
 	{
 		if(!isset($param['data_count'])){
-            return_code(CODE_UNDEFINED_ERROR_TYPE,'lack arguments $param[\'data_count\']');
+			show_info('lack arguments $param[\'data_count\']');
 		}
 		$html = '';
 		!isset($param['page_key']) && $param['page_key']='page';
@@ -111,7 +111,7 @@ class pager
 		$param = array_merge($param, $page_data);
 
 		if($param['total_page']>1){
-			!isset($param['base_url']) && $param['base_url']=$this->get_host_url();
+			!isset($param['base_url']) && $param['base_url']=$this->get_url();
 			!isset($param['class_name']) && $param['class_name']='pages';
 			!isset($param['first_page_text']) && $param['first_page_text']='首页';
 			!isset($param['pre_page_text']) && $param['pre_page_text']='上一页';

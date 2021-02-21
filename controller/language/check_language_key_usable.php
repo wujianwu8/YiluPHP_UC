@@ -22,11 +22,11 @@
  *  5 语言键名填写有误，语言键名只能包含字母、数字、下划线组成，3-200个字
  */
 
-if (!$app->logic_permission->check_permission('user_center:add_project_lang_key')) {
-    return_code(100, $app->lang('not_authorized'));
+if (!logic_permission::I()->check_permission('user_center:add_project_lang_key')) {
+    throw new validate_exception(YiluPHP::I()->lang('not_authorized'),100);
 }
 
-$params = $app->input->validate(
+$params = input::I()->validate(
     [
         'project_id' => 'required|integer|min:1|return',
         'language_key' => 'required|trim|string|min:2|max:200|return',
@@ -42,22 +42,22 @@ $params = $app->input->validate(
 
 if (preg_match('/^[a-zA-Z0-9_]{3,200}$/', $params['language_key'], $matches)==false){
     unset($params, $matches);
-    return_code(5,'语言键名填写有误，语言键名只能包含字母、数字、下划线组成，3-200个字');
+    return code(5,'语言键名填写有误，语言键名只能包含字母、数字、下划线组成，3-200个字');
 }
 unset($matches);
 
-if (!$project_info = $app->model_language_project->find_table(['id' => $params['project_id']])){
+if (!$project_info = model_language_project::I()->find_table(['id' => $params['project_id']])){
     unset($params, $project_info);
-    return_code(4,'项目不存在');
+    return code(4,'项目不存在');
 }
 
-if ($app->model_language_value->find_table(
+if (model_language_value::I()->find_table(
     ['project_key' => $project_info['project_key'], 'language_key' => $params['language_key']],
     'id')){
     unset($params);
-    return_code(1,'在'.$project_info['project_name'].'项目中，此语言键名已经存在');
+    return code(1,'在'.$project_info['project_name'].'项目中，此语言键名已经存在');
 }
 
 unset($params, $project_info);
 //返回结果
-return_json(0,'语言键名可用');
+return json(0,'语言键名可用');

@@ -1,7 +1,7 @@
 <!--{use_layout layout/main}-->
 <?php
 $head_info = [
-    'title' => $app->lang('feedback_detail'),
+    'title' => YiluPHP::I()->lang('feedback_detail'),
 ];
 ?>
 
@@ -11,7 +11,7 @@ $head_info = [
     </div>
     <div class="row mb-2" id="feedback_detail">
         <div class="mr-5">
-            <span class="title mr-2"><?php echo $app->lang('feedback_user'); ?></span>
+            <span class="title mr-2"><?php echo YiluPHP::I()->lang('feedback_user'); ?></span>
             <span>
                 <a class="detail" href="/user/detail/<?php echo $feedback_info['uid']; ?>" uid="<?php echo $feedback_info['uid']; ?>">
                     <img src="<?php echo $feedback_info['avatar']; ?>" width="20" height="20">
@@ -20,7 +20,7 @@ $head_info = [
             </span>
         </div>
         <div>
-            <span class="title"><?php echo $app->lang('feedback_time'); ?></span>
+            <span class="title"><?php echo YiluPHP::I()->lang('feedback_time'); ?></span>
             <span>
                 <?php echo date('Y-m-d H:i:s', $feedback_info['ctime']); ?>
             </span>
@@ -28,30 +28,30 @@ $head_info = [
     </div>
     <div class="row mb-3">
         <fieldset>
-            <legend><?php echo $app->lang('feedback_content'); ?></legend>
+            <legend><?php echo YiluPHP::I()->lang('feedback_content'); ?></legend>
             <?php echo $feedback_info['content']; ?>
         </fieldset>
     </div>
     <form class="needs-validation" novalidate>
         <input type="hidden" name="id" value="<?php echo $feedback_info['id']; ?>">
         <div class="row mb-3">
-            <div class="col-md-2 title"><?php echo $app->lang('status'); ?></div>
+            <div class="col-md-2 title"><?php echo YiluPHP::I()->lang('status'); ?></div>
             <div class="col-md-4">
                 <select name="status">
                     <option value="0"<?php echo $feedback_info['status']=='0'? ' selected':''; ?>>
-                        <?php echo $app->lang('feedback_status_0'); ?>
+                        <?php echo YiluPHP::I()->lang('feedback_status_0'); ?>
                     </option>
                     <option value="1"<?php echo $feedback_info['status']=='1'? ' selected':''; ?>>
-                        <?php echo $app->lang('feedback_status_1'); ?>
+                        <?php echo YiluPHP::I()->lang('feedback_status_1'); ?>
                     </option>
                     <option value="2"<?php echo $feedback_info['status']=='2'? ' selected':''; ?>>
-                        <?php echo $app->lang('feedback_status_2'); ?>
+                        <?php echo YiluPHP::I()->lang('feedback_status_2'); ?>
                     </option>
                 </select>
             </div>
         </div>
         <div class="row mb-3">
-            <div class="col-md-2 title"><?php echo $app->lang('remark'); ?></div>
+            <div class="col-md-2 title"><?php echo YiluPHP::I()->lang('remark'); ?></div>
             <div class="col-md-10">
                 <textarea class="w-100" id="remark" name="remark"><?php echo $feedback_info['remark']; ?></textarea>
             </div>
@@ -60,8 +60,8 @@ $head_info = [
             <div class="col-md-2">
             </div>
             <div class="col-md-10">
-                <button class="btn btn-primary btn-sm pl-5 pr-5" type="submit"><?php echo $app->lang('save'); ?></button>
-                <button class="btn btn-light btn-sm ml-3 pl-5 pr-5" type="button" onclick="window.close();"><?php echo $app->lang('close_this_page'); ?></button>
+                <button class="btn btn-primary btn-sm pl-5 pr-5" type="submit"><?php echo YiluPHP::I()->lang('save'); ?></button>
+                <button class="btn btn-light btn-sm ml-3 pl-5 pr-5" type="button" onclick="window.close();"><?php echo YiluPHP::I()->lang('close_this_page'); ?></button>
             </div>
         </div>
     </form>

@@ -10,7 +10,7 @@
  * @return HTML
  */
 
-$open = $app->input->get_int('open', 0);
+$open = input::I()->get_int('open', 0);
 if ($open){
     $scope = 'snsapi_login';
 }
@@ -18,7 +18,7 @@ else{
     $scope = 'snsapi_userinfo';
 }
 $callback = null;
-if ($app->input->get_trim('for_bind', null)){
+if (input::I()->get_trim('for_bind', null)){
     if ($open){
         $callback = $config['oauth_plat']['wechat_open']['callback'].'/for_bind/1';
     }
@@ -26,4 +26,4 @@ if ($app->input->get_trim('for_bind', null)){
         $callback = $config['oauth_plat']['wechat']['callback'].'/for_bind/1';
     }
 }
-$app->oauth_wechat->login($scope, null, $callback);
+oauth_wechat::I()->login($scope, null, $callback);

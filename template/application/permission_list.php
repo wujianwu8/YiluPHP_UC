@@ -1,15 +1,15 @@
 <!--{use_layout layout/main}-->
 <?php
 $head_info = [
-    'title' => $app->lang('manage_permission'),
+    'title' => YiluPHP::I()->lang('manage_permission'),
 ];
 ?>
 
 <h4>
-    <?php echo $app->lang('permission_of_application', ['app_name'=>$application_info['app_name']]); ?>
+    <?php echo YiluPHP::I()->lang('permission_of_application', ['app_name'=>$application_info['app_name']]); ?>
     <a class="btn btn-sm btn-outline-primary ml-4 ajax_main_content" href="/application/add_permission/<?php echo $application_info['app_id']; ?>">
         <i class="fa fa-plus" aria-hidden="true"></i>
-        <?php echo $app->lang('lang_add_permission'); ?>
+        <?php echo YiluPHP::I()->lang('lang_add_permission'); ?>
     </a>
 </h4>
 <div class="table-responsive">
@@ -17,11 +17,11 @@ $head_info = [
         <thead>
         <tr>
             <th>ID</th>
-            <th><?php echo $app->lang('translation'); ?></th>
-            <th><?php echo $app->lang('permission_name'); ?></th>
-            <th><?php echo $app->lang('permission_key'); ?></th>
-            <th><?php echo $app->lang('description'); ?></th>
-            <th><?php echo $app->lang('operation'); ?></th>
+            <th><?php echo YiluPHP::I()->lang('translation'); ?></th>
+            <th><?php echo YiluPHP::I()->lang('permission_name'); ?></th>
+            <th><?php echo YiluPHP::I()->lang('permission_key'); ?></th>
+            <th><?php echo YiluPHP::I()->lang('description'); ?></th>
+            <th><?php echo YiluPHP::I()->lang('operation'); ?></th>
         </tr>
         </thead>
         <tbody>
@@ -33,7 +33,7 @@ $head_info = [
             <td><?php echo $item['permission_key']; ?></td>
             <td class="show_title" title="<?php echo htmlspecialchars($item['description']); ?>"><?php echo mb_substr($item['description'],0,60); ?></td>
             <td>
-                <a class="show_title show_users mr-2" href="/application/permission_users/<?php echo $item['permission_id']; ?>" title="<?php echo $app->lang('view_people_with_this_permission'); ?>">
+                <a class="show_title show_users mr-2" href="/application/permission_users/<?php echo $item['permission_id']; ?>" title="<?php echo YiluPHP::I()->lang('view_people_with_this_permission'); ?>">
                     <i class="fa fa-users" aria-hidden="true"></i>
                 </a>
                 <?php if (empty($item['is_fixed'])){ ?>
@@ -48,7 +48,7 @@ $head_info = [
 
         <?php if(empty($data_list)): ?>
             <tr>
-                <td colspan="5" class="pt-5 pb-5"><center><?php echo $app->lang('no_data'); ?></center></td>
+                <td colspan="5" class="pt-5 pb-5"><center><?php echo YiluPHP::I()->lang('no_data'); ?></center></td>
             </tr>
         <?php endif; ?>
         </tbody>

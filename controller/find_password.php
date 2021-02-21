@@ -9,10 +9,10 @@
  */
 
 if ($self_info){
-    $tlt = $app->logic_user->create_login_tlt($self_info['uid'], client_ip());
-    $app->logic_user->auto_jump(false, $tlt);
+    $tlt = logic_user::I()->create_login_tlt($self_info['uid'], client_ip());
+    logic_user::I()->auto_jump(false, $tlt);
 }
 
-return_result('find_password',
-    ['area_list' => $app->lib_ip->getAutoAreaList()]
+return result('find_password',
+    ['area_list' => lib_ip::I()->getAutoAreaList()]
 );

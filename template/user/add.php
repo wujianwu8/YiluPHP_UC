@@ -1,7 +1,7 @@
 <!--{use_layout layout/main}-->
 <?php
 $head_info = [
-    'title' => $app->lang('add_user'),
+    'title' => YiluPHP::I()->lang('add_user'),
 ];
 ?>
 

@@ -23,7 +23,7 @@
  *  2 退出失败
  */
 
-$params = $app->input->validate(
+$params = input::I()->validate(
     [
         'uid' => 'required|integer|min:1|return',
     ],
@@ -34,8 +34,8 @@ $params = $app->input->validate(
         'uid.*' => 1,
     ]);
 
-if($user_info = $app->logic_user->get_login_user_info_by_uid($params['uid'])) {
-    $app->logic_user->destroy_login_session($user_info['vk']);
+if($user_info = logic_user::I()->get_login_user_info_by_uid($params['uid'])) {
+    logic_user::I()->destroy_login_session($user_info['vk']);
 }
 unset($user_info, $params);
-return_json(CODE_SUCCESS, $app->lang('sign_out_successfully'));
+return json(CODE_SUCCESS, YiluPHP::I()->lang('sign_out_successfully'));

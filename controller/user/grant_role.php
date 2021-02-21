@@ -9,11 +9,11 @@
  * @return html
  */
 
-if (!$app->logic_permission->check_permission('user_center:view_user_role')) {
-    return_code(100, $app->lang('not_authorized'));
+if (!logic_permission::I()->check_permission('user_center:view_user_role')) {
+    throw new validate_exception(YiluPHP::I()->lang('not_authorized'),100);
 }
 
-$params = $app->input->validate(
+$params = input::I()->validate(
     [
         'uid' => 'required|integer|min:1|return',
     ],
@@ -24,20 +24,20 @@ $params = $app->input->validate(
         'uid.*' => 2,
     ]);
 
-if(!$user_info = $app->model_user->find_table(['uid' => $params['uid']], 'uid,nickname', $params['uid'])){
+if(!$user_info = model_user::I()->find_table(['uid' => $params['uid']], 'uid,nickname', $params['uid'])){
     unset($params);
-    return_code(1, '用户不存在');
+    return code(1, '用户不存在');
 }
 
 //获取用户已有的角色ID
-if($having_role_ids = $app->model_user_role->select_all(['uid'=>$params['uid']], '', 'role_id')){
+if($having_role_ids = model_user_role::I()->select_all(['uid'=>$params['uid']], '', 'role_id')){
     $having_role_ids = array_column($having_role_ids, 'role_id');
 }
 
-if($role_list = $app->model_role->select_all([])) {
+if($role_list = model_role::I()->select_all([])) {
     $in_arr = $not_in_arr = [];
     foreach ($role_list as $key => $item) {
-        $item['role_name_lang'] = $app->lang($item['role_name']);
+        $item['role_name_lang'] = YiluPHP::I()->lang($item['role_name']);
         if (in_array($item['id'], $having_role_ids)) {
             $item['is_own'] = true;
             $in_arr[] = $item;
@@ -51,7 +51,7 @@ if($role_list = $app->model_role->select_all([])) {
 }
 unset($params, $having_role_ids);
 
-return_result('role/grant_role', [
+return result('role/grant_role', [
     'role_list' => $role_list,
     'user_info' => $user_info,
 ]);

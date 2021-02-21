@@ -14,7 +14,9 @@
  * {
  *      code: 0
  *      ,data: [
- *          'redirect_uri':'http://www.yiluphp.com/sss..fff.html' //跳转的链接地址
+ *          'redirect_uri':'http://www.yiluphp.com/sss..fff.html', //跳转的链接地址
+ *          'uid':3568, //用户uid
+ *          'vk':'49210efef194ce1208f4a9d3be622a14' //当前用户的唯一标识
  *      ]
  *      ,msg: "登录成功"
  * }
@@ -34,7 +36,7 @@
  *  13 记住登录状态的参数错误
  */
 
-$params = $app->input->validate(
+$params = input::I()->validate(
     [
         'area_code' => 'integer|min:1|max:9999|return',
         'identity' => 'required|trim|string|min:2|max:100|rsa_encrypt|return',
@@ -42,10 +44,10 @@ $params = $app->input->validate(
         'remember_me' => 'integer|min:0|max:1|return',
     ],
     [
-        'area_code.*' => $app->lang('wrong_area_code_of_mobile'),
-        'identity.*' => $app->lang('login_account_error'),
-        'password.*' => $app->lang('password_error'),
-        'remember_me.*' => $app->lang('stay_logged_in_param_error'),
+        'area_code.*' => YiluPHP::I()->lang('wrong_area_code_of_mobile'),
+        'identity.*' => YiluPHP::I()->lang('login_account_error'),
+        'password.*' => YiluPHP::I()->lang('password_error'),
+        'remember_me.*' => YiluPHP::I()->lang('stay_logged_in_param_error'),
     ],
     [
         'area_code.*' => 10,
@@ -55,10 +57,10 @@ $params = $app->input->validate(
     ]);
 
 $params['identity'] = strtolower($params['identity']);
-$type = $app->logic_user->get_identity_type($params['identity']);
+$type = logic_user::I()->get_identity_type($params['identity']);
 if($type=='mobile'){
     if( empty($params['area_code']) ){
-        return_code(10, $app->lang('wrong_area_code_of_mobile'));
+        return code(10, YiluPHP::I()->lang('wrong_area_code_of_mobile'));
     }
     $identity = $params['area_code'].'-'.$params['identity'];
 }
@@ -67,56 +69,56 @@ else{
 }
 
 //检查此登录账号有没有注册过
-if(!$uid = $app->model_user_identity->find_uid_by_identity('INNER', $identity)){
+if(!$uid = model_user_identity::I()->find_uid_by_identity('INNER', $identity)){
     unset($identity, $params, $type, $uid);
-    return_code(1, $app->lang('login_account_does_not_exist'));
+    return code(1, YiluPHP::I()->lang('login_account_does_not_exist'));
 }
 //校验密码
-if(!$user_info = $app->model_user->find_table(['uid'=>$uid], '*', $uid)){
+if(!$user_info = model_user::I()->find_table(['uid'=>$uid], '*', $uid)){
     unset($identity, $params, $type, $uid, $user_info);
-    return_code(2, $app->lang('login_account_does_not_exist'));
+    return code(2, YiluPHP::I()->lang('login_account_does_not_exist'));
 }
 
 if(md5($params['password'].$user_info['salt']) !== $user_info['password']){
     unset($identity, $params, $type, $uid, $user_info);
-    return_code(3, $app->lang('password_error'));
+    return code(3, YiluPHP::I()->lang('password_error'));
 }
 
 $repair_info = [];
 //查看SESSION中是否有从第三方登录过来的使用信息
 //用于判断是否要绑定账号
-$is_bind = $app->input->post_int('is_bind',0);
+$is_bind = input::I()->post_int('is_bind',0);
 if($is_bind===1){
     if(!isset($_SESSION['temp_user_info'])){
         unset($params, $type, $uid, $user_info, $is_bind);
-        return_code(5, $app->lang('authorized_login_has_expired'));
+        return code(5, YiluPHP::I()->lang('authorized_login_has_expired'));
     }
     $temp_user_info = $_SESSION['temp_user_info'];
     $temp_user_info = json_decode($temp_user_info, true);
     if(empty($temp_user_info['identity_type'])){
         unset($params, $type, $uid, $user_info, $is_bind, $temp_user_info);
-        return_code(6, $app->lang('authorized_login_has_expired'));
+        return code(6, YiluPHP::I()->lang('authorized_login_has_expired'));
     }
 
     //检查此外部账户是否已经绑定过用户
-    $check_uid = $app->model_user_identity->find_uid_by_identity($temp_user_info['identity_type'], $temp_user_info['openid']);
+    $check_uid = model_user_identity::I()->find_uid_by_identity($temp_user_info['identity_type'], $temp_user_info['openid']);
     if($check_uid && $check_uid!==$uid){
         unset($identity, $params, $type, $uid, $check_uid, $user_info);
-        return_code(7, $app->lang('nickname_have_bound_to_other_account', [
+        return code(7, YiluPHP::I()->lang('nickname_have_bound_to_other_account', [
             'nickname' => $temp_user_info['nickname']
         ]));
     }
     if(!($check_uid && $check_uid==$uid)) {
         //检查当前内部用户是否已经绑定过相同类型的外部账户
-        if($app->model_user_identity->find_table(
+        if(model_user_identity::I()->find_table(
             [
                 'uid' => $uid,
                 'type' => $temp_user_info['identity_type']
             ],
             'uid', $uid)){
             unset($identity, $params, $type, $uid, $check_uid);
-            return_code(8, $app->lang('you_have_bound_other_outer_account', [
-                'outer_account' => $app->lang('identity_type_user_'.$temp_user_info['identity_type'])
+            return code(8, YiluPHP::I()->lang('you_have_bound_other_outer_account', [
+                'outer_account' => YiluPHP::I()->lang('identity_type_user_'.$temp_user_info['identity_type'])
             ]));
         }
     }
@@ -139,7 +141,7 @@ if($is_bind===1){
         isset($temp_user_info['province']) && empty($user_info['province']) && $repair_info['province'] = $temp_user_info['province'];
         isset($temp_user_info['city']) && empty($user_info['city']) && $repair_info['city'] = $temp_user_info['city'];
 
-        $app->model_user_identity->insert_identity($identity_plat);
+        model_user_identity::I()->insert_identity($identity_plat);
         unset($identity_plat);
     }
     unset($check_uid, $temp_user_info);
@@ -147,17 +149,20 @@ if($is_bind===1){
 
 if($repair_info) {
     $where = ['uid' => $uid];
-    $app->model_user->update_table($where, $repair_info);
+    model_user::I()->update_table($where, $repair_info);
     unset($where);
 }
 
-$remember_me = $app->input->post_int('remember_me',false);
+$remember_me = input::I()->post_int('remember_me',false);
 //登录用户
-$app->logic_user->create_login_session($user_info, !empty($remember_me));
+logic_user::I()->create_login_session($user_info, !empty($remember_me));
 $tlt = $user_info['tlt'];
+$vk = $user_info['vk'];
 
-unset($user_info, $is_bind, $params, $identity, $uid, $repair_info);
+unset($user_info, $is_bind, $params, $identity, $repair_info);
 //返回结果
-return_json(0,$app->lang('login_succeed'), [
-    'redirect_uri' => $app->logic_user->auto_jump(true, $tlt)
+return json(0,YiluPHP::I()->lang('login_succeed'), [
+    'redirect_uri' => logic_user::I()->auto_jump(true, $tlt),
+    'uid' => $uid,
+    'vk' => $vk,
 ]);

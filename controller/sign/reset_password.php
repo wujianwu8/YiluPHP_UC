@@ -32,7 +32,7 @@
  *  13
  */
 
-$params = $app->input->validate(
+$params = input::I()->validate(
     [
         'email' => 'string|trim|min:8|max:100|rsa_encrypt|return',
         'mobile' => 'string|trim|min:8|max:30|rsa_encrypt|return',
@@ -40,10 +40,10 @@ $params = $app->input->validate(
         'verify_code' => 'required|trim|string|min:4|max:6|rsa_encrypt|return',
     ],
     [
-        'email.*' => $app->lang('email_error'),
-        'mobile.*' => $app->lang('wrong_mobile_number'),
-        'password.*' => $app->lang('password_too_simple'),
-        'verify_code.*' => $app->lang('verify_code_error'),
+        'email.*' => YiluPHP::I()->lang('email_error'),
+        'mobile.*' => YiluPHP::I()->lang('wrong_mobile_number'),
+        'password.*' => YiluPHP::I()->lang('password_too_simple'),
+        'verify_code.*' => YiluPHP::I()->lang('verify_code_error'),
     ],
     [
         'email.*' => 1,
@@ -54,57 +54,57 @@ $params = $app->input->validate(
 
 if(empty($params['email']) && empty($params['mobile'])){
     unset($params);
-    return_code(5, $app->lang('mobile_or_email'));
+    return code(5, YiluPHP::I()->lang('mobile_or_email'));
 }
 
 if(!is_safe_password($params['password'])){
     unset($params);
-    return_code(6, $app->lang('password_too_simple'));
+    return code(6, YiluPHP::I()->lang('password_too_simple'));
 }
 
 if(!empty($params['mobile'])) {
     $code_cache_key = REDIS_KEY_MOBILE_VERIFY_CODE . md5($params['mobile'] . '_' . session_id());
     //检查验证码是否正确
-    if (!$cache_code = $app->redis()->get($code_cache_key)) {
+    if (!$cache_code = redis_y::I()->get($code_cache_key)) {
         unset($code_cache_key, $params, $complete_phone, $cache_code);
-        return_code(7,  $app->lang('verify_code_error_or_invalid'));
+        return code(7,  YiluPHP::I()->lang('verify_code_error_or_invalid'));
     }
     $account = $params['mobile'];
 }
 else if(!empty($params['email'])) {
     $code_cache_key = REDIS_KEY_EMAIL_VERIFY_CODE.md5($params['email'].'_'.session_id());
     //检查验证码是否正确
-    if(!$cache_code = $app->redis()->get($code_cache_key)){
+    if(!$cache_code = redis_y::I()->get($code_cache_key)){
         unset($code_cache_key, $params, $cache_code);
-        return_code(8, $app->lang('verify_code_error_or_invalid'));
+        return code(8, YiluPHP::I()->lang('verify_code_error_or_invalid'));
     }
     $account = $params['email'];
 }
 if (strtolower($cache_code) != strtolower($params['verify_code'])) {
     unset($code_cache_key, $params, $account, $cache_code);
-    return_code(9, $app->lang('verify_code_error'));
+    return code(9, YiluPHP::I()->lang('verify_code_error'));
 }
 
 //检查此手机/邮箱有没有注册过
-if(!$uid = $app->model_user_identity->find_uid_by_identity('INNER', $account)){
+if(!$uid = model_user_identity::I()->find_uid_by_identity('INNER', $account)){
     unset($code_cache_key, $params, $account, $cache_code, $uid);
-    return_code(10, $app->lang('login_account_does_not_exist'));
+    return code(10, YiluPHP::I()->lang('login_account_does_not_exist'));
 }
-if(!$user_info = $app->model_user->find_table(['uid'=>$uid], 'status', $uid)){
+if(!$user_info = model_user::I()->find_table(['uid'=>$uid], 'status', $uid)){
     unset($code_cache_key, $params, $account, $cache_code, $uid, $user_info);
-    return_code(11, $app->lang('login_account_does_not_exist'));
+    return code(11, YiluPHP::I()->lang('login_account_does_not_exist'));
 }
 if(empty($user_info['status'])) {
     unset($code_cache_key, $params, $account, $cache_code, $uid, $user_info);
-    return_code(12, $app->lang('account_locked_for_reset_password'));
+    return code(12, YiluPHP::I()->lang('account_locked_for_reset_password'));
 }
 
 $where = ['uid'=>$uid];
-$app->logic_user->update_user_info($where, ['password' => $params['password']]);
+logic_user::I()->update_user_info($where, ['password' => $params['password']]);
 
 //删除验证码
-$app->redis()->del($code_cache_key);
+redis_y::I()->del($code_cache_key);
 
 unset($code_cache_key, $params, $account, $cache_code, $uid, $user_info, $where);
 //返回结果
-return_json(0, $app->lang('set_password_successfully'));
+return json(0, YiluPHP::I()->lang('set_password_successfully'));

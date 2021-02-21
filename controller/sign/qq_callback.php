@@ -23,19 +23,19 @@
 //  string(32) "CD4C576D9E3BE2755E731D1A86BA0581"
 //}
 
-$app->oauth_qq->check_callback();
-$token = $app->oauth_qq->get_access_token();
+oauth_qq::I()->check_callback();
+$token = oauth_qq::I()->get_access_token();
 
 //如果是登录用户绑定第三方账号，走此流程
-if ($app->input->get_int('for_bind', null)){
-    $app->logic_user->bind_outer_account('QQ', $token['openid']);
+if (input::I()->get_int('for_bind', null)){
+    logic_user::I()->bind_outer_account('QQ', $token['openid']);
 }
 
 //如果用户已经注册,则直接跳转
-if($uid = $app->model_user_identity->find_uid_by_identity('QQ', $token['openid'])) {
+if($uid = model_user_identity::I()->find_uid_by_identity('QQ', $token['openid'])) {
     //登录用户
-    $user_info = $app->logic_user->login_by_uid($uid);
-    $redirect_uri = $app->logic_user->auto_jump(true, $user_info['tlt']);
+    $user_info = logic_user::I()->login_by_uid($uid);
+    $redirect_uri = logic_user::I()->auto_jump(true, $user_info['tlt']);
 
     echo '<script>
         window.opener.location.href = "'.$redirect_uri.'";
@@ -44,8 +44,8 @@ if($uid = $app->model_user_identity->find_uid_by_identity('QQ', $token['openid']
     exit;
 }
 
-$app->oauth_qq->set_access_token($token['access_token']);
-$app->oauth_qq->set_openid($token['openid']);
+oauth_qq::I()->set_access_token($token['access_token']);
+oauth_qq::I()->set_openid($token['openid']);
 
 //array (size=19)
 //  'ret' => int 0
@@ -68,13 +68,13 @@ $app->oauth_qq->set_openid($token['openid']);
 //  'level' => string '0' (length=1)
 //  'is_yellow_year_vip' => string '0' (length=1)
 
-//if(!$user_info = $app->qq_connect->get_user_info()){
-//    return_code(2, '获取您的用户信息失败');
+//if(!$user_info = qq_connect::I()->get_user_info()){
+//    return code(2, '获取您的用户信息失败');
 //}
-$user_info = $app->oauth_qq->get_user_info(); //调用接口
+$user_info = oauth_qq::I()->get_user_info(); //调用接口
 
 if(empty($user_info['nickname'])){
-    return_code(2, '获取您的用户信息失败');
+    return code(2, '获取您的用户信息失败');
 }
 
 $avatar = empty($user_info['figureurl_qq']) ? (empty($user_info['figureurl_2'])?'':$user_info['figureurl_2']) : $user_info['figureurl_qq'];
@@ -83,10 +83,10 @@ if (empty($avatar)){
 }
 else{
     $path = 'avatar/'.date('Y').'/'.date('md').'/'.date('H').'/';
-    $avatar = $app->file->download_image($avatar, $path);
+    $avatar = file::I()->download_image($avatar, $path);
     //上传到阿里云
     if (!empty($GLOBALS['config']['oss']['aliyun'])) {
-        $avatar = $app->tool_oss->upload_file($project_root . 'static/' . substr($avatar, 1));
+        $avatar = tool_oss::I()->upload_file(APP_PATH . 'static/' . substr($avatar, 1));
     }
 }
 
@@ -109,7 +109,7 @@ $data = [
 ];
 
 //存入临时表
-$data ['id'] = $app->model_try_to_sign_in->insert_table($data);
+$data ['id'] = model_try_to_sign_in::I()->insert_table($data);
 //存入SESSION
 $_SESSION['temp_user_info'] = json_encode($data);
 unset($data, $token, $avatar, $user_info, $app);

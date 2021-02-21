@@ -1,7 +1,7 @@
 <!--{use_layout layout/main}-->
 <?php
 $head_info = [
-    'title' => $app->lang('edit_role'),
+    'title' => YiluPHP::I()->lang('edit_role'),
 ];
 ?>
 
@@ -10,26 +10,26 @@ $head_info = [
     <input type="hidden" name="role_id" value="<?php echo $role_info['id']; ?>">
     <div class="row mb-2">
         <div class="col-sm-3 title">
-            <?php echo $app->lang('translation'); ?>
+            <?php echo YiluPHP::I()->lang('translation'); ?>
         </div>
         <div class="col-sm-9">
-            <?php echo $app->lang($role_info['role_name']); ?>
+            <?php echo YiluPHP::I()->lang($role_info['role_name']); ?>
         </div>
     </div>
 
     <div class="row mb-2">
         <div class="col-sm-3 title">
-            <label for="role_name"><?php echo $app->lang('role_name'); ?></label>
+            <label for="role_name"><?php echo YiluPHP::I()->lang('role_name'); ?></label>
         </div>
         <div class="col-sm-9">
             <input type="text" class="form-control" id="role_name" name="role_name" value="<?php echo $role_info['role_name']; ?>"
-                   placeholder="<?php echo $app->lang('can_be_a_language_key_name'); ?>" required="" maxlength="40">
+                   placeholder="<?php echo YiluPHP::I()->lang('can_be_a_language_key_name'); ?>" required="" maxlength="40">
         </div>
     </div>
 
     <div class="row mb-2">
         <div class="col-sm-3 title">
-            <label for="description"><?php echo $app->lang('description'); ?></label>
+            <label for="description"><?php echo YiluPHP::I()->lang('description'); ?></label>
         </div>
         <div class="col-sm-9">
             <textarea class="form-control" id="description" name="description" maxlength="200"><?php echo $role_info['description']; ?></textarea>
@@ -37,7 +37,7 @@ $head_info = [
     </div>
 
     <hr class="mb-4">
-    <button class="btn btn-primary btn-lg btn-block" type="submit"><?php echo $app->lang('save'); ?></button>
+    <button class="btn btn-primary btn-lg btn-block" type="submit"><?php echo YiluPHP::I()->lang('save'); ?></button>
 </form>
 <div class="mb-5"></div>
 <script>

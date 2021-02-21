@@ -9,19 +9,19 @@
  * @return 跳转到微信进行授权登录
  */
 
-$code = $app->input->get_trim('code');
-if(!$app->redis()->exists(REDIS_KEY_WEIXIN_QR_LOGIN_CODE.$code)){
-    return_code(CODE_UNDEFINED_ERROR_TYPE,'二维码已失效，请刷新二维码');
+$code = input::I()->get_trim('code');
+if(!redis_y::I()->exists(REDIS_KEY_WEIXIN_QR_LOGIN_CODE.$code)){
+    return code(CODE_UNDEFINED_ERROR_TYPE,'二维码已失效，请刷新二维码');
 }
-$data = $app->redis()->get(REDIS_KEY_WEIXIN_QR_LOGIN_CODE.$code);
+$data = redis_y::I()->get(REDIS_KEY_WEIXIN_QR_LOGIN_CODE.$code);
 $data = json_decode($data, true);
 $data['status'] = 'scanned';
-$app->redis()->set(REDIS_KEY_WEIXIN_QR_LOGIN_CODE.$code, json_encode($data));
+redis_y::I()->set(REDIS_KEY_WEIXIN_QR_LOGIN_CODE.$code, json_encode($data));
 //延长二维码的有效期
-$app->redis()->expire(REDIS_KEY_WEIXIN_QR_LOGIN_CODE.$code, TIME_MIN);
+redis_y::I()->expire(REDIS_KEY_WEIXIN_QR_LOGIN_CODE.$code, TIME_MIN);
 
 //session中记录传过来的code
 $_SESSION['weixin_qr_login_code'] = $code;
 $state = 'weixin_qr_'.md5(uniqid(rand(), TRUE).microtime().uniqid());
 write_applog('DEBUG', json_encode($_COOKIE));
-$app->oauth_wechat->login('snsapi_userinfo', $state);
+oauth_wechat::I()->login('snsapi_userinfo', $state);

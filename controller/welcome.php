@@ -2,4 +2,4 @@
 /*
  * 欢迎页
  */
-return_result('welcome');
+return result('welcome');

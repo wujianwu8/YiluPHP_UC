@@ -12,11 +12,11 @@
  *  3 角色不存在
  */
 
-if (!$app->logic_permission->check_permission('user_center:view_user_role')) {
-    return_code(100, $app->lang('not_authorized'));
+if (!logic_permission::I()->check_permission('user_center:view_user_role')) {
+    throw new validate_exception(YiluPHP::I()->lang('not_authorized'),100);
 }
 
-$params = $app->input->validate(
+$params = input::I()->validate(
     [
         'role_id' => 'required|trim|integer|min:1|return',
     ],
@@ -27,9 +27,9 @@ $params = $app->input->validate(
         'role_id.*' => 2,
     ]);
 
-if (!$check=$app->model_role->find_table(['id' => $params['role_id']], 'id')){
+if (!$check=model_role::I()->find_table(['id' => $params['role_id']], 'id')){
     unset($params, $check);
-    return_code(3,'角色不存在');
+    return code(3,'角色不存在');
 }
 unset($check);
 //检查操作权限
@@ -38,16 +38,16 @@ $where = [
     'role_id' => $params['role_id'],
 ];
 $uids = [];
-if($data_list = $app->model_user_role->select_all($where, '', 'uid')) {
+if($data_list = model_user_role::I()->select_all($where, '', 'uid')) {
     $uids = array_column($data_list, 'uid');
 }
 if ($uids){
-    $user_list = $app->logic_user->select_user_info_by_multi_uids($uids, 'uid,nickname,avatar');
+    $user_list = logic_user::I()->select_user_info_by_multi_uids($uids, 'uid,nickname,avatar');
 }
 else{
     $user_list = [];
 }
 
-return_result('application/user_nickname_list', [
+return result('application/user_nickname_list', [
     'user_list' => $user_list,
 ]);

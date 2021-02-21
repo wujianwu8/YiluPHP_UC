@@ -1,13 +1,13 @@
 <?php
 /*
  * 文件处理类
- * YiluPHP vision 1.0
+ * YiluPHP vision 2.0
  * User: Jim.Wu
- * Date: 19/10/20
+ * * Date: 2021/01/23
  * Time: 19:22
  */
 
-class file
+class file extends base_class
 {
 	public function __construct()
 	{
@@ -45,7 +45,7 @@ class file
         if (strlen($path)>0 && substr($path,-1)!=='/'){
             $path .= '/';
         }
-        $local_path = $GLOBALS['project_root'] . 'static/'.$path;
+        $local_path = APP_PATH . 'static/'.$path;
         !is_dir($local_path) && mkdir($local_path, 0777, true);
         $filename = md5(uniqid().time().uniqid()).'.'.$extension;
         $resource = fopen($local_path . $filename, 'a');

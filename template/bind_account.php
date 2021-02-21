@@ -7,7 +7,7 @@
     <!-- The above 3 meta tags *must* come first in the head; any other head content must come *after* these tags -->
     <meta name="description" content="">
     <meta name="author" content="">
-    <title><?php echo $app->lang('bind_account'); ?></title>
+    <title><?php echo YiluPHP::I()->lang('bind_account'); ?></title>
     <!--#include virtual="/include/css_bootstrap.shtml"-->
     <!--#include virtual="/include/css_dialog.shtml"-->
     <!--#include virtual="/include/css_base.shtml"-->
@@ -31,8 +31,8 @@
 
 <body>
 <div class="language_handle">
-    <a href="javascript:changeLanguage('<?php echo $app->current_lang()=='cn' ?'selected':'cn'; ?>');" class="<?php echo $app->current_lang()=='cn' ?'selected':''; ?>" >简体中文</a>
-    <a href="javascript:changeLanguage('<?php echo $app->current_lang()=='en' ?'selected':'en'; ?>');" class="<?php echo $app->current_lang()=='en' ?'selected':''; ?>" >English</a>
+    <a href="javascript:changeLanguage('<?php echo YiluPHP::I()->current_lang()=='cn' ?'selected':'cn'; ?>');" class="<?php echo YiluPHP::I()->current_lang()=='cn' ?'selected':''; ?>" >简体中文</a>
+    <a href="javascript:changeLanguage('<?php echo YiluPHP::I()->current_lang()=='en' ?'selected':'en'; ?>');" class="<?php echo YiluPHP::I()->current_lang()=='en' ?'selected':''; ?>" >English</a>
 </div>
 
 <div class="form-signin">
@@ -46,12 +46,12 @@
 <!--   class="bind-new"  -->
     <div id="bind_widget" class="bind-new">
         <div class="form-bind-title">
-            <span class="existing-account"><?php echo $app->lang('bind_existing_account'); ?></span>
-            <span class="new-account"><?php echo $app->lang('bind_new_account'); ?></span>
+            <span class="existing-account"><?php echo YiluPHP::I()->lang('bind_existing_account'); ?></span>
+            <span class="new-account"><?php echo YiluPHP::I()->lang('bind_new_account'); ?></span>
         </div>
         <form class="new-account-form" name="new-account-form" onsubmit="return submitRegisterForm(this)">
             <input type="hidden" name="is_bind" value="1">
-            <div><?php echo $app->lang('your_mobile_located_in'); ?></div>
+            <div><?php echo YiluPHP::I()->lang('your_mobile_located_in'); ?></div>
             <div class="mb-3">
                 <select class="custom-select d-block w-100" name="area_code" id="area_code_2">
                     <?php foreach ($area_list as $item): ?>
@@ -63,38 +63,38 @@
             </div>
 
             <div class="mb-3">
-                <input type="number" name="mobile" id="mobile" class="form-control" placeholder="<?php echo $app->lang('mobile_number'); ?>" value="" required autofocus>
+                <input type="number" name="mobile" id="mobile" class="form-control" placeholder="<?php echo YiluPHP::I()->lang('mobile_number'); ?>" value="" required autofocus>
             </div>
 
             <div class="mb-3">
-                <input type="password" name="password" class="form-control" placeholder="<?php echo $app->lang('please_set_your_password'); ?>" value="" required>
+                <input type="password" name="password" class="form-control" placeholder="<?php echo YiluPHP::I()->lang('please_set_your_password'); ?>" value="" required>
             </div>
 
             <div class="mb-3">
-                <input type="password" name="confirm_password" class="form-control" placeholder="<?php echo $app->lang('confirm_new_password'); ?>" value="" required>
+                <input type="password" name="confirm_password" class="form-control" placeholder="<?php echo YiluPHP::I()->lang('confirm_new_password'); ?>" value="" required>
             </div>
 
             <div class="mb-3">
                 <div class="input-group">
-                    <input type="number" class="form-control" name="verify_code" value="" placeholder="<?php echo $app->lang('verify_code'); ?>" maxlength="6" minlength="4" oninput="if(value.length>6) value=value.slice(0,6)" required>
+                    <input type="number" class="form-control" name="verify_code" value="" placeholder="<?php echo YiluPHP::I()->lang('verify_code'); ?>" maxlength="6" minlength="4" oninput="if(value.length>6) value=value.slice(0,6)" required>
                     <div class="input-group-append">
-                        <button type="button" id="btn_send_sms_code" class="btn btn-secondary" use_for="bind_account" style="width: 130px;"><?php echo $app->lang('send_verify_code'); ?></button>
+                        <button type="button" id="btn_send_sms_code" class="btn btn-secondary" use_for="bind_account" style="width: 130px;"><?php echo YiluPHP::I()->lang('send_verify_code'); ?></button>
                     </div>
                 </div>
             </div>
-            <button class="btn btn-lg btn-primary btn-block" type="submit" id="registerButton"><?php echo $app->lang('sign_up_and_bind'); ?></button>
+            <button class="btn btn-lg btn-primary btn-block" type="submit" id="registerButton"><?php echo YiluPHP::I()->lang('sign_up_and_bind'); ?></button>
         </form>
         <form class="existing-account-form" name="existing-account-form" onsubmit="return submitLoginForm(this)">
             <input type="hidden" name="is_bind" value="1">
             <div class="mb-3">
-                <input type="text" id="identity" name="identity" class="form-control" placeholder="<?php echo $app->lang('login_name_placeholder'); ?>" value="" required autofocus onchange="checkIdentityType()" />
+                <input type="text" id="identity" name="identity" class="form-control" placeholder="<?php echo YiluPHP::I()->lang('login_name_placeholder'); ?>" value="" required autofocus onchange="checkIdentityType()" />
             </div>
             <div class="mb-3">
-                <input type="password" name="password" class="form-control" placeholder="<?php echo $app->lang('login_password'); ?>" value="" required oninput="checkIdentityType()">
+                <input type="password" name="password" class="form-control" placeholder="<?php echo YiluPHP::I()->lang('login_password'); ?>" value="" required oninput="checkIdentityType()">
             </div>
 <!--    show-area-select    -->
             <div class="mb-3" id="existing-area-select">
-                <div><?php echo $app->lang('your_mobile_located_in'); ?></div>
+                <div><?php echo YiluPHP::I()->lang('your_mobile_located_in'); ?></div>
                 <select class="custom-select d-block w-100" name="area_code" id="area_code_1">
                     <?php foreach ($area_list as $item): ?>
                         <option value="<?php echo $item['code_number']; ?>" <?php if(!empty($item['recommend'])): ?>style="color: blue"<?php endif; ?> >
@@ -104,10 +104,10 @@
                 </select>
             </div>
             <div class="mb-3">
-                <button class="btn btn-lg btn-primary btn-block" type="submit" id="loginBind"><?php echo $app->lang('sign_in_and_bind'); ?></button>
+                <button class="btn btn-lg btn-primary btn-block" type="submit" id="loginBind"><?php echo YiluPHP::I()->lang('sign_in_and_bind'); ?></button>
             </div>
             <div class="checkbox" style="overflow: hidden;zoom:1;margin-top: 20px;margin-bottom: 30px;">
-                <a href="/find_password" style="float: left;"><?php echo $app->lang('forgot_password'); ?></a>
+                <a href="/find_password" style="float: left;"><?php echo YiluPHP::I()->lang('forgot_password'); ?></a>
             </div>
         </form>
     </div>
@@ -257,6 +257,5 @@
 </script>
 <!--#include virtual="/include/js_no_logged_in.shtml"-->
 <script type="text/javascript">var cnzz_protocol = (("https:" == document.location.protocol) ? "https://" : "http://");document.write(unescape("%3Cspan id='cnzz_stat_icon_1278278388'%3E%3C/span%3E%3Cscript src='" + cnzz_protocol + "s4.cnzz.com/z_stat.php%3Fid%3D1278278388' type='text/javascript'%3E%3C/script%3E"));</script>
-<script type="text/javascript" src="https://tajs.qq.com/stats?sId=66496946" charset="UTF-8"></script>
 </body>
 </html>

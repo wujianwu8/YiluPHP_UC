@@ -8,18 +8,18 @@
  * @return HTML
  */
 
-$identity = $app->model_user_identity->select_all(['uid'=>$self_info['uid']], '', 'type,identity', $self_info['uid']);
+$identity = model_user_identity::I()->select_all(['uid'=>$self_info['uid']], '', 'type,identity', $self_info['uid']);
 $email = '';
 foreach ($identity as $item){
     if ($item['type']=='INNER'){
-        if('email' == $app->logic_user->get_identity_type($item['identity'])){
+        if('email' == logic_user::I()->get_identity_type($item['identity'])){
             $email = $item['identity'];
         }
     }
 }
 unset($identity, $item);
 
-return_result('setting/bind_email',
+return result('setting/bind_email',
     [
         'email' => $email,
     ]

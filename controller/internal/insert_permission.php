@@ -25,7 +25,7 @@
  *   8 保存失败
  */
 
-$params = $app->input->validate(
+$params = input::I()->validate(
     [
         'uid' => 'required|integer|return',
         'permission_key' => 'required|trim|string|min:2|max:40|return',
@@ -42,16 +42,16 @@ $params = $app->input->validate(
 
 if (preg_match('/^[a-zA-Z0-9_]{3,25}$/', $params['permission_key'], $matches)==false){
     unset($params,$matches);
-    return_code(6,'权限键名只能使用字母、数字、下划线，长度在3-25个字');
+    return code(6,'权限键名只能使用字母、数字、下划线，长度在3-25个字');
 }
 if (strpos($params['permission_key'], 'grant_')===0){
     unset($params);
-    return_code(7,'权限键名不能以grant_开头');
+    return code(7,'权限键名不能以grant_开头');
 }
 //检查相同的权限键名是否存在
-if ($check=$app->model_permission->find_table(['app_id' => $params['app_id'], 'permission_key' => $params['permission_key']], 'app_id')){
+if ($check=model_permission::I()->find_table(['app_id' => $params['app_id'], 'permission_key' => $params['permission_key']], 'app_id')){
     unset($params, $check);
-    return_code(11,'权限键名已经存在，请更换一个吧');
+    return code(11,'权限键名已经存在，请更换一个吧');
 }
 unset($check);
 
@@ -62,15 +62,15 @@ $data = [
     'permission_name' => $params['permission_name'],
     'description' => isset($params['description'])?$params['description']:'',
 ];
-if(false === $app->logic_application->add_permission($data, $params['uid'])){
+if(false === logic_application::I()->add_permission($data, $params['uid'])){
     unset($params, $data);
-    return_code(8, $app->lang('save_failed'));
+    return code(8, YiluPHP::I()->lang('save_failed'));
 }
 
 //删除用户权限缓存
-$app->redis()->del(REDIS_KEY_USER_PERMISSION.$params['uid']);
-$app->redis()->del(REDIS_KEY_USER_PERMISSION.$params['uid'].'_'.$params['app_id']);
+redis_y::I()->del(REDIS_KEY_USER_PERMISSION.$params['uid']);
+redis_y::I()->del(REDIS_KEY_USER_PERMISSION.$params['uid'].'_'.$params['app_id']);
 
 unset($params, $data);
 //返回结果
-return_json(0,$app->lang('save_successfully'));
+return json(0,YiluPHP::I()->lang('save_successfully'));

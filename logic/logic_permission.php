@@ -1,14 +1,14 @@
 <?php
 /*
  * 权限相关的逻辑处理类
- * YiluPHP vision 1.0
+ * YiluPHP vision 2.0
  * User: Jim.Wu
- * Date: 19/11/04
+ * * Date: 2021/01/23
  * Time: 17:10
  */
 
 
-class logic_permission
+class logic_permission extends base_class
 {
 	public function __construct()
 	{
@@ -27,7 +27,7 @@ class logic_permission
      */
     public function check_permission($format_permission_key)
     {
-        global $self_info, $app;
+        global $self_info;
         if (empty($self_info['uid'])){
             return false;
         }
@@ -35,7 +35,7 @@ class logic_permission
         if (count($tmp)!=2){
             return false;
         }
-        return $app->model_user_permission->if_has_permission($self_info['uid'], $tmp[1], $tmp[0]);
+        return model_user_permission::I()->if_has_permission($self_info['uid'], $tmp[1], $tmp[0]);
     }
 
     /**
@@ -48,10 +48,9 @@ class logic_permission
      */
     public function delete_user_permission_cache_by_role_id($role_id, $app_id='')
     {
-        global $app;
         if (!$app_id) {
             //读取此角色包含的所有系统
-            if (!$app_ids = $app->model_role_permission->select_all_app_id_of_role($role_id)) {
+            if (!$app_ids = model_role_permission::I()->select_all_app_id_of_role($role_id)) {
                 unset($app, $app_ids);
                 return true;
             }
@@ -61,15 +60,15 @@ class logic_permission
         }
 
         //读取拥有此角色的所有人
-        if(!$uids = $app->model_user_role->select_all(['role_id'=>$role_id], '', 'uid')){
+        if(!$uids = model_user_role::I()->select_all(['role_id'=>$role_id], '', 'uid')){
             unset($app, $uids);
             return true;
         }
 
         foreach ($uids as $item){
-            $app->redis()->del(REDIS_KEY_USER_PERMISSION.$item['uid']);
+            redis_y::I()->del(REDIS_KEY_USER_PERMISSION.$item['uid']);
             foreach($app_ids as $app_id){
-                $app->redis()->del(REDIS_KEY_USER_PERMISSION.$item['uid'].'_'.$app_id);
+                redis_y::I()->del(REDIS_KEY_USER_PERMISSION.$item['uid'].'_'.$app_id);
             }
         }
         unset($app, $uids, $item, $app_ids);
@@ -86,21 +85,20 @@ class logic_permission
      */
     public function delete_user_permission_cache_by_permission_id($permission_id, $app_id='')
     {
-        global $app;
         if (!$app_id){
-            if ($app_id = $app->model_permission->find_table(['permission_id'=>$permission_id], 'app_id')){
+            if ($app_id = model_permission::I()->find_table(['permission_id'=>$permission_id], 'app_id')){
                 $app_id = $app_id['app_id'];
             }
         }
         //读取拥有此权限的所有人
-        if(!$uids = $app->model_user_permission->select_all(['permission_id'=>$permission_id], '', 'uid')){
+        if(!$uids = model_user_permission::I()->select_all(['permission_id'=>$permission_id], '', 'uid')){
             unset($app, $uids);
             return true;
         }
         foreach ($uids as $item){
-            $app->redis()->del(REDIS_KEY_USER_PERMISSION.$item['uid']);
+            redis_y::I()->del(REDIS_KEY_USER_PERMISSION.$item['uid']);
             if ($app_id){
-                $app->redis()->del(REDIS_KEY_USER_PERMISSION.$item['uid'].'_'.$app_id);
+                redis_y::I()->del(REDIS_KEY_USER_PERMISSION.$item['uid'].'_'.$app_id);
             }
         }
         unset($app, $uids, $item);

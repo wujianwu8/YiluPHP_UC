@@ -1,14 +1,14 @@
 <?php
 /*
  * 角色类
- * YiluPHP vision 1.0
+ * YiluPHP vision 2.0
  * User: Jim.Wu
- * Date: 19/10/11
+ * * Date: 2021/01/23
  * Time: 21:50
  */
 
 
-class logic_role
+class logic_role extends base_class
 {
 	public function __construct()
 	{
@@ -27,13 +27,12 @@ class logic_role
      */
     public function delete_role($role_id)
     {
-        global $app;
-        if (false === $app->model_user_role->destroy([
+        if (false === model_user_role::I()->destroy([
                 'role_id' => $role_id
             ])){
             return false;
         }
-        if (false === $app->model_role->delete([
+        if (false === model_role::I()->delete([
                 'id' => $role_id
             ])){
             return false;

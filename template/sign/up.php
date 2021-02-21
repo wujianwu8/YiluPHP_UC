@@ -8,7 +8,7 @@
     <meta name="description" content="">
     <meta name="author" content="">
     <link rel="icon" href="/favicon.ico">
-    <title><?php echo $app->lang('sign_up_account'); ?></title>
+    <title><?php echo YiluPHP::I()->lang('sign_up_account'); ?></title>
       <!--#include virtual="/include/css_bootstrap.shtml"-->
       <!--#include virtual="/include/css_dialog.shtml"-->
       <!--#include virtual="/include/css_base.shtml"-->
@@ -33,13 +33,13 @@
 
   <body>
       <div class="language_handle">
-          <a href="javascript:changeLanguage('<?php echo $app->current_lang()=='cn' ?'selected':'cn'; ?>');" class="<?php echo $app->current_lang()=='cn' ?'selected':''; ?>" >简体中文</a>
-          <a href="javascript:changeLanguage('<?php echo $app->current_lang()=='en' ?'selected':'en'; ?>');" class="<?php echo $app->current_lang()=='en' ?'selected':''; ?>" >English</a>
+          <a href="javascript:changeLanguage('<?php echo YiluPHP::I()->current_lang()=='cn' ?'selected':'cn'; ?>');" class="<?php echo YiluPHP::I()->current_lang()=='cn' ?'selected':''; ?>" >简体中文</a>
+          <a href="javascript:changeLanguage('<?php echo YiluPHP::I()->current_lang()=='en' ?'selected':'en'; ?>');" class="<?php echo YiluPHP::I()->current_lang()=='en' ?'selected':''; ?>" >English</a>
       </div>
 
       <form class="form-signin" onsubmit="return submitRegisterForm(this)" method="post">
-        <h2 class="form-signin-heading"><?php echo $app->lang('sign_up_account'); ?></h2>
-          <div><?php echo $app->lang('your_mobile_located_in'); ?></div>
+        <h2 class="form-signin-heading"><?php echo YiluPHP::I()->lang('sign_up_account'); ?></h2>
+          <div><?php echo YiluPHP::I()->lang('your_mobile_located_in'); ?></div>
           <div class="mb-3">
           <select class="custom-select d-block w-100" id="area_code_2" name="area_code">
               <?php foreach ($area_list as $item): ?>
@@ -51,37 +51,42 @@
           </div>
 
         <div class="mb-3">
-              <input type="number" id="mobile" name="mobile" class="form-control" placeholder="<?php echo $app->lang('mobile_number'); ?>" required autofocus>
+              <input type="number" id="mobile" name="mobile" class="form-control" placeholder="<?php echo YiluPHP::I()->lang('mobile_number'); ?>" required autofocus>
         </div>
 
         <div class="mb-3">
             <label for="inputPassword" class="sr-only">Password</label>
-            <input type="password" id="password" name="password" class="form-control" placeholder="<?php echo $app->lang('login_password'); ?>" required>
+            <input type="password" id="password" name="password" class="form-control" placeholder="<?php echo YiluPHP::I()->lang('login_password'); ?>" required>
         </div>
 
         <div class="mb-3">
           <label for="inputPassword" class="sr-only">Confim Password</label>
-          <input type="password" id="confirm_password" name="confirm_password" class="form-control" placeholder="<?php echo $app->lang('confirm_login_password'); ?>" required>
+          <input type="password" id="confirm_password" name="confirm_password" class="form-control" placeholder="<?php echo YiluPHP::I()->lang('confirm_login_password'); ?>" required>
         </div>
 
           <div class="mb-3">
               <div class="input-group">
-                  <input type="number" class="form-control" name="verify_code" id="verify_code" placeholder="<?php echo $app->lang('verify_code'); ?>" maxlength="6" minlength="4" oninput="if(value.length>6) value=value.slice(0,6)" required>
+                  <input type="number" class="form-control" name="verify_code" id="verify_code" placeholder="<?php echo YiluPHP::I()->lang('verify_code'); ?>" maxlength="6" minlength="4" oninput="if(value.length>6) value=value.slice(0,6)" required>
                   <div class="input-group-append">
-                      <button type="button" id="btn_send_sms_code" class="btn btn-secondary" use_for="sign_up"><?php echo $app->lang('send_code'); ?></button>
+                      <button type="button" id="btn_send_sms_code" class="btn btn-secondary" use_for="sign_up"><?php echo YiluPHP::I()->lang('send_code'); ?></button>
                   </div>
               </div>
           </div>
-        <button class="btn btn-lg btn-primary btn-block" type="submit" id="registerButton"><?php echo $app->lang('sign_up'); ?></button>
+        <button class="btn btn-lg btn-primary btn-block" type="submit" id="registerButton"><?php echo YiluPHP::I()->lang('sign_up'); ?></button>
         <div class="checkbox" style="overflow: hidden;zoom:1;margin-top: 20px;margin-bottom: 30px;">
-          <a href="/find_password" style="float: left;"><?php echo $app->lang('forgot_password'); ?></a>
-          <a href="/sign/in" style="float: right;"><?php echo $app->lang('sign_in'); ?></a>
+          <a href="/find_password" style="float: left;"><?php echo YiluPHP::I()->lang('forgot_password'); ?></a>
+            <?php if(!is_webview()): ?>
+          <a href="/sign/in" style="float: right;"><?php echo YiluPHP::I()->lang('sign_in'); ?></a>
+            <?php endif; ?>
         </div>
+          <div style="color: #aaaaaa; font-size: 12px; margin-bottom: 100px;">点击登录和注册即代表您已同意
+              《<a href="<?php echo $config['website_index']; ?>/sign/user_agreement" target="_blank" style="color: #aaaaaa">服务协议</a>》与
+              《<a href="<?php echo $config['website_index']; ?>/sign/privacy_policy" target="_blank" style="color: #aaaaaa">隐私声明</a>》。
+          </div>
       </form>
 
       <!--#include virtual="/include/js_no_logged_in.shtml"-->
-      <script src="/js/language/<?php echo $app->current_lang(); ?>.js"></script>
+      <script src="/js/language/<?php echo YiluPHP::I()->current_lang(); ?>.js"></script>
       <script type="text/javascript">var cnzz_protocol = (("https:" == document.location.protocol) ? "https://" : "http://");document.write(unescape("%3Cspan id='cnzz_stat_icon_1278278388'%3E%3C/span%3E%3Cscript src='" + cnzz_protocol + "s4.cnzz.com/z_stat.php%3Fid%3D1278278388' type='text/javascript'%3E%3C/script%3E"));</script>
-      <script type="text/javascript" src="https://tajs.qq.com/stats?sId=66496946" charset="UTF-8"></script>
   </body>
 </html>

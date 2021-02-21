@@ -8,9 +8,9 @@
  * @return HTML
  */
 
-if (!$app->logic_permission->check_permission('user_center:add_lang_project')) {
-    return_code(100, $app->lang('not_authorized'));
+if (!logic_permission::I()->check_permission('user_center:add_lang_project')) {
+    throw new validate_exception(YiluPHP::I()->lang('not_authorized'),100);
 }
 
 
-return_result('language/add_project');
+return result('language/add_project');

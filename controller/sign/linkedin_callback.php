@@ -12,21 +12,21 @@
  */
 
 
-$app->oauth_linkedin->check_callback();
-$token = $app->oauth_linkedin->get_access_token();
+oauth_linkedin::I()->check_callback();
+$token = oauth_linkedin::I()->get_access_token();
 if(!$token || isset($token['error'])){
-    return_code(CODE_UNDEFINED_ERROR_TYPE,'Linkedin授权登录失败。'.(isset($token['error'])?'. '.$token['error'].'：'.$token['error']:''));
+    return code(CODE_UNDEFINED_ERROR_TYPE,'Linkedin授权登录失败。'.(isset($token['error'])?'. '.$token['error'].'：'.$token['error']:''));
 }
 
-$app->oauth_linkedin->set_access_token($token['access_token']);
-$user_info = $app->oauth_linkedin->check_access_token();
+oauth_linkedin::I()->set_access_token($token['access_token']);
+$user_info = oauth_linkedin::I()->check_access_token();
 if (empty($user_info) || !isset($user_info['id']) || !isset($user_info['first-name'])) {
-    return_code(CODE_UNDEFINED_ERROR_TYPE,'Linkedin授权登录失败。'.(is_array($user_info)?json_encode($user_info):''));
+    return code(CODE_UNDEFINED_ERROR_TYPE,'Linkedin授权登录失败。'.(is_array($user_info)?json_encode($user_info):''));
 }
 
 
 //如果用户已经创建，则直接跳转
-//return_code(CODE_UNDEFINED_ERROR_TYPE,'登录成功');
+//return code(CODE_UNDEFINED_ERROR_TYPE,'登录成功');
 
 /*
 array(5) {

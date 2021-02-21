@@ -33,10 +33,10 @@
 
 <body>
 <?php
-    $layout_menus_list = $app->logic_menus->get_all($self_info['uid']);
+    $layout_menus_list = logic_menus::I()->get_all($self_info['uid']);
 ?>
 <nav class="navbar navbar-expand-sm navbar-dark sticky-top bg-dark flex-md-nowrap p-0">
-    <a class="navbar-brand col-md-2" href="<?php echo $config['website_index']?:'/'; ?>"><img src="<?php echo $app->lang('website_logo_img'); ?>" height="35"></a>
+    <a class="navbar-brand col-md-2" href="<?php echo $config['website_index']?:'/'; ?>"><img src="<?php echo YiluPHP::I()->lang('website_logo_img'); ?>" height="35"></a>
     <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#topMenus" aria-controls="topMenus" aria-expanded="false" aria-label="Toggle navigation">
         <span class="navbar-toggler-icon"></span>
     </button>
@@ -56,7 +56,7 @@
                         <?php endif; ?>
                     ">
                         <a class="nav-link <?php echo $menu['link_class']; ?>" href="<?php echo $menu['href']; ?>">
-                            <?php echo $app->lang($menu['lang_key']); ?>
+                            <?php echo YiluPHP::I()->lang($menu['lang_key']); ?>
                             <?php if(preg_match('/'.$menu['active_preg'].'/', $_SERVER['REQUEST_URI'], $match)>0): ?>
                                 <span class="sr-only">(current)</span>
                             <?php endif; ?>
@@ -71,7 +71,7 @@
                         </a>
                         <?php else: ?>
                             <a class="nav-link dropdown-toggle" href="<?php echo $child['href']; ?>" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                                <?php echo $app->lang($child['lang_key']); ?>
+                                <?php echo YiluPHP::I()->lang($child['lang_key']); ?>
                             </a>
                         <?php endif; ?>
                         <div class="dropdown-menu" aria-labelledby="dropdown03">
@@ -81,7 +81,7 @@
                                     active
                                     <?php endif; ?>
                                 " href="<?php echo $child['href']; ?>">
-                                    <?php echo $app->lang($child['lang_key']); ?>
+                                    <?php echo YiluPHP::I()->lang($child['lang_key']); ?>
                                 </a>
                             <?php endforeach; ?>
                         </div>
@@ -89,17 +89,17 @@
                 <?php endif; ?>
             <?php endforeach; ?>
             <li class="nav-item dropdown">
-                <?php if($app->current_lang()=='cn'): ?>
+                <?php if(YiluPHP::I()->current_lang()=='cn'): ?>
                     <a class="nav-link dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">中文</a>
                 <?php endif; ?>
-                <?php if($app->current_lang()=='en'): ?>
+                <?php if(YiluPHP::I()->current_lang()=='en'): ?>
                     <a class="nav-link dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">English</a>
                 <?php endif; ?>
                 <div class="dropdown-menu" aria-labelledby="dropdown03">
-                    <?php if($app->current_lang()!='cn'): ?>
+                    <?php if(YiluPHP::I()->current_lang()!='cn'): ?>
                         <a class="dropdown-item" href="javascript:changeLanguage('cn')">中文</a>
                     <?php endif; ?>
-                    <?php if($app->current_lang()!='en'): ?>
+                    <?php if(YiluPHP::I()->current_lang()!='en'): ?>
                         <a class="dropdown-item" href="javascript:changeLanguage('en')">English</a>
                     <?php endif; ?>
                 </div>
@@ -116,7 +116,7 @@
                     <li class="nav-item">
                         <a class="nav-link ajax_main_content <?php echo preg_match('/dashboard.*/', $_SERVER['REQUEST_URI'], $match)>0?'active':''; ?>" href="/dashboard">
                             <i class="fa fa-home fa-lg" aria-hidden="true"></i>
-                            <?php echo $app->lang('home_page'); ?> <span class="sr-only">(current)</span>
+                            <?php echo YiluPHP::I()->lang('home_page'); ?> <span class="sr-only">(current)</span>
                         </a>
                     </li>
                 </ul>
@@ -133,7 +133,7 @@
                         </ul>
                     <?php endif; $isLoopFirst=false; ?>
                     <h6 class="sidebar-heading d-flex justify-content-between align-items-center px-3 mt-3 mb-1 text-muted">
-                        <span><?php echo $app->lang($menu['lang_key']); ?></span>
+                        <span><?php echo YiluPHP::I()->lang($menu['lang_key']); ?></span>
                     </h6>
                     <ul class="nav flex-column">
                         <?php foreach($menu['children'] as $child): ?>
@@ -144,7 +144,7 @@
                                 <?php elseif( trim($child['icon'])!=''): ?>
                                     <i class="fa <?php echo $child['icon']; ?>" aria-hidden="true"></i>
                                 <?php endif; ?>
-                                <?php echo $app->lang($child['lang_key']); ?>
+                                <?php echo YiluPHP::I()->lang($child['lang_key']); ?>
                             </a>
                         </li>
                         <?php endforeach; ?>
@@ -160,7 +160,7 @@
                             <?php elseif( trim($menu['icon'])!=''): ?>
                                 <i class="fa <?php echo $menu['icon']; ?>" aria-hidden="true"></i>
                             <?php endif; ?>
-                            <?php echo $app->lang($menu['lang_key']); ?>
+                            <?php echo YiluPHP::I()->lang($menu['lang_key']); ?>
                         </a>
                     </li>
                 <?php endif; ?>
@@ -180,8 +180,7 @@
 <a class="fa fa-indent" id="left_menu_btn"></a>
 
 <!--#include virtual="/include/js_dashboard.shtml"-->
-<script src="/js/language/<?php echo $app->current_lang(); ?>.js"></script>
+<script src="/js/language/<?php echo YiluPHP::I()->current_lang(); ?>.js"></script>
 <script type="text/javascript">var cnzz_protocol = (("https:" == document.location.protocol) ? "https://" : "http://");document.write(unescape("%3Cspan id='cnzz_stat_icon_1278278388'%3E%3C/span%3E%3Cscript src='" + cnzz_protocol + "s4.cnzz.com/z_stat.php%3Fid%3D1278278388' type='text/javascript'%3E%3C/script%3E"));</script>
-<script type="text/javascript" src="https://tajs.qq.com/stats?sId=66496946" charset="UTF-8"></script>
 </body>
 </html>

@@ -20,11 +20,11 @@
  *  4 删除失败
  */
 
-if (!$app->logic_permission->check_permission('user_center:delete_lang_project')) {
-    return_code(100, $app->lang('not_authorized'));
+if (!logic_permission::I()->check_permission('user_center:delete_lang_project')) {
+    return code(100, YiluPHP::I()->lang('not_authorized'));
 }
 
-$params = $app->input->validate(
+$params = input::I()->validate(
     [
         'id' => 'required|integer|min:1|return',
     ],
@@ -36,20 +36,20 @@ $params = $app->input->validate(
     ]);
 
 
-if (!$project_info = $app->model_language_project->find_table(['id' => $params['id']], 'project_key')){
+if (!$project_info = model_language_project::I()->find_table(['id' => $params['id']], 'project_key')){
     unset($params);
-    return_code(3,'项目不存在');
+    return code(3,'项目不存在');
 }
 
-if(false === $app->model_language_value->destroy(['project_key' => $project_info['project_key']])){
+if(false === model_language_value::I()->destroy(['project_key' => $project_info['project_key']])){
     unset($params,$matches,$where,$project_info);
-    return_code(4, '删除失败');
+    return code(4, '删除失败');
 }
-if(false === $app->model_language_project->delete(['id' => $params['id']])){
+if(false === model_language_project::I()->delete(['id' => $params['id']])){
     unset($params,$matches,$where);
-    return_code(1, '删除失败');
+    return code(1, '删除失败');
 }
 
 unset($params);
 //返回结果
-return_json(CODE_SUCCESS,'删除成功');
+return json(CODE_SUCCESS,'删除成功');

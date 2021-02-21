@@ -22,11 +22,11 @@
  *  5 权限不存在
  */
 
-if (!$app->logic_permission->check_permission('user_center:edit_user_permission')) {
-    return_code(100, $app->lang('not_authorized'));
+if (!logic_permission::I()->check_permission('user_center:edit_user_permission')) {
+    throw new validate_exception(YiluPHP::I()->lang('not_authorized'),100);
 }
 
-$params = $app->input->validate(
+$params = input::I()->validate(
     [
         'uid' => 'required|integer|min:1|return',
         'permission_id' => 'required|integer|min:1|return',
@@ -40,20 +40,20 @@ $params = $app->input->validate(
         'permission_id.*' => 3,
     ]);
 
-if (!$check=$app->model_user->find_table(['uid' => $params['uid']], 'uid', $params['uid'])){
+if (!$check=model_user::I()->find_table(['uid' => $params['uid']], 'uid', $params['uid'])){
     unset($params, $check);
-    return_code(4,'用户不存在');
+    return code(4,'用户不存在');
 }
-if (!$check=$app->model_permission->find_table(['permission_id' => $params['permission_id']], 'app_id')){
+if (!$check=model_permission::I()->find_table(['permission_id' => $params['permission_id']], 'app_id')){
     unset($params, $check);
-    return_code(5,'权限不存在');
+    return code(5,'权限不存在');
 }
 
-$app->logic_permission->delete_user_permission_cache_by_permission_id($params['permission_id'], $check['app_id']);
-if (false === $app->model_user_permission->delete(['uid'=>$params['uid'], 'permission_id'=>$params['permission_id']])){
+logic_permission::I()->delete_user_permission_cache_by_permission_id($params['permission_id'], $check['app_id']);
+if (false === model_user_permission::I()->delete(['uid'=>$params['uid'], 'permission_id'=>$params['permission_id']])){
     unset($params, $check);
-    return_code(1,'保存失败');
+    return code(1,'保存失败');
 }
 unset($params, $check);
 //返回结果
-return_json(CODE_SUCCESS,'保存成功');
+return json(CODE_SUCCESS,'保存成功');

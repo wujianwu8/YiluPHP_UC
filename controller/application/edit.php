@@ -8,11 +8,11 @@
  * @return HTML
  */
 
-if (!$app->logic_permission->check_permission('user_center:edit_application')) {
-    return_code(100, $app->lang('not_authorized'));
+if (!logic_permission::I()->check_permission('user_center:edit_application')) {
+    return code(100, YiluPHP::I()->lang('not_authorized'));
 }
 
-$params = $app->input->validate(
+$params = input::I()->validate(
     [
         'app_id' => 'required|string|return',
     ],
@@ -23,9 +23,9 @@ $params = $app->input->validate(
         'app_id.*' => 1,
     ]);
 
-if (!$app_info=$app->model_application->find_table(['app_id'=>$params['app_id']])){
-    return_code(2, '应用不存在');
+if (!$app_info=model_application::I()->find_table(['app_id'=>$params['app_id']])){
+    return code(2, '应用不存在');
 }
-return_result('application/edit', [
+return result('application/edit', [
     'app_info' => $app_info
 ]);

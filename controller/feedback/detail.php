@@ -12,11 +12,11 @@
  *  2 反馈信息不存在
  */
 
-if (!$app->logic_permission->check_permission('user_center:view_feedback')) {
-    return_code(100, $app->lang('not_authorized'));
+if (!logic_permission::I()->check_permission('user_center:view_feedback')) {
+    throw new validate_exception(YiluPHP::I()->lang('not_authorized'),100);
 }
 
-$params = $app->input->validate(
+$params = input::I()->validate(
     [
         'id' => 'required|integer|min:1|return',
     ],
@@ -27,11 +27,11 @@ $params = $app->input->validate(
         'id.*' => 1,
     ]);
 
-if(!$info = $app->model_user_feedback->find_table(['id' => $params['id']])){
-    return_code(2, '反馈信息不存在');
+if(!$info = model_user_feedback::I()->find_table(['id' => $params['id']])){
+    throw new validate_exception('反馈信息不存在',2);
 }
 $uids = [$info['uid']];
-$user_info = $app->logic_user->select_user_info_by_multi_uids($uids, 'uid,nickname,avatar');
+$user_info = logic_user::I()->select_user_info_by_multi_uids($uids, 'uid,nickname,avatar');
 
 if (isset($user_info[$info['uid']])) {
     $info['nickname'] = $user_info[$info['uid']]['nickname'];
@@ -42,6 +42,6 @@ else{
     $info['avatar'] = $config['default_avatar'];
 }
 unset($user_info, $params);
-return_result('feedback/detail', [
+return result('feedback/detail', [
     'feedback_info' => $info,
 ]);

@@ -1,9 +1,9 @@
 <?php
 /*
  * 用户反馈模型类
- * YiluPHP vision 1.0
+ * YiluPHP vision 2.0
  * User: Jim.Wu
- * Date: 19/10/03
+ * * Date: 2021/01/23
  * Time: 23:16
  */
 
@@ -45,7 +45,7 @@ class model_user_feedback extends model
         }
 
         //读取总数量
-        $stmt = $GLOBALS['app']->mysql()->prepare('SELECT COUNT(1) AS c '.$sql);
+        $stmt = mysql::I()->prepare('SELECT COUNT(1) AS c '.$sql);
         $stmt->execute($params);
         $count = $stmt->fetch(PDO::FETCH_ASSOC);
 
@@ -53,7 +53,7 @@ class model_user_feedback extends model
 
         $start = ($page-1)*$page_size;
         $start<0 && $start = 0;
-        $stmt = $GLOBALS['app']->mysql()->prepare('SELECT * '.$sql);
+        $stmt = mysql::I()->prepare('SELECT * '.$sql);
         //第三个参数data_type，使用 PDO::PARAM_* 常量明确地指定参数的类型，如：
         //PDO::PARAM_INT、PDO::PARAM_STR、PDO::PARAM_BOOL、PDO::PARAM_NULL
         $stmt->bindValue(':start', $start, PDO::PARAM_INT);

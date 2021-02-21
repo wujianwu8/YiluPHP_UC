@@ -24,7 +24,7 @@
  *  7 新密码与现用密码一样，无需修改
  */
 
-$params = $app->input->validate(
+$params = input::I()->validate(
     [
         'password' => 'required|trim|string|min:6|max:20|rsa_encrypt|return',
         'current_password' => 'required|trim|string|min:6|max:20|rsa_encrypt|return',
@@ -41,23 +41,23 @@ $params = $app->input->validate(
 
 if (!is_safe_password($params['password'])){
     unset($params);
-    return_code(4, '新密码太简单,密码长度需为6-20位,且同时包含大小写字母,数字和@#$!_-中的一个符号');
+    return code(4, '新密码太简单,密码长度需为6-20位,且同时包含大小写字母,数字和@#$!_-中的一个符号');
 }
 if (!is_safe_password($params['current_password'])){
     unset($params);
-    return_code(5, '现用密码错误');
+    return code(5, '现用密码错误');
 }
 
 //检查现用密码是否正确
-$user_info = $app->model_user->find_table(['uid'=>$self_info['uid']], '*', $self_info['uid']);
+$user_info = model_user::I()->find_table(['uid'=>$self_info['uid']], '*', $self_info['uid']);
 if (!$user_info || md5($params['current_password'].$user_info['salt'])!=$user_info['password']){
     unset($params, $user_info);
-    return_code(6,'现用密码错误');
+    return code(6,'现用密码错误');
 }
 
 if (md5($params['password'].$user_info['salt'])==$user_info['password']){
     unset($params, $user_info);
-    return_code(7, '新密码与现用密码一样，无需修改');
+    return code(7, '新密码与现用密码一样，无需修改');
 }
 
 $where = [
@@ -66,12 +66,12 @@ $where = [
 $data = [
     'password'=>$params['password'],
 ];
-if(!$app->logic_user->update_user_info($where, $data)){
+if(!logic_user::I()->update_user_info($where, $data)){
     unset($params, $user_info);
-    return_json(1,'修改失败');
+    return json(1,'修改失败');
 }
-$app->logic_user->destroy_login_session();
+logic_user::I()->destroy_login_session();
 
 unset($params, $user_info);
 //返回结果
-return_json(CODE_SUCCESS,'修改成功');
+return json(CODE_SUCCESS,'修改成功');

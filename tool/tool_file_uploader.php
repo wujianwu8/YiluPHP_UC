@@ -1,13 +1,13 @@
 <?php
 /*
  * O文件上传类
- * YiluPHP vision 1.0
+ * YiluPHP vision 2.0
  * User: Jim.Wu
- * Date: 19/11/22
+ * * Date: 2021/01/23
  * Time: 10:31
  */
 
-class tool_file_uploader
+class tool_file_uploader extends base_class
 {
     //设定属性：保存允许上传的MIME类型
     private static $types = array('image/jpg', 'image/jpeg', 'image/pjpeg', 'image/png');

@@ -1,23 +1,23 @@
 <?php
 /*
  * 邮件发送类
- * YiluPHP vision 1.0
+ * YiluPHP vision 2.0
  * User: Jim.Wu
- * Date: 19/10/023
+ * * Date: 2021/01/233
  * Time: 20:56
  * 使用方法，先配置邮件平台的信息
-    $app->tool_mailer->to_alias = 'bbb';
-    $app->tool_mailer->to_email = 'bambooner.wu@qq.com';
-    $app->tool_mailer->subject = 'subject title';
-    $app->tool_mailer->html_body = 'Hello friend.';
-    $app->tool_mailer->auto_send();
+    tool_mailer::I()->to_alias = 'bbb';
+    tool_mailer::I()->to_email = 'bambooner.wu@qq.com';
+    tool_mailer::I()->subject = 'subject title';
+    tool_mailer::I()->html_body = 'Hello friend.';
+    tool_mailer::I()->auto_send();
  */
 
 use PHPMailer\PHPMailer\PHPMailer;
 use PHPMailer\PHPMailer\Exception;
 use Dm\Request\V20151123 as Dm;
 
-class tool_mailer
+class tool_mailer extends base_class
 {
     //SingleSendMail接口文档
     //https://help.aliyun.com/document_detail/29444.html
@@ -256,7 +256,7 @@ class tool_mailer
             write_applog('ERROR', '发送邮件失败,必填项缺失:'.json_encode($this->all_params()));
             return false;
         }
-        include_once $GLOBALS['project_root'].'/vendor/aliyun-php-sdk-core/Config.php';
+        include_once APP_PATH.'/vendor/aliyun-php-sdk-core/Config.php';
         //需要设置对应的region名称，如华东1（杭州）设为cn-hangzhou，新加坡Region设为ap-southeast-1，澳洲Region设为ap-southeast-2。
         $iClientProfile = DefaultProfile::getProfile("cn-hangzhou", $GLOBALS['config']['mailer']['aliyun']['access_key_id'],
             $GLOBALS['config']['mailer']['aliyun']['access_key_secret']);

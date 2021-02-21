@@ -1,9 +1,9 @@
 <?php
 /*
  * 创建分表
- * OneWayPHP vision 1.0
+ * YiluPHP vision 2.0
  * User: Jim.Wu
- * Date: 19/10/24
+ * * Date: 2021/01/23
  * Time: 21:45
  */
 if(!isset($_SERVER['REQUEST_URI'])){
@@ -11,9 +11,13 @@ if(!isset($_SERVER['REQUEST_URI'])){
     unset($the_argv[0]);
     $_SERVER['REQUEST_URI'] = 'php '.$argv[0].' "'.implode('" "', $the_argv).'"';
 }
-$project_root = explode('/cli/', __FILE__);
-$project_root = $project_root[0].'/';
-include_once($project_root.'public/index.php');
+if (!defined('APP_PATH')){
+    $project_root = explode(DIRECTORY_SEPARATOR.'cli'.DIRECTORY_SEPARATOR, __FILE__);
+    //项目的根目录，最后包含一个斜杠
+    define('APP_PATH', $project_root[0].DIRECTORY_SEPARATOR);
+    unset($project_root);
+}
+include_once(APP_PATH.'public'.DIRECTORY_SEPARATOR.'index.php');
 
 $tables_sql = [
 	[
@@ -65,18 +69,18 @@ foreach($tables_sql as $table){
 
 		//删除原表
 		$sql="DROP TABLE IF EXISTS `".$sub_table."`";
-		$stmt = $app->mysql($sub_connection)->prepare($sql);
+		$stmt = mysql::I($sub_connection)->prepare($sql);
 		$stmt->execute();
 
 		$sql = "SELECT table_name FROM information_schema.TABLES WHERE table_name ='".$sub_table."'";
-		$stmt = $app->mysql($sub_connection)->prepare($sql);
+		$stmt = mysql::I($sub_connection)->prepare($sql);
 		$stmt->execute();
 		if(!$stmt->fetch(PDO::FETCH_ASSOC)) {
 //			var_dump($res);
 //			die;
 
 			$sql = str_replace('{{table_name_replacer}}', $sub_table, $table['sql']);
-			$stmt = $app->mysql($sub_connection)->prepare($sql);
+			$stmt = mysql::I($sub_connection)->prepare($sql);
 			if (!$stmt->execute()) {
 				echo "执行失败" . $table['name'] . "\r＼n";
 			}
@@ -84,7 +88,7 @@ foreach($tables_sql as $table){
 	}
 
 	//删除所有
-	$app->redis()->del(REDIS_KEY_ALL_IDENTITY);
+	redis_y::I()->del(REDIS_KEY_ALL_IDENTITY);
 }
 
 exit("\r\n完成\r\n\r\n");

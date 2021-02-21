@@ -1,13 +1,13 @@
 <?php
 /*
  * 阿里云授权登录
- * YiluPHP vision 1.0
+ * YiluPHP vision 2.0
  * User: Jim.Wu
- * Date: 19/10/17
+ * * Date: 2021/01/23
  * Time: 15:30
  */
 
-class oauth_alipay
+class oauth_alipay extends base_class
 {
     /**
      * 获取requestCode的api接口
@@ -104,7 +104,7 @@ class oauth_alipay
 
         $result = $aop->execute($request);
         if (!empty($result->error_response)){
-            return_code($result->error_response->code, $result->error_response->sub_msg);
+            throw new validate_exception($result->error_response->sub_msg, $result->error_response->code);
         }
         $responseNode = str_replace(".", "_", $request->getApiMethodName()) . "_response";
         $access_token = $result->$responseNode;

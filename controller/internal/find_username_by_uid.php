@@ -25,7 +25,7 @@
  *  2 用户不存在
  */
 
-$params = $app->input->validate(
+$params = input::I()->validate(
     [
         'uid' => 'required|integer|min:1|return',
     ],
@@ -36,18 +36,18 @@ $params = $app->input->validate(
         'uid.*' => 1,
     ]);
 
-if (!$identity_list = $app->model_user_identity->select_all(
+if (!$identity_list = model_user_identity::I()->select_all(
     ['type'=>'INNER', 'uid'=>$params['uid']],
     '', 'identity', $params['uid']
 )){
     unset($params, $identity_list);
-    return_code(2, $app->lang('user_not_exist'));
+    return code(2, YiluPHP::I()->lang('user_not_exist'));
 }
 unset($params);
 $username = null;
 foreach ($identity_list as $item){
     $identity = $item['identity'];
-    $type = $app->logic_user->get_identity_type($identity);
+    $type = logic_user::I()->get_identity_type($identity);
     if ($type=='username'){
         $username = $identity;
         break;
@@ -56,6 +56,6 @@ foreach ($identity_list as $item){
 }
 if (!$username){
     unset($params, $username);
-    return_code(3, $app->lang('user_not_exist'));
+    return code(3, YiluPHP::I()->lang('user_not_exist'));
 }
-return_json(0, $app->lang('successful_get'),['username'=>$username]);
+return json(0, YiluPHP::I()->lang('successful_get'),['username'=>$username]);

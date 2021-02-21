@@ -21,7 +21,7 @@ if (in_array($origin, $allow_origin)) {
     header('Access-Control-Allow-Credentials:true'); //是否可以携带cookie
 }
 
-require $project_root.'/vendor/autoload.php';
+require APP_PATH.'/vendor/autoload.php';
 
 date_default_timezone_set('Asia/Shanghai');
 
@@ -347,8 +347,8 @@ $env_config = [
      * 你可以使用file_get_contents动态获取文件内容，为了减少读磁盘文件的操作，
      * 你也可以把文件的内容拷贝出来，原样粘贴在这两个参数的值
      * */
-    'rsa_private_key' => file_get_contents($GLOBALS['project_root'].'document/rsa_private_key.pem'),
-    'rsa_public_key' => file_get_contents($GLOBALS['project_root'].'document/rsa_public_key.pem'),
+    'rsa_private_key' => file_get_contents(APP_PATH.'document/rsa_private_key.pem'),
+    'rsa_public_key' => file_get_contents(APP_PATH.'document/rsa_public_key.pem'),
 
     /*
      * 官网首页，用于头部Logo的链接

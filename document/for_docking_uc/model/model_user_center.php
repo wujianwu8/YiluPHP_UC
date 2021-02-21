@@ -1,17 +1,14 @@
 <?php
 /*
  * 与用户中心系统对接的模型类
- * YiluPHP vision 1.0
+ * YiluPHP vision 2.0
  * User: Jim.Wu
- * Date: 19/11/25
+ * Date: 2021/01/21
  * Time: 22:33
  */
 
-class model_user_center
+class model_user_center extends base_class
 {
-    public function __construct()
-    {
-    }
 
     /**
      * @name 获取当前用户的信息，可用于判断当前用户是否登录
@@ -35,13 +32,13 @@ class model_user_center
 
     public function select_menu_list($uid){
         $result = $this->_curl_post('/internal/select_menu_list', ['uid'=>$uid]);
-        if ($result['code']==0){
+        if ($result && $result['code']==0){
             return $result['data']['menu_list'];
         }
         else{
             write_applog('ERROR', '用uid从用户中心获取用户菜单失败，$uid=' . $uid
                 .'，返回数据：'.json_encode($result, JSON_UNESCAPED_UNICODE));
-            return_code(CODE_NO_AUTHORIZED, '获取用户菜单失败');
+            throw new validate_exception('获取用户菜单失败', CODE_NO_AUTHORIZED);
         }
     }
 
@@ -51,7 +48,7 @@ class model_user_center
 
     public function find_username_by_uid($uid){
         $result = $this->_curl_post('/internal/find_username_by_uid', ['uid'=>$uid]);
-        if ($result['code']==0){
+        if ($result && $result['code']==0){
             return $result['data']['username'];
         }
         else{
@@ -63,7 +60,7 @@ class model_user_center
 
     public function find_user_info_by_uid($uid){
         $result = $this->_curl_post('/internal/find_user_info_by_uid', ['uid'=>$uid]);
-        if ($result['code']==0){
+        if ($result && $result['code']==0){
             return $result['data']['user_info'];
         }
         else{
@@ -81,11 +78,11 @@ class model_user_center
             return null;
         }
         else {
-            $GLOBALS['app']->redis()->del(REDIS_LOGIN_USER_INFO . $_COOKIE['vk']);
-            $GLOBALS['app']->redis()->del(REDIS_LAST_LOGIN_UID . $_COOKIE['vk']);
+            redis_y::I()->del(REDIS_LOGIN_USER_INFO . $_COOKIE['vk']);
+            redis_y::I()->del(REDIS_LAST_LOGIN_UID . $_COOKIE['vk']);
         }
         $result = $this->_curl_post('/internal/sign_out', ['uid'=>$user_info['uid']]);
-        if ($result['code']==0){
+        if ($result && $result['code']==0){
             return true;
         }
         else{
@@ -101,7 +98,7 @@ class model_user_center
             'uid'=>$uid,
             'permission_key'=>$permission_key
         ]);
-        if ($result['code']==0){
+        if ($result && $result['code']==0){
             return empty($result['data']['result'])?false:true;
         }
         else{
@@ -137,18 +134,26 @@ class model_user_center
             return null;
         }
         //读本地缓存
-        if($user_info = $GLOBALS['app']->redis()->hgetall(REDIS_LOGIN_USER_INFO.$_COOKIE['vk'])){
+        if($user_info = redis_y::I()->hgetall(REDIS_LOGIN_USER_INFO.$_COOKIE['vk'])){
             return $user_info;
         }
-        if(!$uid = $GLOBALS['app']->redis()->get(REDIS_LAST_LOGIN_UID.$_COOKIE['vk'])){
-            return null;
+        if(!$uid = redis_y::I()->get(REDIS_LAST_LOGIN_UID.$_COOKIE['vk'])){
+            //使用vk查询用户中心
+            if($user_info = $this->check_login_by_vk($_COOKIE['vk']) ) {
+                if ($user_info['code'] == 0) {
+                    //缓存用户登录的信息
+                    redis_y::I()->hmset(REDIS_LOGIN_USER_INFO . $_COOKIE['vk'], $user_info['data']['user_info']);
+                    redis_y::I()->expire(REDIS_LOGIN_USER_INFO . $_COOKIE['vk'], TIME_30_SEC);
+                    return $user_info['data']['user_info'];
+                }
+            }
         }
-        //使用vk查询用户中心
+        //使用uid查询用户中心
         if($user_info = $this->check_login_by_uid($uid) ){
             if ($user_info['code']==0){
                 //缓存用户登录的信息
-                $GLOBALS['app']->redis()->hmset(REDIS_LOGIN_USER_INFO.$_COOKIE['vk'], $user_info['data']['user_info']);
-                $GLOBALS['app']->redis()->expire(REDIS_LOGIN_USER_INFO.$_COOKIE['vk'], TIME_30_SEC);
+                redis_y::I()->hmset(REDIS_LOGIN_USER_INFO.$_COOKIE['vk'], $user_info['data']['user_info']);
+                redis_y::I()->expire(REDIS_LOGIN_USER_INFO.$_COOKIE['vk'], TIME_30_SEC);
                 return $user_info['data']['user_info'];
             }
             else{

@@ -1,9 +1,9 @@
 <?php
 /*
  * 权限模型类
- * YiluPHP vision 1.0
+ * YiluPHP vision 2.0
  * User: Jim.Wu
- * Date: 19/10/19
+ * * Date: 2021/01/23
  * Time: 21:56
  */
 
@@ -42,7 +42,7 @@ class model_permission extends model
                 SELECT rp.permission_id FROM user_role AS ur, role_permission AS rp WHERE ur.uid=:uid2 AND ur.role_id=rp.role_id
             )';
         $connection = $this->sub_connection();
-        $stmt = $GLOBALS['app']->mysql($connection)->prepare($sql);
+        $stmt = mysql::I($connection)->prepare($sql);
         $stmt->bindValue(':uid1', $uid, PDO::PARAM_INT);
         $stmt->bindValue(':uid2', $uid, PDO::PARAM_INT);
         $stmt->execute();
@@ -60,7 +60,7 @@ class model_permission extends model
                 SELECT permission_id FROM role_permission WHERE role_id=:role_id
             )';
         $connection = $this->sub_connection();
-        $stmt = $GLOBALS['app']->mysql($connection)->prepare($sql);
+        $stmt = mysql::I($connection)->prepare($sql);
         $stmt->bindValue(':role_id', $role_id, PDO::PARAM_INT);
         $stmt->execute();
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
