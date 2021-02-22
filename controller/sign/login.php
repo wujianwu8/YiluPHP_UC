@@ -78,6 +78,10 @@ if(!$user_info = model_user::I()->find_table(['uid'=>$uid], '*', $uid)){
     unset($identity, $params, $type, $uid, $user_info);
     return code(2, YiluPHP::I()->lang('login_account_does_not_exist'));
 }
+if($user_info['status'] == 0){
+    unset($identity, $params, $type, $uid, $user_info);
+    return code(9, YiluPHP::I()->lang('account_is_blocked'));
+}
 
 if(md5($params['password'].$user_info['salt']) !== $user_info['password']){
     unset($identity, $params, $type, $uid, $user_info);

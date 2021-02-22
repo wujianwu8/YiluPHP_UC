@@ -125,7 +125,7 @@ function write_applog(string $level, string $data='')
     }
     $file = $path.date('Y-m-d').'.log';
     file_put_contents($file, $txt."\n\n", FILE_APPEND);
-    chmod($file,0755);
+//    chmod($file,0755);
 }
 
 /**
@@ -1049,7 +1049,7 @@ else{
     catch (validate_exception $exception){
         $data = $exception->getData();
         if (is_array($data) && isset($data['dtype']) && in_array($data['dtype'], ['json','jsonp'])){
-            if($data['dtype']==json){
+            if($data['dtype']=='json'){
                 echo json($exception->getCode(), $exception->getMessage(), $data);
             }
             else{
@@ -1062,7 +1062,14 @@ else{
     }
     catch (Exception $exception){
         $msg = YiluPHP::I()->lang('inner_error');
-        echo code(CODE_SYSTEM_ERR, $msg);
+        write_applog('ERROR', $exception->getMessage().'[code:'.$exception->getCode().']');
+        global $config;
+        if (empty($config['debug_mode'])) {
+            echo code(CODE_SYSTEM_ERR, $msg);
+        }
+        else{
+            echo code($exception->getCode(), $exception->getMessage());
+        }
         unset($msg);
     }
 }

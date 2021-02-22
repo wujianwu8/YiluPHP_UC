@@ -107,6 +107,8 @@ class hook_route_auth extends hook
             '/^\/role\/save_edit/',
             '/^\/role\/save_grant_permission/',
             '/^\/role\/delete/',
+            '/^\/role\/save_delete_role_permission/',
+            '/^\/role\/save_add_role_permission/',
             '/^\/user\/save_add_role/',
             '/^\/user\/save_add_permission/',
             '/^\/user\/save_delete_role/',

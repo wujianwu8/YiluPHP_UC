@@ -9,9 +9,9 @@
 
 $origin = isset($_SERVER['HTTP_ORIGIN'])?$_SERVER['HTTP_ORIGIN']:'';
 //设置跨域允许的域名
-$allow_origin = ['http://www.yiluphp.com','https://www.yiluphp.com'];
+$allow_origin = ['http://www.yldev.com','https://www.yldev.com'];
 if (in_array($origin, $allow_origin)) {
-    //制定允许其他域名访问 header("Access-Control-Allow-Origin://www.yiluphp.com");
+    //制定允许其他域名访问 header("Access-Control-Allow-Origin://www.yldev.com");
     header('Access-Control-Allow-Origin:'.$origin);
     //允许请求方式 header("Access-Control-Allow-Methods: POST,GET,PUT,OPTIONS,DELETE");
     header('Access-Control-Allow-Methods:*');
@@ -103,6 +103,7 @@ $config = [
      */
     'oss' => [
         'aliyun' => [
+            'enable' => false,  //true可用，false不可用
             'accessKeyId' => 'LTAI4FsKnMaaccessKeyId88888',
             'accessKeySecret' => 'aEnXeIxUEaccessKeySecret88888',
             'endpoint' => 'http://oss-cn-shenzhen.aliyuncs.com',
@@ -120,7 +121,7 @@ $env_config = [
      * 分表方式按表中某整数类型的字段的后两位数进行拆分,拆分成100个分表
      * 分表的库连接名称也是在默认的库连接名称(default)后面加下划线加分表的数字后缀,如default_1, default_23
      **/
-    'split_table' => true,
+    'split_table' => false,
 
     'mysql' => [
             'default' => [
@@ -155,7 +156,7 @@ $env_config = [
     /**
      * 系统的根域名，这里涉及到用户的cookie作用域
      **/
-    'root_domain' => 'yiluphp.com',
+    'root_domain' => 'yldev.com',
 
     /**
      * 默认语言设置，如果你的系统使用多语言，在这里可以设置默认的语言
@@ -353,7 +354,7 @@ $env_config = [
     /*
      * 官网首页，用于头部Logo的链接
      * */
-    'website_index' => 'http://www.yiluphp.com',
+    'website_index' => 'http://www.yldev.com',
 
 ];
 

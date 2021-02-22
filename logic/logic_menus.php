@@ -76,7 +76,6 @@ class logic_menus extends base_class
                 }
             }
         }
-        unset($app);
 		return $data;
     }
 

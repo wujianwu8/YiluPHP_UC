@@ -103,6 +103,7 @@ $config = [
      */
     'oss' => [
         'aliyun' => [
+            'enable' => false,  //true可用，false不可用
             'accessKeyId' => 'LTAI4FsKnMaaccessKeyId88888',
             'accessKeySecret' => 'aEnXeIxUEaccessKeySecret88888',
             'endpoint' => 'http://oss-cn-shenzhen.aliyuncs.com',

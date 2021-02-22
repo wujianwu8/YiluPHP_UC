@@ -50,9 +50,10 @@ fwrite($fp, $data);
 fclose($fp);
 
 $avatar = $path.$file_name;
-if (!empty($GLOBALS['config']['oss']['aliyun'])) {
+if (!empty($GLOBALS['config']['oss']['aliyun']['enable'])) {
     $avatar = tool_oss::I()->upload_file(APP_PATH . 'static/' . substr($avatar, 1));
 }
+
 $data = [
     'avatar'=>$avatar,
 ];
