@@ -22,7 +22,7 @@ var validation = Array.prototype.filter.call(forms, function(form) {
             }
             arr.push(item.name+"="+item.value);
         }
-        url = "<?php echo strpos($_SERVER['REQUEST_URI'],'forbidden')===false ? '/user/list' : '/user/forbidden'; ?>";
+        url = document.location.pathname.indexOf("forbidden")==-1?'/user/list' : '/user/forbidden';
         if(arr.length>0){
             url = url+"?"+arr.join("&");
         }

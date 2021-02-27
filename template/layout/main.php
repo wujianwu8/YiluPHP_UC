@@ -7,19 +7,19 @@
     <meta name="author" content="<?php echo empty($head_info['author'])?'':$head_info['author']; ?>">
     <link rel="icon" href="/favicon.ico">
     <title><?php echo empty($head_info['title'])?'':$head_info['title']; ?></title>
-    <!--#include virtual="/include/css_bootstrap.shtml"-->
-    <!--#include virtual="/include/css_dialog.shtml"-->
-    <!--#include virtual="/include/css_base.shtml"-->
-    <!--#include virtual="/include/css_font_awesome.shtml"-->
-    <!--#include virtual="/include/css_dashboard.shtml"-->
+    <?php echo load_static('/include/css_bootstrap.shtml'); ?>
+    <?php echo load_static('/include/css_dialog.shtml'); ?>
+    <?php echo load_static('/include/css_base.shtml'); ?>
+    <?php echo load_static('/include/css_font_awesome.shtml'); ?>
+    <?php echo load_static('/include/css_dashboard.shtml'); ?>
 
-    <!--#include virtual="/include/js_jquery.shtml"-->
-    <!--#include virtual="/include/js_dialog_diy.shtml"-->
-    <!--#include virtual="/include/js_popper.shtml"-->
-    <!--#include virtual="/include/js_bootstrap.shtml"-->
-    <!--#include virtual="/include/js_base.shtml"-->
-    <!--#include virtual="/include/js_config_js.shtml"-->
-    <!--#include virtual="/include/js_jsencrypt.shtml"-->
+    <?php echo load_static('/include/js_jquery.shtml'); ?>
+    <?php echo load_static('/include/js_dialog_diy.shtml'); ?>
+    <?php echo load_static('/include/js_popper.shtml'); ?>
+    <?php echo load_static('/include/js_bootstrap.shtml'); ?>
+    <?php echo load_static('/include/js_base.shtml'); ?>
+    <?php echo load_static('/include/js_config_js.shtml'); ?>
+    <?php echo load_static('/include/js_jsencrypt.shtml'); ?>
     <script>
         var _hmt = _hmt || [];
         (function() {
@@ -179,7 +179,7 @@
 
 <a class="fa fa-indent" id="left_menu_btn"></a>
 
-<!--#include virtual="/include/js_dashboard.shtml"-->
+<?php echo load_static('/include/js_dashboard.shtml'); ?>
 <script src="/js/language/<?php echo YiluPHP::I()->current_lang(); ?>.js"></script>
 <script type="text/javascript">var cnzz_protocol = (("https:" == document.location.protocol) ? "https://" : "http://");document.write(unescape("%3Cspan id='cnzz_stat_icon_1278278388'%3E%3C/span%3E%3Cscript src='" + cnzz_protocol + "s4.cnzz.com/z_stat.php%3Fid%3D1278278388' type='text/javascript'%3E%3C/script%3E"));</script>
 </body>

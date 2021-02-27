@@ -85,7 +85,7 @@ $head_info = [
     }
 </style>
 
-<!--#include virtual="/include/css_cropper.shtml"-->
+<?php echo load_static('/include/css_cropper.shtml'); ?>
 
     <div class="row mb-3">
         <div class="col-sm-12">
@@ -125,7 +125,7 @@ $head_info = [
     <button class="btn btn-primary btn-lg btn-block" id="save_avatar_btn" type="submit"><?php echo YiluPHP::I()->lang('save'); ?></button>
 
 <div class="mb-5"></div>
-<!--#include virtual="/include/js_cropper.shtml"-->
+<?php echo load_static('/include/js_cropper.shtml'); ?>
 <script>
     (function() {
         var $image = $('#crop_avatar > img');

@@ -189,9 +189,9 @@ $head_info = [
 </form>
 <div class="mb-5"></div>
 
-<!--#include virtual="/include/js_config_js.shtml"-->
-<!--#include virtual="/include/js_jsencrypt.shtml"-->
-<!--#include virtual="/include/js_jweixin.shtml"-->
+<?php echo load_static('/include/js_config_js.shtml'); ?>
+<?php echo load_static('/include/js_jsencrypt.shtml'); ?>
+<?php echo load_static('/include/js_jweixin.shtml'); ?>
 <script>
     //是否可以使用微信开放平台授权登录
     var haveWeixinOpen = <?php echo empty($config['oauth_plat']['wechat_open']['usable'])?'false':'true'; ?>;

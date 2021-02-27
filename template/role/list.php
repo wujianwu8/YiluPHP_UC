@@ -85,4 +85,4 @@ $head_info = [
     'last_page_text' => YiluPHP::I()->lang('last_page'),
 ]); ?>
 
-<!--#include virtual="/include/js_role_list.shtml"-->
+<?php echo load_static('/include/js_role_list.shtml'); ?>

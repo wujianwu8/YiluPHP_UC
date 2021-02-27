@@ -8,10 +8,10 @@
   <link rel="icon" href="favicon.ico">
 
   <title><?php echo YiluPHP::I()->lang('please_login'); ?></title>
-    <!--#include virtual="/include/css_bootstrap.shtml"-->
-    <!--#include virtual="/include/css_dialog.shtml"-->
-    <!--#include virtual="/include/css_base.shtml"-->
-    <!--#include virtual="/include/css_sign.shtml"-->
+    <?php echo load_static('/include/css_bootstrap.shtml'); ?>
+    <?php echo load_static('/include/css_dialog.shtml'); ?>
+    <?php echo load_static('/include/css_base.shtml'); ?>
+    <?php echo load_static('/include/css_sign.shtml'); ?>
     <script>
         var _hmt = _hmt || [];
         (function() {
@@ -100,18 +100,18 @@
     </div>
 </form>
 
-<!--#include virtual="/include/js_jquery.shtml"-->
-<!--#include virtual="/include/js_jquery_cookie.shtml"-->
-<!--#include virtual="/include/js_config_js.shtml"-->
-<!--#include virtual="/include/js_jsencrypt.shtml"-->
-<!--#include virtual="/include/js_dialog_diy.shtml"-->
-<!--#include virtual="/include/js_jweixin.shtml"-->
-<!--#include virtual="/include/js_base.shtml"-->
+<?php echo load_static('/include/js_jquery.shtml'); ?>
+<?php echo load_static('/include/js_jquery_cookie.shtml'); ?>
+<?php echo load_static('/include/js_config_js.shtml'); ?>
+<?php echo load_static('/include/js_jsencrypt.shtml'); ?>
+<?php echo load_static('/include/js_dialog_diy.shtml'); ?>
+<?php echo load_static('/include/js_jweixin.shtml'); ?>
+<?php echo load_static('/include/js_base.shtml'); ?>
 <script type="text/javascript">
     //是否可以使用微信开放平台授权登录
     var haveWeixinOpen = <?php echo empty($config['oauth_plat']['wechat_open']['usable'])?'false':'true'; ?>;
 </script>
-<!--#include virtual="/include/js_sign_in.shtml"-->
+<?php echo load_static('/include/js_sign_in.shtml'); ?>
 <script src="/js/language/<?php echo YiluPHP::I()->current_lang(); ?>.js"></script>
 <script type="text/javascript">var cnzz_protocol = (("https:" == document.location.protocol) ? "https://" : "http://");document.write(unescape("%3Cspan id='cnzz_stat_icon_1278278388'%3E%3C/span%3E%3Cscript src='" + cnzz_protocol + "s4.cnzz.com/z_stat.php%3Fid%3D1278278388' type='text/javascript'%3E%3C/script%3E"));</script>
 </body>

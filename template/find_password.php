@@ -7,17 +7,17 @@
     <meta name="description" content="">
     <meta name="author" content="">
     <title><?php echo YiluPHP::I()->lang('forgot_password'); ?></title>
-    <!--#include virtual="/include/css_bootstrap.shtml"-->
-    <!--#include virtual="/include/css_dialog.shtml"-->
-    <!--#include virtual="/include/css_base.shtml"-->
-    <!--#include virtual="/include/css_sign.shtml"-->
+    <?php echo load_static('/include/css_bootstrap.shtml'); ?>
+    <?php echo load_static('/include/css_dialog.shtml'); ?>
+    <?php echo load_static('/include/css_base.shtml'); ?>
+    <?php echo load_static('/include/css_sign.shtml'); ?>
 
-    <!--#include virtual="/include/js_jquery.shtml"-->
-    <!--#include virtual="/include/js_jquery_cookie.shtml"-->
-    <!--#include virtual="/include/js_config_js.shtml"-->
-    <!--#include virtual="/include/js_jsencrypt.shtml"-->
-    <!--#include virtual="/include/js_dialog_diy.shtml"-->
-    <!--#include virtual="/include/js_base.shtml"-->
+    <?php echo load_static('/include/js_jquery.shtml'); ?>
+    <?php echo load_static('/include/js_jquery_cookie.shtml'); ?>
+    <?php echo load_static('/include/js_config_js.shtml'); ?>
+    <?php echo load_static('/include/js_jsencrypt.shtml'); ?>
+    <?php echo load_static('/include/js_dialog_diy.shtml'); ?>
+    <?php echo load_static('/include/js_base.shtml'); ?>
     <style>
         #select_method a{
             width: 100%;
@@ -163,8 +163,8 @@
 </div>
 
 
-<!--#include virtual="/include/js_find_password.shtml"-->
-<!--#include virtual="/include/js_no_logged_in.shtml"-->
+<?php echo load_static('/include/js_find_password.shtml'); ?>
+<?php echo load_static('/include/js_no_logged_in.shtml'); ?>
 <script src="/js/language/<?php echo YiluPHP::I()->current_lang(); ?>.js"></script>
 <script type="text/javascript">var cnzz_protocol = (("https:" == document.location.protocol) ? "https://" : "http://");document.write(unescape("%3Cspan id='cnzz_stat_icon_1278278388'%3E%3C/span%3E%3Cscript src='" + cnzz_protocol + "s4.cnzz.com/z_stat.php%3Fid%3D1278278388' type='text/javascript'%3E%3C/script%3E"));</script>
 </body>

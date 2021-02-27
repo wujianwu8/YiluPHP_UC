@@ -152,4 +152,4 @@ $head_info = [
     'last_page_text' => YiluPHP::I()->lang('last_page'),
 ]); ?>
 
-<!--#include virtual="/include/js_user_list.shtml"-->
+<?php echo load_static('/include/js_user_list.shtml'); ?>

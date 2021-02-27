@@ -5,8 +5,8 @@ $head_info = [
 ];
 ?>
 
-<!--#include virtual="/include/js_config_js.shtml"-->
-<!--#include virtual="/include/js_jsencrypt.shtml"-->
+<?php echo load_static('/include/js_config_js.shtml'); ?>
+<?php echo load_static('/include/js_jsencrypt.shtml'); ?>
 <h4 class="mb-3"><?php echo $head_info['title']; ?></h4>
 <form class="needs-validation title_content" novalidate="" method="post">
     <div class="row mb-3">
