@@ -104,7 +104,7 @@ else{
     $path = 'avatar/'.date('Y').'/'.date('md').'/'.date('H').'/';
     $avatar = file::I()->download_image($user_info['headimgurl'], $path);
     //上传到阿里云
-    if (!empty($GLOBALS['config']['oss']['aliyun'])) {
+    if (!empty($GLOBALS['config']['oss']['aliyun']['enable'])) {
         $avatar = tool_oss::I()->upload_file(APP_PATH . 'static/' . substr($avatar, 1));
     }
 }

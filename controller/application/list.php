@@ -64,7 +64,8 @@ if($is_fixed!==null){
 
 $data_list = model_application::I()->paging_select($where, $page, $page_size, 'ctime DESC');
 $uids = array_column($data_list, 'uid');
-$user_infos = logic_user::I()->select_user_info_by_multi_uids($uids, 'uid, nickname');
+$uids = array_unique($uids);
+$user_infos = logic_user::I()->select_user_info_by_multi_uids($uids, 'uid, nickname', 'uid');
 foreach ($data_list as $key=>$item){
     if (empty($item['uid'])){
         $data_list[$key]['nickname'] = '系统应用';

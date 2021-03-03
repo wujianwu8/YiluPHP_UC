@@ -1,17 +1,16 @@
 <?php
 /*
  * 用户的配置文件
- * YiluPHP vision 1.0
+ * YiluPHP vision 2.0
  * User: Jim.Wu
- * Date: 19/12/30
- * Time: 19:22
+ * * Date: 2021/01/23
+ * Time: 09:22
  */
 
 $origin = isset($_SERVER['HTTP_ORIGIN'])?$_SERVER['HTTP_ORIGIN']:'';
-//设置跨域允许的域名
-$allow_origin = ['http://www.yldev.com','https://www.yldev.com'];
+$allow_origin = ['http://www.yldev.com','http://www.ylphp.com','http://www.yiluphp.com','https://www.yiluphp.com'];
 if (in_array($origin, $allow_origin)) {
-    //制定允许其他域名访问 header("Access-Control-Allow-Origin://www.yldev.com");
+    //制定允许其他域名访问 header("Access-Control-Allow-Origin://www.yiluphp.com");
     header('Access-Control-Allow-Origin:'.$origin);
     //允许请求方式 header("Access-Control-Allow-Methods: POST,GET,PUT,OPTIONS,DELETE");
     header('Access-Control-Allow-Methods:*');
@@ -48,6 +47,7 @@ define('REDIS_KEY_USER_LOGIN_TLT', 'REDIS_KEY_USER_LOGIN_TLT_');   //临时登�
 define('REDIS_KEY_SEARCH_USER_RESULT', 'REDIS_KEY_SEARCH_USER_RESULT_');    //缓存搜索到的全部用户ID
 define('REDIS_KEY_QQ_CALLBACK', 'REDIS_KEY_QQ_CALLBACK_');  //QQ授权登录时，记录是否已经关闭小窗口
 define('REDIS_KEY_USER_PERMISSION', 'REDIS_KEY_USER_PERMISSION_');  //缓存用户拥有的所有权限，存储app_id:permission_key格式的
+define('REDIS_KEY_USER_PERMISSION_IDS', 'REDIS_KEY_USER_PERMISSION_IDS_');  //缓存用户拥有的所有权限的ID
 
 define('TIME_10_YEAR', 315360000); //10年的秒数
 define('TIME_5_YEAR', 157680000); //5年的秒数
@@ -62,11 +62,11 @@ define('TIME_MIN', 60); //1分钟的秒数
 define('TIME_30_SEC', 30); //30秒
 
 define('CODE_ATTACKED_BY_CSRF', 30001); //可能遭受CSRF攻击
-define('CODE_NOT_CONFIG_SMS_PLAT', 30002);  //未配置短信发送所需要信息
-define('CODE_EMAIL_PLAT_CONFIG_ERROR', 30003);  //配置邮件发送平台的信息错误
+define('CODE_NOT_CONFIG_SMS_PLAT', 30002);	//未配置短信发送所需要信息
+define('CODE_EMAIL_PLAT_CONFIG_ERROR', 30003);	//配置邮件发送平台的信息错误
 define('CODE_INVALID', 601); //失效
 define('CODE_FAIL_TO_GENERATE_UID', 602); //生成用户ID失败
-define('CODE_USER_NOT_LOGIN', -1);  //用户未登录的错误码
+define('CODE_USER_NOT_LOGIN', -1);	//用户未登录的错误码
 
 /*
  * 全局配置文件
@@ -94,26 +94,17 @@ $config = [
         '/language/edit_project/{project_id}' => '/language/edit_project/project_id/{project_id}',
         '/language/table/{project_id}' => '/language/table/project_id/{project_id}',
     ],
+
+    /**
+     * 是否支持多语言切换
+     **/
+    'multi_Lang' => true,
+
     //用户默认头像
     'default_avatar' => '/img/default_avatar.gif',
 
-    /*
-     * 文件上传OSS配置
-     * 根据你申请的阿里云OSS信息进行修改
-     */
-    'oss' => [
-        'aliyun' => [
-            'enable' => false,  //true可用，false不可用
-            'accessKeyId' => 'LTAI4FsKnMaaccessKeyId88888',
-            'accessKeySecret' => 'aEnXeIxUEaccessKeySecret88888',
-            'endpoint' => 'http://oss-cn-shenzhen.aliyuncs.com',
-            'bucketName' => 'your_bucketName',
-            'visit_host' => 'https://yiluphp.oss-cn-shenzhen.aliyuncs.com/',
-        ]
-    ],
-];
-
-$env_config = [
+    //是否开放注册
+    'open_sign_up' => true,
 
     /**
      * 是否对数据表进行分表分库,true为分表分库,false为不分表分库,默认为false
@@ -122,41 +113,6 @@ $env_config = [
      * 分表的库连接名称也是在默认的库连接名称(default)后面加下划线加分表的数字后缀,如default_1, default_23
      **/
     'split_table' => false,
-
-    'mysql' => [
-            'default' => [
-                'dsn'       =>  'mysql:host=127.0.0.1;port=3306;dbname=yiluuc',
-                'username'  =>  'root',
-                'password'  =>  'yiluPHP@2017',
-                'charset'   =>  'utf8',
-                'option'    =>  [],
-            ]
-    ],
-    'redis' => [
-            'default' => [
-                'host'      =>  '127.0.0.1',
-                'port'      =>  '6379',
-            ]
-    ],
-
-    /**
-     * 是否为调试模式，此参数为空时调试模式，会显示调试信息
-     **/
-    'debug_mode' => true,
-
-    /**
-     * 队列的运行模式，sync为同步运行，asyn为异步运行
-     * 如果不设置,默认为异步运行
-     * 异步运行时,需要在后台一直运行着相应的队列才能继续,否则队列数据会一直记录在redis中
-     * 执行方式: 例如有队列/cli/queue/like_post.php，则执行命令：php [目录路径]queue queue_name=like_post &
-     * 后面加&它就会一直在后台运行着
-     **/
-    'queue_mode' => 'sync',
-
-    /**
-     * 系统的根域名，这里涉及到用户的cookie作用域
-     **/
-    'root_domain' => 'yldev.com',
 
     /**
      * 默认语言设置，如果你的系统使用多语言，在这里可以设置默认的语言
@@ -181,6 +137,65 @@ $env_config = [
      * 用于after_controller类从构造函数__construct()开始执行
      **/
     'after_controller' => [],
+
+    /*
+     * 是否使用session，true为使用，false为不使用
+     * YiluPHP的session是使用redis存储的，可以实现集群服务器之间共享session
+     * */
+    'use_session' => true,
+];
+
+$env_config = [
+
+    'mysql' => [
+        'default' => [
+            'dsn'       =>  'mysql:host=127.0.0.1;port=3306;dbname=yiluuc',
+            'username'  =>  'root',
+            'password'  =>  'yiluPHP@2017',
+            'charset'   =>  'utf8',
+            'option'    =>  [],
+        ]
+    ],
+    'redis' => [
+        'default' => [
+            'host'      =>  '127.0.0.1',
+            'port'      =>  '6379',
+        ]
+    ],
+
+    /**
+     * 是否为调试模式，此参数为空时调试模式，会显示调试信息
+     **/
+    'debug_mode' => true,
+
+    /**
+     * 队列的运行模式，sync为同步运行，asyn为异步运行
+     * 如果不设置,默认为异步运行
+     * 异步运行时,需要在后台一直运行着相应的队列才能继续,否则队列数据会一直记录在redis中
+     * 执行方式: 例如有队列/cli/queue/like_post.php，则执行命令：php [目录路径]queue queue_name=like_post &
+     * 后面加&它就会一直在后台运行着
+     **/
+    'queue_mode' => 'sync',
+
+    /**
+     * 系统的根域名，这里涉及到用户的cookie作用域
+     **/
+    'root_domain' => 'yldev.com',
+
+    /*
+     * 文件上传OSS配置
+     * 根据你申请的阿里云OSS信息进行修改
+     */
+    'oss' => [
+        'aliyun' => [
+            'enable' => false,  //true可用，false不可用
+            'accessKeyId' => 'LTAI4FsKnMaaccessKeyId88888',
+            'accessKeySecret' => 'aEnXeIxUEaccessKeySecret88888',
+            'endpoint' => 'http://oss-cn-shenzhen.aliyuncs.com',
+            'bucketName' => 'your_bucketName',
+            'visit_host' => 'https://yiluphp.oss-cn-shenzhen.aliyuncs.com/',
+        ]
+    ],
 
     /**
      * 第三方授权登录的相关配置
@@ -265,12 +280,6 @@ $env_config = [
     'log_level' => ['ERROR', 'WARNING', 'DEBUG', 'NOTICE', 'VISIT', 'RESPONSE', 'ERROR', 'TRACE'],
 
     /*
-     * 是否使用session，true为使用，false为不使用
-     * YiluPHP的session是使用redis存储的，可以实现集群服务器之间共享session
-     * */
-    'use_session' => true,
-
-    /*
      * 发短信和语音的平台列表
      * 键名需与sms.php的方法名对应
      * */
@@ -323,16 +332,16 @@ $env_config = [
         'phpmailer' => [
             'weight' => 10, //使用的权重，0-100的整数，数值越大使用的概率就越大，不设置默认为1
             //用于发送邮件的地址
-            'from_email' => '888888@qq.com',
+            'from_email' => '759480087@qq.com',
             //用于发件人名称
             'from_name' => 'YiluPHP邮件通知系统',
             'host' => 'smtp.qq.com',    //指定发邮件的主服务器和备份SMTP服务器
             'mailer_type' => 'smtp',    //邮箱服务器类型:smtp, mail, sendmail, qmail,
-            'username' => '888888@qq.com',    //SMTP用户名
+            'username' => '759480087@qq.com',    //SMTP用户名
             'password' => 'your_smtp_password',   //SMTP密码
             'port' => 465,
             'SMTP_secure' => 'ssl', //启用TLS加密，也接受'ssl'
-            'reply_to_email' => '666666@qq.com', //接收回信的邮箱地址
+            'reply_to_email' => '759480087@qq.com', //接收回信的邮箱地址
             //设置错误信息的语言,默认为zh_cn
             'language' => 'zh_cn',
             //启用详细调试输出,`0` No output，`1` Commands，`2` Data and commands，`3` As 2 plus connection status，`4` Low-level data output.

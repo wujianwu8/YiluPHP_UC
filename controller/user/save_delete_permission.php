@@ -56,4 +56,4 @@ if (false === model_user_permission::I()->delete(['uid'=>$params['uid'], 'permis
 }
 unset($params, $check);
 //返回结果
-return json(CODE_SUCCESS,'保存成功');
+return json(CODE_SUCCESS,YiluPHP::I()->lang('save_successfully'));

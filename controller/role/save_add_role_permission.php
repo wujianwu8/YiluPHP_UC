@@ -55,4 +55,4 @@ if (false === model_role_permission::I()->insert_role_permission($params['role_i
 logic_permission::I()->delete_user_permission_cache_by_role_id($params['role_id'], $check['app_id']);
 unset($params, $check);
 //返回结果
-return json(CODE_SUCCESS,'保存成功');
+return json(CODE_SUCCESS,YiluPHP::I()->lang('save_successfully'));

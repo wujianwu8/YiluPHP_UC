@@ -75,4 +75,32 @@ class model_role_permission extends model
         unset($role_id, $stmt, $sql, $connection);
         return $data;
     }
+
+    /**
+     * @name 获取用户在指定APP、通过角色获得的权限ids
+     * @desc
+     * @param integer $uid 用户ID
+     * @param string $app_id 应用ID
+     * @return array 数据列表
+     */
+    public function select_user_permission_ids_in_role($uid, $app_id){
+
+        $sql = 'SELECT rp.permission_id FROM user_role AS ur, role_permission AS rp ';
+        if (!empty($app_id)){
+            $sql .= ',permission AS p ';
+        }
+        $sql .= ' WHERE ur.uid=:uid AND ur.role_id=rp.role_id ';
+        if (!empty($app_id)){
+            $sql .= ' AND rp.permission_id=p.permission_id AND p.app_id=:app_id ';
+        }
+        $connection = $this->sub_connection();
+        $stmt = mysql::I($connection)->prepare($sql);
+        $stmt->bindValue(':uid', $uid, PDO::PARAM_INT);
+        if (!empty($app_id)){
+            $stmt->bindValue(':app_id', $app_id, PDO::PARAM_STR);
+        }
+        $stmt->execute();
+        $data = $stmt->fetchAll(PDO::FETCH_ASSOC);
+        return array_column($data, 'permission_id');
+    }
 }

@@ -117,4 +117,4 @@ foreach ($permission_keys as $permission_key => $name){
 
 unset($params, $permission_keys, $permission_key, $name, $permission_id);
 //返回结果
-return json(CODE_SUCCESS,'保存成功');
+return json(CODE_SUCCESS,YiluPHP::I()->lang('save_successfully'));

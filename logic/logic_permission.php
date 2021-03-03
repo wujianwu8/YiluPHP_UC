@@ -104,4 +104,72 @@ class logic_permission extends base_class
         unset($app, $uids, $item);
         return true;
     }
+
+    /**
+     * @name 获取指定用户可以分配的权限
+     * @desc
+     * @param integer $uid 用户ID
+     * @param string $app_id 应用ID
+     * @return array
+     * @throws
+     */
+    public function select_user_permission_can_grant_in_app($uid, $app_id)
+    {
+        if ($user_permission_list = model_user_permission::I()->select_permissions_user_already_has($uid, $app_id)){
+            $permission_ids = [];
+            foreach ($user_permission_list as $item){
+                $item = explode(':', $item);
+                if (strpos($item[1],'grant_')===0){
+                    $permission_ids[] = substr($item[1],6);
+                }
+            }
+            if ($permission_ids) {
+                $where = [
+                    'app_id' => $app_id,
+                    'permission_key' => ['symbol' => 'IN', 'value' => $permission_ids]
+                ];
+                $app_permission_list = model_permission::I()->select_all($where, '', 'permission_id,permission_key,permission_name,description');
+            }
+            else{
+                $app_permission_list = [];
+            }
+        }
+        else{
+            $app_permission_list = [];
+        }
+        return $app_permission_list;
+    }
+
+    /**
+     * @name 获取指定用户可以分配的权限
+     * @desc
+     * @param integer $uid 用户ID
+     * @param string $app_id 应用ID
+     * @return array
+     * @throws
+     */
+    public function select_user_permission_ids_in_app($uid, $app_id)
+    {
+        if ($user_permission_list = model_user_permission::I()->select_permissions_user_already_has($uid, $app_id)){
+            $permission_ids = [];
+            foreach ($user_permission_list as $item){
+                $item = explode(':', $item);
+                $permission_ids[] = $item[1];
+            }
+            if ($permission_ids) {
+                $where = [
+                    'app_id' => $app_id,
+                    'permission_key' => ['symbol' => 'IN', 'value' => $permission_ids]
+                ];
+                $app_permission_list = model_permission::I()->select_all($where, '', 'permission_id');
+            }
+            else{
+                $app_permission_list = [];
+            }
+        }
+        else{
+            $app_permission_list = [];
+        }
+        return $app_permission_list;
+    }
 }

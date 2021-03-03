@@ -47,6 +47,7 @@ class hook_route_auth extends hook
         ],
         'get_login' => [
             '/^\/user\/list/',
+            '/^\/user\/add/',
             '/^\/user\/forbidden/',
             '/^\/user\/logout/',
             '/^\/user\/detail/',
@@ -83,6 +84,7 @@ class hook_route_auth extends hook
             '/^\/language\/table/',
         ],
         'post_login' => [
+            '/^\/user\/save_add/',
             '/^\/menus\/save_add/',
             '/^\/menus\/save_edit/',
             '/^\/menus\/delete/',
@@ -105,10 +107,10 @@ class hook_route_auth extends hook
             '/^\/application\/save_edit_permission/',
             '/^\/role\/save_add/',
             '/^\/role\/save_edit/',
-            '/^\/role\/save_grant_permission/',
-            '/^\/role\/delete/',
             '/^\/role\/save_delete_role_permission/',
             '/^\/role\/save_add_role_permission/',
+            '/^\/role\/save_grant_permission/',
+            '/^\/role\/delete/',
             '/^\/user\/save_add_role/',
             '/^\/user\/save_add_permission/',
             '/^\/user\/save_delete_role/',

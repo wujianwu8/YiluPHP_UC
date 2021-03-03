@@ -53,7 +53,7 @@ if (isset($params['remark'])){
     $data['remark'] = $params['remark'];
 }
 if(count($data)==0){
-    return json(CODE_SUCCESS,'保存成功');
+    return json(CODE_SUCCESS,YiluPHP::I()->lang('save_successfully'));
 }
 
 //保存入库
@@ -64,4 +64,4 @@ if(!model_user_complaint::I()->update_table($where, $data)){
 
 unset($params, $where, $data);
 //返回结果
-return json(CODE_SUCCESS,'保存成功');
+return json(CODE_SUCCESS,YiluPHP::I()->lang('save_successfully'));

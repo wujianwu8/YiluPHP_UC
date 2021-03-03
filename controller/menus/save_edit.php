@@ -92,7 +92,7 @@ if ($menu_info['type']=='SYSTEM'){
     //删除所有菜单的缓存
     redis_y::I()->del(REDIS_KEY_ALL_MENUS);
     //返回结果
-    return json(CODE_SUCCESS,'保存成功');
+    return json(CODE_SUCCESS,YiluPHP::I()->lang('save_successfully'));
 }
 
 $data = [];
@@ -184,7 +184,7 @@ if (isset($params['href'])) {
 }
 
 if(count($data)==0){
-    return json(CODE_SUCCESS,'保存成功');
+    return json(CODE_SUCCESS,YiluPHP::I()->lang('save_successfully'));
 }
 
 //保存入库
@@ -198,4 +198,4 @@ redis_y::I()->del(REDIS_KEY_ALL_MENUS);
 
 unset($params, $parent, $menu_info, $where, $data);
 //返回结果
-return json(CODE_SUCCESS,'保存成功');
+return json(CODE_SUCCESS,YiluPHP::I()->lang('save_successfully'));

@@ -25,7 +25,7 @@ $role_name = input::I()->get_trim('role_name',null);
 if($role_name){
     $where['role_name'] = [
         'symbol' => 'LIKE',
-        'value' => '%'.$app_name.'%',
+        'value' => '%'.$role_name.'%',
     ];
 }
 

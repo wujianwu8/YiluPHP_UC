@@ -88,6 +88,7 @@
                     </li>
                 <?php endif; ?>
             <?php endforeach; ?>
+            <?php if(!empty($config['multi_Lang'])): ?>
             <li class="nav-item dropdown">
                 <?php if(YiluPHP::I()->current_lang()=='cn'): ?>
                     <a class="nav-link dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">中文</a>
@@ -104,6 +105,7 @@
                     <?php endif; ?>
                 </div>
             </li>
+            <?php endif; ?>
         </ul>
     </div>
 </nav>
@@ -132,8 +134,13 @@
                     <?php if($isLoopFirst): ?>
                         </ul>
                     <?php endif; $isLoopFirst=false; ?>
-                    <h6 class="sidebar-heading d-flex justify-content-between align-items-center px-3 mt-3 mb-1 text-muted">
-                        <span><?php echo YiluPHP::I()->lang($menu['lang_key']); ?></span>
+                    <h6 class="align-items-center px-3 mt-3 mb-1" style="font-size: 0.875rem;font-weight: bold;">
+                        <?php if(trim($menu['icon'])!='' && substr(trim($menu['icon']),0,1)=='<'): ?>
+                            <?php echo $menu['icon']; ?>
+                        <?php elseif( trim($menu['icon'])!=''): ?>
+                            <i class="fa <?php echo $menu['icon']; ?>" aria-hidden="true"></i>
+                        <?php endif; ?>
+                        <?php echo YiluPHP::I()->lang($menu['lang_key']); ?>
                     </h6>
                     <ul class="nav flex-column">
                         <?php foreach($menu['children'] as $child): ?>

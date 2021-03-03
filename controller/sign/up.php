@@ -9,8 +9,11 @@
  * @return HTML
  */
 
+if(empty($config['open_sign_up'])){
+    return code(1, YiluPHP::I()->lang('no_open_sign_up'));
+}
 
-if ($self_info){
+if (!empty($self_info['uid'])){
     $tlt = logic_user::I()->create_login_tlt($self_info['uid'], client_ip());
     logic_user::I()->auto_jump(false, $tlt);
 }

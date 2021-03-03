@@ -84,4 +84,4 @@ if(false === $role_id=model_language_project::I()->insert_table($params)){
 
 unset($params,$matches);
 //返回结果
-return json(CODE_SUCCESS,'保存成功');
+return json(CODE_SUCCESS,YiluPHP::I()->lang('save_successfully'));

@@ -95,4 +95,4 @@ if(false === logic_application::I()->update_permission($params['app_id'], $param
 
 unset($params, $data);
 //返回结果
-return json(0,'保存成功');
+return json(0,YiluPHP::I()->lang('save_successfully'));

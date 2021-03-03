@@ -89,6 +89,9 @@ class logic_user extends base_class
 				}
 				unset($item);
 			}
+			if (empty($info['avatar']) && !empty($GLOBALS['config']['default_avatar'])){
+                $info['avatar'] = $GLOBALS['config']['default_avatar'];
+            }
 			model_user::I()->insert_table($info);
 
 			$info = [
@@ -190,7 +193,7 @@ class logic_user extends base_class
 		$arr = [
 			'uid' => $user_info['uid'],
 			'nickname' => $user_info['nickname'],
-			'avatar' => isset($user_info['avatar']) ? $user_info['avatar'] : '',
+			'avatar' => empty($user_info['avatar']) ? $GLOBALS['config']['default_avatar'] : $user_info['avatar'],
 			'gender' => isset($user_info['gender']) ? $user_info['gender'] : 'male',
             'last_active' => time(),
             'remember' => $remember_me?1:0,
@@ -214,7 +217,11 @@ class logic_user extends base_class
 		}
 		//登录时长跟随浏览器状态和session的时长
 		else {
-            $expire = TIME_30_MIN;
+		    global $config;
+            $expire = intval($config['login_expire']);
+            if ($expire<=0) {
+                $expire = TIME_30_MIN;
+            }
 		}
         redis_y::I()->expire($cache_key_vk, $expire);
         redis_y::I()->expire($cache_key_uid, $expire);
@@ -544,6 +551,13 @@ class logic_user extends base_class
                 $user_list[] = $users[$user_id];
             }
         }
+        global $config;
+        foreach ($user_list as $key => $user){
+            if (empty($user['avatar'])){
+                $user['avatar'] = $config['default_avatar'];
+            }
+            $user_list[$key] = $user;
+        }
 		return $user_list;
 	}
 
@@ -552,9 +566,10 @@ class logic_user extends base_class
      * @desc
      * @param array $uids 多个用户ID的数组
      * @param string $fields 需要返回的字段
+     * @param string $key_field 使用此字段作为数据键名
      * @return array 数据列表
      */
-    function select_user_info_by_multi_uids(array $uids, string $fields='*')
+    function select_user_info_by_multi_uids(array $uids, string $fields='*', $key_field='')
     {
         if (empty($GLOBALS['config']['split_table'])) {
             $users = model_user::I()->select_user_info_by_multi_uids($uids, $fields);
@@ -578,6 +593,13 @@ class logic_user extends base_class
                     $users[$user['uid']] = $user;
                 }
             }
+        }
+        if ($key_field && $users && isset($users[0][$key_field])) {
+            $arr = [];
+            foreach ($users as $key => $user) {
+                $arr[$user[$key_field]] = $user;
+            }
+            $users = $arr;
         }
         return $users;
     }

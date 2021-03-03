@@ -91,7 +91,6 @@ $user_info = [
 
     'type' => 'INNER',
     'identity' => $complete_phone,
-    'ctime' => $time,
 ];
 
 $nickname = '';

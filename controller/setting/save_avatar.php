@@ -53,24 +53,23 @@ $avatar = $path.$file_name;
 if (!empty($GLOBALS['config']['oss']['aliyun']['enable'])) {
     $avatar = tool_oss::I()->upload_file(APP_PATH . 'static/' . substr($avatar, 1));
 }
-
 $data = [
     'avatar'=>$avatar,
 ];
 $where = ['uid'=>$self_info['uid']];
 //保存入库
 if(!logic_user::I()->update_user_info($where, $data)){
-    if (!empty($GLOBALS['config']['oss']['aliyun'])) {
+    if (!empty($GLOBALS['config']['oss']['aliyun']['enable'])) {
         $avatar = tool_oss::I()->delete_file($avatar);
     }
     unset($params, $where, $data, $path, $file_name, $img, $fp, $avatar);
     return code(1, '保存失败');
 }
-if (!empty($GLOBALS['config']['oss']['aliyun'])) {
+if (!empty($GLOBALS['config']['oss']['aliyun']['enable'])) {
     $avatar = tool_oss::I()->delete_file($self_info['avatar']);
 }
 //更新当前登录者的session信息
 logic_user::I()->update_current_user_info($data);
 unset($params, $where, $data, $path, $file_name, $img, $fp, $avatar);
 //返回结果
-return json(CODE_SUCCESS,'保存成功');
+return json(CODE_SUCCESS,YiluPHP::I()->lang('save_successfully'));

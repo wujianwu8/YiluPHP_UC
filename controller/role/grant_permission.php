@@ -60,9 +60,16 @@ if (!$current_app_id) {
     $current_app_id = $current_app_id['app_id'];
 }
 
+//角色拥有的权限
 $having_permission_ids = model_role_permission::I()->select_role_permission($params['role_id'], $current_app_id);
 $having_permission_ids = array_column($having_permission_ids, 'permission_id');
-$app_permission_list = model_permission::I()->select_all(['app_id'=>$current_app_id],'','permission_id,permission_key,permission_name,description');
+//当前登录用户拥有的可分配权限
+if ($self_info['uid']==1) { //超级管理员读取所有的权限
+    $app_permission_list = model_permission::I()->select_all(['app_id' => $current_app_id], '', 'permission_id,permission_key,permission_name,description');
+}
+else{
+    $app_permission_list = logic_permission::I()->select_user_permission_can_grant_in_app($self_info['uid'], $current_app_id);
+}
 foreach ($app_permission_list as $key=>$item){
     $app_permission_list[$key]['permission_name_lang'] = logic_application::I()->translate_permission_name($item['permission_name'],$item['permission_key']);
 }

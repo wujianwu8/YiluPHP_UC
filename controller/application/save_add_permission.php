@@ -97,4 +97,4 @@ if(false === logic_application::I()->add_permission($data, $self_info['uid'])){
 
 unset($params, $data);
 //返回结果
-return json(0,'保存成功');
+return json(0,YiluPHP::I()->lang('save_successfully'));

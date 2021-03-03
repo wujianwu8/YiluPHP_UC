@@ -134,4 +134,4 @@ redis_y::I()->del(REDIS_KEY_ALL_MENUS);
 
 unset($params, $parent);
 //返回结果
-return json(CODE_SUCCESS,'保存成功');
+return json(CODE_SUCCESS,YiluPHP::I()->lang('save_successfully'));

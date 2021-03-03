@@ -24,10 +24,12 @@
 </head>
 
 <body>
+<?php if(!empty($config['multi_Lang'])): ?>
 <div class="language_handle">
     <a href="javascript:changeLanguage('<?php echo YiluPHP::I()->current_lang()=='cn' ?'selected':'cn'; ?>');" class="<?php echo YiluPHP::I()->current_lang()=='cn' ?'selected':''; ?>" >简体中文</a>
     <a href="javascript:changeLanguage('<?php echo YiluPHP::I()->current_lang()=='en' ?'selected':'en'; ?>');" class="<?php echo YiluPHP::I()->current_lang()=='en' ?'selected':''; ?>" >English</a>
 </div>
+<?php endif; ?>
 
 <form class="form-signin" onsubmit="return submitLoginForm(this)" method="post">
   <div class="text-center mb-3">
@@ -65,9 +67,11 @@
     <div class="col-6">
       <a href="/find_password"><?php echo YiluPHP::I()->lang('forgot_password'); ?></a>
     </div>
+      <?php if(!empty($config['open_sign_up'])): ?>
     <div class="col-6 text-right">
       <a href="/sign/up"><?php echo YiluPHP::I()->lang('sign_up'); ?></a>
     </div>
+      <?php endif; ?>
   </div>
     <?php if(true): ?>
   <div class="gray_title">

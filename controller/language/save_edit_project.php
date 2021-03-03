@@ -81,4 +81,4 @@ if(false === model_language_project::I()->update_table($where, $params)){
 
 unset($params,$matches,$where);
 //返回结果
-return json(0,'保存成功');
+return json(0,YiluPHP::I()->lang('save_successfully'));

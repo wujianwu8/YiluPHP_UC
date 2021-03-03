@@ -56,4 +56,4 @@ if (false === model_user_role::I()->insert_table(['uid'=>$params['uid'], 'role_i
 
 unset($params);
 //返回结果
-return json(CODE_SUCCESS,'保存成功');
+return json(CODE_SUCCESS,YiluPHP::I()->lang('save_successfully'));

@@ -31,7 +31,7 @@ if (!$file_name = tool_file_uploader::upload_one($_FILES['image'], APP_PATH.'sta
 }
 
 $file_url = $path.$file_name;
-if (!empty($GLOBALS['config']['oss']['aliyun'])) {
+if (!empty($GLOBALS['config']['oss']['aliyun']['enable'])) {
     $file_url = tool_oss::I()->upload_file(APP_PATH . 'static/' . substr($file_url, 1));
 }
 $with = input::I()->request_int('with', 1000);

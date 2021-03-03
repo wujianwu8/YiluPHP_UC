@@ -38,7 +38,6 @@
  *   1 tlt参数错误
  */
 
-var_dump('00000000000000000', $params['tlt']);
 $params = input::I()->validate(
     [
         'tlt' => 'required|trim|string|min:32|max:32|return',
@@ -49,9 +48,8 @@ $params = input::I()->validate(
     [
         'tlt.*' => 1,
     ]);
-var_dump('00000000000000000', $params['tlt']);
+
 if($user_info = redis_y::I()->get(REDIS_KEY_USER_LOGIN_TLT.$params['tlt'])){
-    var_dump($user_info);
     $user_info = json_decode($user_info, true);
     if($user_info && !empty($user_info['uid'])){
         $client_ip = $user_info['client_ip'];

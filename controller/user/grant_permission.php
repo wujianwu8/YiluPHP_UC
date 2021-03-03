@@ -60,12 +60,23 @@ if (!$current_app_id) {
     $current_app_id = $current_app_id['app_id'];
 }
 
-$having_permission_ids = model_user_permission::I()->select_all(['uid'=>$params['uid']], '', 'permission_id');
+$having_permission_ids = logic_permission::I()->select_user_permission_ids_in_app($params['uid'], $current_app_id);
 $having_permission_ids = array_column($having_permission_ids, 'permission_id');
-$app_permission_list = model_permission::I()->select_all(['app_id'=>$current_app_id],'','permission_id,permission_key,permission_name,description');
+
+//当前登录用户拥有的可分配权限
+if ($self_info['uid']==1) { //超级管理员读取所有的权限
+    $app_permission_list = model_permission::I()->select_all(['app_id' => $current_app_id], '', 'permission_id,permission_key,permission_name,description');
+}
+else{
+    $app_permission_list = logic_permission::I()->select_user_permission_can_grant_in_app($self_info['uid'], $current_app_id);
+}
+
 foreach ($app_permission_list as $key=>$item){
     $app_permission_list[$key]['permission_name_lang'] = logic_application::I()->translate_permission_name($item['permission_name'],$item['permission_key']);
 }
+
+//用户通过角色获得的权限ID，这部分ID在此页面不能删除
+$permission_ids_from_role = model_role_permission::I()->select_user_permission_ids_in_role($params['uid'], $current_app_id);
 unset($params, $in_arr, $not_in_arr, $self_app_ids);
 
 return result('role/grant_permission', [
@@ -75,4 +86,5 @@ return result('role/grant_permission', [
     'user_info' => $user_info,
     'current_app_id' => $current_app_id,
     'having_permission_ids' => $having_permission_ids,
+    'permission_ids_from_role' => $permission_ids_from_role,
 ]);

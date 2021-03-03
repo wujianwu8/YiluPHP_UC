@@ -1,7 +1,7 @@
 <!--{use_layout layout/main}-->
 <?php
 $head_info = [
-    'title' => strpos($_SERVER['REQUEST_URI'],'forbidden')===false ? YiluPHP::I()->lang('user_list') : YiluPHP::I()->lang('menu_blocked_user'),
+    'title' => strpos($_SERVER['REQUEST_URI'],'forbidden')===false ? YiluPHP::I()->lang('menu_user_list') : YiluPHP::I()->lang('menu_blocked_user'),
 ];
 ?>
 
@@ -60,7 +60,7 @@ $head_info = [
     <div class="row mb-3">
         <button class="btn btn-primary btn-sm ml-3 pl-5 pr-5" type="submit"><?php echo YiluPHP::I()->lang('search'); ?></button>
         <button class="btn btn-primary btn-sm ml-4" type="button" id="clear_form"><?php echo YiluPHP::I()->lang('clean_up'); ?></button>
-        <a class="btn btn-sm btn-outline-primary ml-4" href="#">
+        <a class="btn btn-sm btn-outline-primary ml-4 ajax_main_content" href="/user/add">
             <i class="fa fa-user-plus" aria-hidden="true"></i>
             <?php echo YiluPHP::I()->lang('add_user'); ?>
         </a>
@@ -116,18 +116,20 @@ $head_info = [
                 <a class="detail" href="/user/detail/<?php echo $user['uid']; ?>">
                     <i class="fa fa-ellipsis-h" aria-hidden="true"></i>
                 </a>
-                <a class="ml-2 ajax_main_content" href="/user/grant_role/<?php echo $user['uid']; ?>">
-                    <i class="fa fa-user-o" aria-hidden="true"></i>
-                </a>
-                <a class="ml-2 ajax_main_content" href="/user/grant_permission/<?php echo $user['uid']; ?>">
-                    <i class="fa fa-cubes" aria-hidden="true"></i>
-                </a>
-                <a class="ml-2 reset_password" href="/user/reset_user_password"><i class="fa fa-key" aria-hidden="true"></i></a>
-            <?php if(empty($user['status'])): ?>
-                <a class="ml-2 unblock_user" href="/user/change_user_status"><i class="fa fa-check-square" aria-hidden="true"></i></a>
-            <?php else: ?>
-                <a class="ml-2 block_user" href="/user/change_user_status"><i class="fa fa-window-close" aria-hidden="true"></i></a>
-            <?php endif; ?>
+                <?php if($user['uid']!=1): ?>
+                    <a class="ml-2 ajax_main_content" href="/user/grant_role/<?php echo $user['uid']; ?>">
+                        <i class="fa fa-user-o" aria-hidden="true"></i>
+                    </a>
+                    <a class="ml-2 ajax_main_content" href="/user/grant_permission/<?php echo $user['uid']; ?>">
+                        <i class="fa fa-cubes" aria-hidden="true"></i>
+                    </a>
+                    <a class="ml-2 reset_password" href="/user/reset_user_password"><i class="fa fa-key" aria-hidden="true"></i></a>
+                    <?php if(empty($user['status'])): ?>
+                        <a class="ml-2 unblock_user" href="/user/change_user_status"><i class="fa fa-check-square" aria-hidden="true"></i></a>
+                    <?php else: ?>
+                        <a class="ml-2 block_user" href="/user/change_user_status"><i class="fa fa-window-close" aria-hidden="true"></i></a>
+                    <?php endif; ?>
+                <?php endif; ?>
             </td>
         </tr>
         <?php endforeach; ?>

@@ -108,7 +108,7 @@ $where = [
     'app_id' => $params['app_id']
 ];
 if (count($data)==0){
-    return json(0,'保存成功');
+    return json(0,YiluPHP::I()->lang('save_successfully'));
 }
 //保存应用入库
 if(false === model_application::I()->update_table($where, $data)){
@@ -118,4 +118,4 @@ if(false === model_application::I()->update_table($where, $data)){
 
 unset($params, $where, $data);
 //返回结果
-return json(0,'保存成功');
+return json(0,YiluPHP::I()->lang('save_successfully'));

@@ -56,4 +56,4 @@ if (false === model_role_permission::I()->delete(['role_id'=>$params['role_id'],
 }
 unset($params, $check);
 //返回结果
-return json(0,'保存成功');
+return json(0,YiluPHP::I()->lang('save_successfully'));

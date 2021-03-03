@@ -56,4 +56,4 @@ if (false === model_user_permission::I()->insert_table(['uid'=>$params['uid'], '
 logic_permission::I()->delete_user_permission_cache_by_permission_id($params['permission_id'], $check['app_id']);
 unset($params, $check);
 //返回结果
-return json(CODE_SUCCESS,'保存成功');
+return json(CODE_SUCCESS,YiluPHP::I()->lang('save_successfully'));

@@ -101,10 +101,10 @@ class tool_oss extends base_class
      */
     public function check_aliyun_config()
     {
-        if (empty($GLOBALS['config']['oss']['aliyun']) || empty($GLOBALS['config']['oss']['aliyun']['accessKeyId'])
+        if (empty($GLOBALS['config']['oss']['aliyun']['enable']) || empty($GLOBALS['config']['oss']['aliyun']['accessKeyId'])
             || empty($GLOBALS['config']['oss']['aliyun']['accessKeySecret']) || empty($GLOBALS['config']['oss']['aliyun']['endpoint'])
             || empty($GLOBALS['config']['oss']['aliyun']['bucketName']) || empty($GLOBALS['config']['oss']['aliyun']['visit_host'])) {
-            throw new validate_exception('未配置阿里云的OSS文件上传的平台，可配置信息不完整', CODE_NOT_CONFIG_SMS_PLAT);
+            throw new validate_exception('未配置阿里云的OSS文件上传的平台，或者配置信息不完整', CODE_NOT_CONFIG_SMS_PLAT);
         }
         return true;
     }

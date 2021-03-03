@@ -51,9 +51,18 @@ if($user_info = logic_user::I()->get_login_user_info_by_vk($params['vk'])){
         $time = time();
         //延长登录状态的有效期
         if (isset($user_info['last_active']) && $time-$user_info['last_active']>300){
+            if (empty($user_info['remember'])) {
+                global $config;
+                $expire = intval($config['login_expire']);
+                if ($expire <= 0) {
+                    $expire = TIME_30_MIN;
+                }
+            }
+            else{
+                $expire = TIME_60_DAY;
+            }
             //5分钟内只更新一次
-            logic_user::I()->keep_login_user_alive($user_info['uid'], $params['vk'],
-                empty($user_info['remember'])?TIME_30_MIN:TIME_60_DAY );
+            logic_user::I()->keep_login_user_alive($user_info['uid'], $params['vk'], $expire);
         }
         $user_info['keep_alive'] = $time;
         unset($time);

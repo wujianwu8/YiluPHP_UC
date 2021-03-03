@@ -43,11 +43,13 @@ else if($page_name=='user_permission'){
         <tr>
             <td>
                 <div class="custom-control custom-checkbox">
-                    <input type="checkbox" class="custom-control-input" name="permission_id"
+                    <input type="checkbox" class="custom-control-input" name="permission_id" $permission_ids_from_role
                            id="permission_id<?php echo $item['permission_id']; ?>"
                            value="<?php echo $item['permission_id']; ?>"
-                            <?php echo in_array($item['permission_id'], $having_permission_ids)?'checked':''; ?>>
-                    <label class="custom-control-label" for="permission_id<?php echo $item['permission_id']; ?>"></label>
+                            <?php echo in_array($item['permission_id'], $having_permission_ids)?'checked':''; ?>
+                           <?php echo $page_name=='user_permission'&&in_array($item['permission_id'], $permission_ids_from_role)?'disabled title="此权限通过角色获得"':''; ?> >
+                    <label class="custom-control-label" for="permission_id<?php echo $item['permission_id']; ?>"
+                        <?php echo $page_name=='user_permission'&&in_array($item['permission_id'], $permission_ids_from_role)?' title="此权限通过角色获得"':''; ?>></label>
                 </div>
             </td>
             <td><?php echo $item['permission_id']; ?></td>

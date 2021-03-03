@@ -9,7 +9,7 @@
  * @return HTML
  */
 
-if ($self_info){
+if (!empty($self_info['uid'])){
     if(logic_user::I()->get_login_user_info_by_uid($self_info['uid'])) {
         $tlt = logic_user::I()->create_login_tlt($self_info['uid'], client_ip());
         logic_user::I()->auto_jump(false, $tlt);
