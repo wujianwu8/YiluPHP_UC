@@ -23,11 +23,20 @@ body {
   background-color: rgba(0,0,0,0.7)!important;
 }
 
+@-moz-document url-prefix() {
+  /*火狐要展示的样式*/
+  @media (min-width: 768px) {
+    .sidebar {
+      padding-top: 3rem;
+    }
+  }
+}
+
 .sidebar-sticky {
   position: -webkit-sticky;
   position: sticky;
   height: 100vh;
-  padding-top: .5rem;
+  padding-top: 1.3rem;
   overflow-x: hidden;
   overflow-y: auto; /* Scrollable contents if viewport is shorter than content. */
   background-color: #f8f9fa;
@@ -41,6 +50,16 @@ nav .dropdown{
 .sidebar .nav-link {
   font-weight: 500;
   color: #333;
+  line-height: 0.9rem;
+  padding: .3rem 2rem;
+}
+.sidebar .nav-son .nav-link {
+  padding: .3rem 1rem .3rem 2.4rem;
+}
+
+.sidebar .nav-link:hover{
+  color: #007bff;
+  background-color: #dddddd;
 }
 
 .sidebar .nav-link .feather {
@@ -130,6 +149,7 @@ nav .dropdown{
 }
 .sidebar .nav-link .fa{
   color: #aaaaaa;
+  margin-left: -1rem;
 }
 .sidebar .nav-link:hover .fa,
 .sidebar .nav-link.active .fa{

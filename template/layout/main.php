@@ -134,7 +134,7 @@
                     <?php if($isLoopFirst): ?>
                         </ul>
                     <?php endif; $isLoopFirst=false; ?>
-                    <h6 class="align-items-center px-3 mt-3 mb-1" style="font-size: 0.875rem;font-weight: bold;">
+                    <h6 class="align-items-center px-3 mt-2 mb-1" style="font-size: 0.875rem;font-weight: bold;">
                         <?php if(trim($menu['icon'])!='' && substr(trim($menu['icon']),0,1)=='<'): ?>
                             <?php echo $menu['icon']; ?>
                         <?php elseif( trim($menu['icon'])!=''): ?>
@@ -142,7 +142,7 @@
                         <?php endif; ?>
                         <?php echo YiluPHP::I()->lang($menu['lang_key']); ?>
                     </h6>
-                    <ul class="nav flex-column">
+                    <ul class="nav nav-son flex-column">
                         <?php foreach($menu['children'] as $child): ?>
                         <li class="nav-item pl-2">
                             <a class="nav-link <?php echo $child['link_class']; ?> <?php echo preg_match('/'.$child['active_preg'].'/', $_SERVER['REQUEST_URI'], $match)>0?'active':''; ?>" href="<?php echo $child['href']; ?>">
