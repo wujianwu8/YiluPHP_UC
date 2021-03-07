@@ -68,6 +68,13 @@ function getCurrentHost()
     var host = arrUrl[1].substring(0,start);
     return arrUrl[0]+"//"+host;
 }
+function getUrlHost(url)
+{
+    var arrUrl = url.split("//");
+    var start = arrUrl[1].indexOf("/");
+    var host = arrUrl[1].substring(0,start);
+    return arrUrl[0]+"//"+host;
+}
 function getUrlDirname(url)
 {
     tmp = url.split("?");
@@ -91,9 +98,9 @@ function loading(overlayShow){
         type : 'notice'
         ,dialogClass:"dialog_transparent"
         ,content: '<div class="loadEffect"><span></span><span></span>' +
-        '<span></span><span></span><span>' +
-        '</span><span></span><span>' +
-        '</span><span></span></div>'
+            '<span></span><span></span><span>' +
+            '</span><span></span><span>' +
+            '</span><span></span></div>'
         , overlayShow: overlayShow
     });
 }
@@ -501,6 +508,12 @@ function changeLanguage(lang)
     document.location.href = url;
 }
 
+/*
+ * 根据语言键名和参数返回当前语言类型下的翻译文本
+ * @param string key 语言键名
+ * @param object param 翻译里的变量参数及值，如果没有可以不传此参数
+ * @return string 返回 当前语言类型下的翻译文本
+ * */
 function getLang(key, param)
 {
     if (typeof language == "object"){
@@ -508,8 +521,27 @@ function getLang(key, param)
             key = language[key];
             if (typeof param == "object"){
                 $.each(param, function (index, value) {
-                    reg = new RegExp("\\{\\$"+index+"\\}", "g");
-                    key= key.replace(reg, value);
+                    // alert(typeof value.values)
+                    if (typeof value == "object" && typeof value.value!="undefined"){
+                        if (value.value<=1){
+                            reg = new RegExp("<--singular(.*?)\\{\\$"+index+"\\}(.*?)-->", "g");
+                            key= key.replace(reg, "$1"+value.value+"$2");
+                            reg = new RegExp("<--plural(.*?)\\{\\$"+index+"\\}(.*?)-->", "g");
+                            key= key.replace(reg, "");
+                        }
+                        else{
+                            reg = new RegExp("<--plural(.*?)\\{\\$"+index+"\\}(.*?)-->", "g");
+                            key= key.replace(reg, "$1"+value.value+"$2");
+                            reg = new RegExp("<--singular(.*?)\\{\\$"+index+"\\}(.*?)-->", "g");
+                            key= key.replace(reg, "");
+                        }
+                        reg = new RegExp("\\{\\$"+index+"\\}", "g");
+                        key= key.replace(reg, value.value);
+                    }
+                    else {
+                        reg = new RegExp("\\{\\$"+index+"\\}", "g");
+                        key= key.replace(reg, value);
+                    }
                 });
             }
         }

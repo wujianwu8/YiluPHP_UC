@@ -257,7 +257,7 @@
     </div>
     <div class="col-lg-5">
         <form action="<?php echo $api_info['uri']; ?>" class="row needs-validation testing_form"
-              method="<?php echo strpos(strtolower($api_info['method']), 'post')==false ? 'post':'get'; ?>">
+              method="<?php echo strpos(strtolower($api_info['method']), 'post')!==false ? 'post':'get'; ?>">
             <div class="col-sm-3 gray_bg_4 title_align_2"></div>
             <div class="col-sm-9"><h5>Testing</h5></div>
             <?php if (empty($api_info)): ?>

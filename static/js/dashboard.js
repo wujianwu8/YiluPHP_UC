@@ -13,14 +13,16 @@ function reloadPage()
 }
 
 $.getMainHtml = function (url, data, callback, targetJquery, overlayShow, widgetDom) {
-    // $("main").load(url, data, callback);
-// alert(url);
     $(".tooltip").remove();
     $.currentPageRequest = {
         url:url
         ,data:data
         ,callback:callback
     };
+    if(getUrlHost(url)!=getCurrentHost()){
+        document.location.href = url;
+        return;
+    }
     var toast = loading(overlayShow===false?false:true);
     $.getJSON(url, data, function (res) {
         toast.close();
@@ -69,39 +71,11 @@ $.getMainHtml = function (url, data, callback, targetJquery, overlayShow, widget
         }
     });
 
-    // $.ajax({
-    //     type: "GET"
-    //     ,url: url
-    //     ,data: data
-    //     ,dataType: "html"
-    //     ,beforeSend: function(msg){ //在发送请求之前调用，并且传入一个XMLHttpRequest作为参数。
-    //         // alert( msg );
-    //     }
-    //     ,dataFilter: function(msg){ //在请求成功之后调用。传入返回的数据以及"dataType"参数的值。并且必须返回新的数据（可能是处理过的）传递给success回调函数。
-    //         // alert( msg );
-    //         return msg;
-    //     }
-    //     ,success: function(msg){  //当请求之后调用。传入返回后的数据，以及包含成功代码的字符串。
-    //         // var srcrit = document.createElement("script");
-    //         // srcrit.src = "/assets/js/vendor/holder.min.js";
-    //         // $("main").html("333<script src=\"/assets/js/vendor/holder.min.js\"><\/script><script>alert(666)<\/script>666").append(srcrit);
-    //         // alert( msg );
-    //         $("main").html(msg);
-    //     }
-    //     ,error: function(msg){  //在请求出错时调用。传入XMLHttpRequest对象，描述错误类型的字符串以及一个异常对象（如果有的话）
-    //         // alert( msg );
-    //     }
-    //     ,complete: function(msg){ //当请求完成之后调用这个函数，无论成功或失败。传入XMLHttpRequest对象，以及一个包含成功或错误代码的字符串。
-    //         // alert( msg );
-    //     }
-    // });
-
 };
 
 
 var currentHref = document.location.href;
 $(document.body).on("click", function (e) {
-    //console.log($(e.target).parents(".ajax_main_content"));
     linkDom = null;
     if ($(e.target).hasClass("ajax_main_content")){
         linkDom = $(e.target);
@@ -158,4 +132,9 @@ $("#left_menu_btn").bind("click", function (e) {
 $(".left_sidebar_menu").bind("click", function (e) {
     $("#left_menu_btn").removeClass("hide_left_menu_btn");
     $(".left_sidebar_menu").removeClass("show_left_menu_in_min");
+});
+
+$("#clear_form").click(function (e) {
+    $("#clear_form").parents("form").find("input").val("");
+    $("#clear_form").parents("form").find("select[name=status]").val("");
 });

@@ -317,6 +317,14 @@ $env_config = [
     'rsa_private_key' => file_get_contents(APP_PATH.'document/rsa_private_key.pem'),
     'rsa_public_key' => file_get_contents(APP_PATH.'document/rsa_public_key.pem'),
 
+    /*
+     * 官网首页，用于头部Logo的链接
+     * */
+    'website_index' => 'https://www.yiluphp.com',
+
+    //查看接口文档的密码
+    'visit_api_docs_password' => '设置你想设置的密码',
+
 ];
 
 //$split_mysql = [];

@@ -365,6 +365,9 @@ $env_config = [
      * */
     'website_index' => 'http://www.yldev.com',
 
+    //查看接口文档的密码
+    'visit_api_docs_password' => '设置你想设置的密码',
+
 ];
 
 /*
