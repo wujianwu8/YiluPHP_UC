@@ -2,7 +2,7 @@
 /*
  * CLI命令入口
  * 运行方式如：/usr/local/php7/bin/php yilu 命令名 "query string形式的参数"
- * OneWayPHP vision 2.0
+ * YiluPHP vision 2.0
  * User: Jim.Wu
  * Date: 2021/01/27
  * Time: 21:46

@@ -35,6 +35,20 @@ class input extends base_class
     ];
 
     /**
+     * 获取单例
+     */
+    public static function I(){
+        $class_name = get_called_class();
+        if (empty($class_name) && empty(self::$instances[$class_name])){
+            return self::$instances[$class_name] = new self();
+        }
+        if (empty(self::$instances[$class_name])){
+            return self::$instances[$class_name] = new $class_name();
+        }
+        return self::$instances[$class_name];
+    }
+
+    /**
      * @name 获取默认错误在数组中的键
      * @desc
      * @param string $rule 当前规则名

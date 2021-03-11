@@ -3,10 +3,10 @@
     <meta http-equiv=Content-Type content="text/html;charset=utf-8">
     <title><?php echo $msg.'('.$err_code.')'; ?></title>
     <?php if($err_code===-1): ?>
-    <script>
-        alert("<?php echo htmlspecialchars($msg); ?>");
-        document.location.href = "/?redirect_uri="+encodeURIComponent(document.location.href);
-    </script>
+        <script>
+            console.log("<?php echo htmlspecialchars($msg); ?>");
+            document.location.href = "<?php echo !empty($config['user_center']['host'])?$config['user_center']['host']:''; ?>/?redirect_uri="+encodeURIComponent(document.location.href);
+        </script>
     <?php endif; ?>
     <script>
         var _hmt = _hmt || [];

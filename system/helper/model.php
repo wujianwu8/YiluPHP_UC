@@ -19,7 +19,7 @@
  * 分页查询的方法名使用paging_开头
  */
 
-class model extends base_class
+class model
 {
     //表名，不包含分表名
     protected $_table = null;
@@ -915,5 +915,37 @@ class model extends base_class
         redis_y::I()->set($vk_redis_key, 1);
         redis_y::I()->EXPIRE($vk_redis_key, TIME_15_MIN);
         return true;
+    }
+
+    /**
+     * @name 使用SQL查询数据
+     * @desc
+     * @param string $sql
+     * @param array $args 参数
+     * @param string $field_value 用于分表的字段的值
+     * @return array 数据列表
+     */
+    function select_sql(string $sql, $args=[], $field_value=null)
+    {
+        $connection = $this->sub_connection($field_value);
+        try {
+            $stmt = mysql::I($connection)->prepare($sql);
+            foreach ($args as $key => &$value) {
+                $val = $value;
+                //第三个参数data_type，使用 PDO::PARAM_* 常量明确地指定参数的类型，如：
+                //PDO::PARAM_INT、PDO::PARAM_STR、PDO::PARAM_BOOL、PDO::PARAM_NULL
+                $stmt->bindValue(':'.$key, $val, is_numeric($val)?PDO::PARAM_INT:(is_string($val)?PDO::PARAM_STR:
+                    (is_bool($val)?PDO::PARAM_BOOL:(is_null($val)?PDO::PARAM_NULL:PDO::PARAM_STR))));
+            }
+            $stmt->execute();
+            $res = $stmt->fetchAll(PDO::FETCH_ASSOC);
+            unset($args, $field_value, $connection, $sql, $stmt);
+            return $res;
+        } catch (PDOException $e) {
+            unset($args, $field_value, $connection, $sql);
+            //这里要写文件日志
+            write_applog('ERROR', $e->getMessage());
+            throw new Exception($e->getMessage(), CODE_DB_ERR);
+        }
     }
 }

@@ -33,7 +33,7 @@
 
 <body>
 <?php
-    $layout_menus_list = logic_menus::I()->get_all($self_info['uid']);
+    $layout_menus_list = model_user_center::I()->select_menu_list($self_info['uid']);
 ?>
 <nav class="navbar navbar-expand-sm navbar-dark sticky-top bg-dark flex-md-nowrap p-0">
     <a class="navbar-brand col-md-2" href="<?php echo $config['website_index']?:'/'; ?>"><img src="<?php echo YiluPHP::I()->lang('website_logo_img'); ?>" height="35"></a>
@@ -55,7 +55,15 @@
                         active
                         <?php endif; ?>
                     ">
-                        <a class="nav-link <?php echo $menu['link_class']; ?>" href="<?php echo $menu['href']; ?>">
+                        <?php
+                            if ($menu['href'] && $menu['type']=='SYSTEM'){
+                                $url = $config['user_center']['host'].$menu['href'];
+                            }
+                            else{
+                                $url = $menu['href'];
+                            }
+                        ?>
+                        <a class="nav-link <?php echo $menu['link_class']; ?>" href="<?php echo $url; ?>">
                             <?php echo YiluPHP::I()->lang($menu['lang_key']); ?>
                             <?php if(preg_match('/'.$menu['active_preg'].'/', $_SERVER['REQUEST_URI'], $match)>0): ?>
                                 <span class="sr-only">(current)</span>
@@ -65,22 +73,46 @@
                 <?php else: ?>
                     <li class="nav-item dropdown">
                         <?php if($menu['lang_key']=='nav-user-avatar'): ?>
-                        <a class="nav-link dropdown-toggle" href="<?php echo $menu['href']; ?>" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                            <?php
+                            if ($menu['href'] && $menu['type']=='SYSTEM'){
+                                $url = $config['user_center']['host'].$menu['href'];
+                            }
+                            else{
+                                $url = $menu['href'];
+                            }
+                            ?>
+                        <a class="nav-link dropdown-toggle" href="<?php echo $url; ?>" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                             <img class="nav-avatar" src="<?php echo $self_info['avatar']; ?>" width="20" height="20">
                             <?php echo $self_info['nickname']; ?>
                         </a>
                         <?php else: ?>
-                            <a class="nav-link dropdown-toggle" href="<?php echo $child['href']; ?>" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                            <?php
+                            if ($child['href'] && $child['type']=='SYSTEM'){
+                                $url = $config['user_center']['host'].$child['href'];
+                            }
+                            else{
+                                $url = $child['href'];
+                            }
+                            ?>
+                            <a class="nav-link dropdown-toggle" href="<?php echo $url; ?>" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                                 <?php echo YiluPHP::I()->lang($child['lang_key']); ?>
                             </a>
                         <?php endif; ?>
                         <div class="dropdown-menu" aria-labelledby="dropdown03">
                             <?php foreach($menu['children'] as $child): ?>
+                                <?php
+                                if ($child['href'] && $child['type']=='SYSTEM'){
+                                    $url = $config['user_center']['host'].$child['href'];
+                                }
+                                else{
+                                    $url = $child['href'];
+                                }
+                                ?>
                                 <a class="dropdown-item <?php echo $child['link_class']; ?>
                                     <?php if(preg_match('/'.$child['active_preg'].'/', $_SERVER['REQUEST_URI'], $match)>0): ?>
                                     active
                                     <?php endif; ?>
-                                " href="<?php echo $child['href']; ?>">
+                                " href="<?php echo $url; ?>">
                                     <?php echo YiluPHP::I()->lang($child['lang_key']); ?>
                                 </a>
                             <?php endforeach; ?>
@@ -116,7 +148,7 @@
             <div class="sidebar-sticky" id="leftMenus">
                 <ul class="nav flex-column">
                     <li class="nav-item">
-                        <a class="nav-link ajax_main_content <?php echo preg_match('/dashboard.*/', $_SERVER['REQUEST_URI'], $match)>0?'active':''; ?>" href="/dashboard">
+                        <a class="nav-link ajax_main_content <?php echo preg_match('/dashboard.*/', $_SERVER['REQUEST_URI'], $match)>0?'active':''; ?>" href="<?php echo $config['user_center']['host']?>/dashboard">
                             <i class="fa fa-home fa-lg" aria-hidden="true"></i>
                             <?php echo YiluPHP::I()->lang('home_page'); ?> <span class="sr-only">(current)</span>
                         </a>
@@ -145,7 +177,15 @@
                     <ul class="nav nav-son flex-column">
                         <?php foreach($menu['children'] as $child): ?>
                         <li class="nav-item pl-2">
-                            <a class="nav-link <?php echo $child['link_class']; ?> <?php echo preg_match('/'.$child['active_preg'].'/', $_SERVER['REQUEST_URI'], $match)>0?'active':''; ?>" href="<?php echo $child['href']; ?>">
+                            <?php
+                            if ($child['href'] && $child['type']=='SYSTEM'){
+                                $url = $config['user_center']['host'].$child['href'];
+                            }
+                            else{
+                                $url = $child['href'];
+                            }
+                            ?>
+                            <a class="nav-link <?php echo $child['link_class']; ?> <?php echo preg_match('/'.$child['active_preg'].'/', $_SERVER['REQUEST_URI'], $match)>0?'active':''; ?>" href="<?php echo $url; ?>">
                                 <?php if(trim($child['icon'])!='' && substr(trim($child['icon']),0,1)=='<'): ?>
                                     <?php echo $child['icon']; ?>
                                 <?php elseif( trim($child['icon'])!=''): ?>
@@ -161,7 +201,15 @@
                     <ul class="nav flex-column mb-2 mt-2">
                     <?php endif; $isLoopFirst=true; ?>
                     <li class="nav-item">
-                        <a class="nav-link <?php echo $menu['link_class']; ?> <?php echo preg_match('/'.$menu['active_preg'].'/', $_SERVER['REQUEST_URI'], $match)>0?'active':''; ?>" href="<?php echo $menu['href']; ?>">
+                        <?php
+                        if ($menu['href'] && $menu['type']=='SYSTEM'){
+                            $url = $config['user_center']['host'].$menu['href'];
+                        }
+                        else{
+                            $url = $menu['href'];
+                        }
+                        ?>
+                        <a class="nav-link <?php echo $menu['link_class']; ?> <?php echo preg_match('/'.$menu['active_preg'].'/', $_SERVER['REQUEST_URI'], $match)>0?'active':''; ?>" href="<?php echo $url; ?>">
                             <?php if(trim($menu['icon'])!='' && substr(trim($menu['icon']),0,1)=='<'): ?>
                                 <?php echo $menu['icon']; ?>
                             <?php elseif( trim($menu['icon'])!=''): ?>

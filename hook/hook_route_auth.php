@@ -19,133 +19,63 @@ class hook_route_auth extends hook
          * login用户必须登录才能访问
          * */
 	    'get_check' => [
-            '/^\/(\?.*)*$/',
-            '/^\/sign\/in/',
-            '/^\/sign\/up/',
-            '/^\/sign\/out/',
-            '/^\/find_password/',
-            '/^\/sign\/qq_callback/',
-            '/^\/sign\/wechat_callback/',
-            '/^\/sign\/alipay_callback/',
         ],
         'post_check' => [
-            '/^\/user\/register/',
-            '/^\/send_email_code/',
-            '/^\/sign\/wechat_check_qr_login/',
-        ],
-        'get_post_internal' => [
-            '/^\/internal\/check_login_by_uid/',
-            '/^\/internal\/check_login_by_vk/',
-            '/^\/internal\/check_login_by_tlt/',
-            '/^\/internal\/find_user_info_by_uid/',
-            '/^\/internal\/select_menu_list/',
-            '/^\/internal\/find_uid_by_username/',
-            '/^\/internal\/find_username_by_uid/',
-            '/^\/internal\/insert_permission/',
-            '/^\/internal\/check_user_permission/',
-            '/^\/internal\/delete_permission_by_key/',
         ],
         'get_login' => [
-            '/^\/user\/list/',
-            '/^\/user\/add/',
-            '/^\/user\/forbidden/',
-            '/^\/user\/logout/',
-            '/^\/user\/detail/',
-            '/^\/user\/grant_role/',
-            '/^\/user\/grant_permission/',
-            '/^\/complaint\/list/',
-            '/^\/complaint\/detail/',
-            '/^\/feedback\/list/',
-            '/^\/feedback\/detail/',
-            '/^\/dashboard/',
-            '/^\/menus\/list/',
-            '/^\/menus\/add/',
-            '/^\/menus\/edit/',
-            '/^\/setting\/user_info/',
-            '/^\/setting\/brief_info/',
-            '/^\/setting\/modify_avatar/',
-            '/^\/setting\/modify_password/',
-            '/^\/setting\/bind_email/',
-            '/^\/application\/list/',
-            '/^\/application\/add/',
-            '/^\/application\/edit/',
-            '/^\/application\/permission_list/',
-            '/^\/application\/add_permission/',
-            '/^\/application\/edit_permission/',
-            '/^\/application\/permission_users/',
-            '/^\/role\/list/',
-            '/^\/role\/add/',
-            '/^\/role\/edit/',
-            '/^\/role\/grant_permission/',
-            '/^\/role\/users/',
-            '/^\/language\/project/',
-            '/^\/language\/add_project/',
-            '/^\/language\/edit_project/',
-            '/^\/language\/table/',
+            '/^\/(\?.*)*$/',
+            '/^\/demo\/index/',
         ],
         'post_login' => [
-            '/^\/user\/save_add/',
-            '/^\/menus\/save_add/',
-            '/^\/menus\/save_edit/',
-            '/^\/menus\/delete/',
-            '/^\/complaint\/save_edit/',
-            '/^\/feedback\/save_edit/',
-            '/^\/setting\/save_info/',
-            '/^\/setting\/save_avatar/',
-            '/^\/setting\/save_password/',
-            '/^\/setting\/save_email/',
-            '/^\/setting\/unbind_wechat/',
-            '/^\/setting\/unbind_qq/',
-            '/^\/setting\/unbind_alipay/',
-            '/^\/application\/save_add/',
-            '/^\/application\/save_edit/',
-            '/^\/application\/delete/',
-            '/^\/application\/show_secret/',
-            '/^\/application\/refresh_secret/',
-            '/^\/application\/delete_permission/',
-            '/^\/application\/save_add_permission/',
-            '/^\/application\/save_edit_permission/',
-            '/^\/role\/save_add/',
-            '/^\/role\/save_edit/',
-            '/^\/role\/save_delete_role_permission/',
-            '/^\/role\/save_add_role_permission/',
-            '/^\/role\/save_grant_permission/',
-            '/^\/role\/delete/',
-            '/^\/user\/save_add_role/',
-            '/^\/user\/save_add_permission/',
-            '/^\/user\/save_delete_role/',
-            '/^\/user\/save_delete_permission/',
-            '/^\/user\/change_user_status/',
-            '/^\/user\/reset_user_password/',
-            '/^\/language\/save_add_project/',
-            '/^\/language\/save_edit_project/',
-            '/^\/language\/delete_project/',
-            '/^\/language\/pull_from_file/',
-            '/^\/language\/write_to_file/',
-            '/^\/language\/pull_from_js_file/',
-            '/^\/language\/write_to_js_file/',
-            '/^\/language\/delete_lang_key/',
-            '/^\/language\/check_language_key_usable/',
-            '/^\/language\/save_edit_lang_value/',
-            '/^\/language\/save_lang_output_type/',
-            '/^\/uploader\/form_image/',
-            '/^\/uploader\/binary_image/',
         ],
 
 	];
 
-    public function run()
-    {
-    }
+    public function run(){}
 
     public function __construct()
-	{
-	    //检查用户的访问标识
-	    $this->check_vk();
-	    //获取当前使用的请求方法
-		$method = strtolower($_SERVER['REQUEST_METHOD']);
-		//获取当前url
-		foreach($this->url_auth as $rules => $patterns){
+    {
+        //检查用户的访问标识
+        $this->check_vk();
+        //检查url中是否有tlt参数
+        $tlt = isset($_GET['tlt'])?$_GET['tlt']:'';
+        if ($tlt){
+            //如果没有登录则登录
+            if (!$user_info = model_user_center::I()->get_current_user_info()){
+                $user_info = model_user_center::I()->check_login_by_tlt($tlt);
+                if (empty($user_info) || !is_array($user_info)){
+                    $GLOBALS['dialog_error'] = YiluPHP::I()->lang('login_failed');
+                }
+                else if ($user_info['code']==-1){
+                    $GLOBALS['dialog_error'] = YiluPHP::I()->lang('login_failed_or_timed_out');
+                }
+                else if ($user_info['code']==0){
+                    //缓存用户登录的信息
+                    redis_y::I()->hmset(REDIS_LOGIN_USER_INFO.$this->vk, $user_info['data']['user_info']);
+                    redis_y::I()->expire(REDIS_LOGIN_USER_INFO.$this->vk, TIME_30_SEC);
+                    //记录当前登录用户的UID
+                    redis_y::I()->set(REDIS_LAST_LOGIN_UID.$this->vk, $user_info['data']['user_info']['uid']);
+                    redis_y::I()->expire(REDIS_LAST_LOGIN_UID.$this->vk, TIME_DAY);
+
+                    //去除tlt参数后重新加载
+                    header('Location:'.delete_url_params(get_host_url(), ['tlt']));
+                    exit;
+                }
+                else if ($user_info['code']>0){
+                    $GLOBALS['dialog_error'] = $user_info['msg'].'('.$user_info['code'].')';
+                    throw new validate_exception($GLOBALS['dialog_error'], CODE_SYSTEM_ERR);
+                }
+            }
+            else{
+                //去除tlt参数后重新加载
+                header('Location:'.delete_url_params(get_host_url(), ['tlt']));
+                exit;
+            }
+        }
+        //获取当前使用的请求方法
+        $method = strtolower($_SERVER['REQUEST_METHOD']);
+        //获取当前url
+        foreach($this->url_auth as $rules => $patterns){
             $rules = explode('_', $rules);
             foreach ($patterns as  $pattern) {
                 if (preg_match($pattern, $_SERVER['REQUEST_URI'])) {
@@ -155,9 +85,8 @@ class hook_route_auth extends hook
                     }
                     if (in_array('check', $rules) || in_array('login', $rules)) {
                         //读出登录用户的资料
-                        $user_info = logic_user::I()->get_current_user_info();
+                        $user_info = model_user_center::I()->get_current_user_info();
                         if (in_array('login', $rules) && !$user_info) {
-                            //返回必须登录的提示
                             throw new validate_exception(YiluPHP::I()->lang('please_login'), CODE_USER_NOT_LOGIN);
                         }
                         if ($user_info) {
@@ -166,38 +95,24 @@ class hook_route_auth extends hook
                             unset($user_info);
                         }
                     }
-                    foreach ($rules as $rule){
-                        if (!in_array($rule, ['get','post','check','login','guest'])){
-                            $class_name = 'hook_'.$rule;
-                            $class_name::I()->check();
-                        }
-                    }
                 }
             }
-		}
-	}
+        }
+    }
 
     public function check_vk()
     {
         //vk即visit key，存在客户端的，用户访问系统的唯一标识
         if (!isset($_COOKIE['vk'])){
-            if (!empty($_REQUEST['vk'])){
-                $vk = $_REQUEST['vk'];
-            }
-            else if(!empty($_SERVER['HTTP_VK'])){
-                $vk = $_SERVER['HTTP_VK'];
-            }
-            else{
-                $vk = create_unique_key();
-            }
             $domain = isset($GLOBALS['config']['root_domain']) ? $GLOBALS['config']['root_domain'] : '';
-            $_COOKIE['vk'] = $vk;
+            $_COOKIE['vk'] = create_unique_key();
             setcookie('vk', $_COOKIE['vk'], time()+TIME_10_YEAR, '/', $domain);
         }
+        $this->vk = $_COOKIE['vk'];
         return;
     }
 
-	public function __destruct()
-	{
-	}
+    public function __destruct()
+    {
+    }
 }

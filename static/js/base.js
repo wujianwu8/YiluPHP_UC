@@ -71,6 +71,10 @@ function getCurrentHost()
 function getUrlHost(url)
 {
     var arrUrl = url.split("//");
+    if (arrUrl.length<2){
+        url = document.location.href;
+        arrUrl = url.split("//");
+    }
     var start = arrUrl[1].indexOf("/");
     var host = arrUrl[1].substring(0,start);
     return arrUrl[0]+"//"+host;

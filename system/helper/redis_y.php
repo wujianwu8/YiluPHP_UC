@@ -9,13 +9,22 @@
 
 class redis_y
 {
-    //存储实例化后的连接
+    //存储实例化后的Rdis连接
     private static $_redis_list = [];
+    //存储实例化后的redis_y对象
+    private static $_redis_y = [];
+
+    private $_obj_key = null;
+
+    public function __construct($key)
+    {
+        $this->_obj_key = $key;
+    }
 
     /**
      * 获取一个MySQL连接实例
      * @param string $db_key 在配置文件中，数据库配置使用的键名
-     * @return object 返回已经建立连接好的对象
+     * @return Redis 返回已经建立连接好的对象
      */
     public static function I($redis_config_key='default', $db=0){
 
@@ -32,12 +41,17 @@ class redis_y
         if ( !isset(static::$_redis_list[$redis_config_key]) ) {
             $redis = static::connect_redis($GLOBALS['config']['redis'][$redis_config_key]);
             $redis->select($db);
-            return static::$_redis_list[$redis_config_key] = $redis;
+            static::$_redis_list[$redis_config_key] = $redis;
         }
         else{
             static::$_redis_list[$redis_config_key]->select($db);
-            return static::$_redis_list[$redis_config_key];
+            static::$_redis_list[$redis_config_key];
         }
+
+        if ( !isset(static::$_redis_y[$redis_config_key]) ) {
+            static::$_redis_y[$redis_config_key] = new self($redis_config_key);
+        }
+        return static::$_redis_y[$redis_config_key];
     }
 
     /**
@@ -46,7 +60,6 @@ class redis_y
      * @return PDO
      * @throws Exception
      */
-
     public static function connect_redis($options)
     {
         $redis = new Redis();
@@ -54,4 +67,14 @@ class redis_y
         return $redis;
     }
 
+    public function __call($name, $arguments)
+    {
+        global $config;
+        if (empty($config['disable_redis'])){
+            return call_user_func_array([static::$_redis_list[$this->_obj_key], $name], $arguments);
+        }
+        else{
+            return false;
+        }
+    }
 }
