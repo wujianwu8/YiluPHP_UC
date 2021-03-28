@@ -40,7 +40,7 @@ $params = input::I()->validate(
     [
         'area_code' => 'integer|min:1|max:9999|return',
         'identity' => 'required|trim|string|min:2|max:100|rsa_encrypt|return',
-        'password' => 'required|trim|string|min:6|max:32|rsa_encrypt|return',
+        'password' => 'required|trim|string|min:6|max:256|rsa_encrypt|return',
         'remember_me' => 'integer|min:0|max:1|return',
     ],
     [
@@ -55,6 +55,17 @@ $params = input::I()->validate(
         'password.*' => 12,
         'remember_me.*' => 13,
     ]);
+
+$password = json_decode($params['password'], true);
+if (!$password || empty($password['time']) || empty($password['data'])){
+    unset($params, $password);
+    return code(14, YiluPHP::I()->lang('password_error'));
+}
+if ( abs(time()-$password['time'])>90 ){
+    unset($params, $password);
+    return code(15, YiluPHP::I()->lang('password_error'));
+}
+$params['password'] = $password['data'];
 
 $params['identity'] = strtolower($params['identity']);
 $type = logic_user::I()->get_identity_type($params['identity']);

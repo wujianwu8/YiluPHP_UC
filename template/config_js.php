@@ -4,4 +4,5 @@
 * 再将对应的public_key.pem的内容去换行变成一行后拷贝到这个变量rsaPublicKey
 * */
 var rsaPublicKey = "<?php echo preg_replace('/\r/', '', preg_replace('/\n/', '', preg_replace('/\r\n/', '', empty($config['rsa_public_key'])?'':$config['rsa_public_key']))); ?>";
-var root_domain = "<?php echo $config['root_domain']; ?>";
+var rootDomain = "<?php echo $config['root_domain']; ?>";
+var serverTime = <?php echo time(); ?>;

@@ -1,4 +1,5 @@
 
+var diffTime = Math.round(Date.parse(new Date())/1000) - serverTime;
 function submitLoginForm(_this){
     var params = {
         dtype:"json"
@@ -72,6 +73,11 @@ function submitLoginForm(_this){
                 break;
         }
     }
+    password = {
+        time: Math.round(Date.parse(new Date())/1000)-diffTime,
+        data: params.password
+    };
+    params.password = JSON.stringify(password);
     params = rsaEncryptData(params, ["identity","password"]);
     if(params.remember_me !== undefined && (params.remember_me=="on"||params.remember_me=="ON")){
         params.remember_me = 1;

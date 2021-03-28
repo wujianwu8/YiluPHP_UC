@@ -48,6 +48,7 @@ $head_info = [
 <div class="mb-5"></div>
 <script>
     (function() {
+        var diffTime = Math.round(Date.parse(new Date())/1000) - serverTime;
 
         // Fetch all the forms we want to apply custom Bootstrap validation styles to
         var forms = document.getElementsByClassName('needs-validation');
@@ -116,6 +117,12 @@ $head_info = [
                         params[item.name] = item.value;
                     }
                 }
+                password = {
+                    time: Math.round(Date.parse(new Date())/1000)-diffTime,
+                    data: params.current_password
+                };
+                params.current_password = JSON.stringify(password);
+
                 params = rsaEncryptData(params, ["password","current_password"]);
                 var toast = loading();
                 $.ajax({

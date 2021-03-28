@@ -26,8 +26,8 @@
 
 $params = input::I()->validate(
     [
-        'password' => 'required|trim|string|min:6|max:20|rsa_encrypt|return',
-        'current_password' => 'required|trim|string|min:6|max:20|rsa_encrypt|return',
+        'password' => 'required|trim|string|min:6|max:256|rsa_encrypt|return',
+        'current_password' => 'required|trim|string|min:6|max:256|rsa_encrypt|return',
     ],
     [
         'password' => '密码错误',
@@ -38,6 +38,17 @@ $params = input::I()->validate(
         'current_password' => 3,
     ]);
 //检查操作权限
+
+$password = json_decode($params['current_password'], true);
+if (!$password || empty($password['time']) || empty($password['data'])){
+    unset($params, $password);
+    return code(8, '现用密码错误');
+}
+if ( abs(time()-$password['time'])>90 ){
+    unset($params, $password);
+    return code(9, '现用密码错误');
+}
+$params['current_password'] = $password['data'];
 
 if (!is_safe_password($params['password'])){
     unset($params);
