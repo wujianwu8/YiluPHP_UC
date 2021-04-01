@@ -38,6 +38,10 @@ $params = input::I()->validate(
         'status.*' => 2,
     ]);
 
+if($params['uid']==1){
+    return code(3, '不能禁用系统管理员');
+}
+
 if(!$user_info = model_user::I()->find_table(['uid'=>$params['uid']], '*', $params['uid'])){
     return code(2, '用户不存在');
 }

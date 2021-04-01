@@ -131,6 +131,7 @@
             <?php echo YiluPHP::I()->lang('numeral_time_s', ['numeral'=>['value'=>$respondent_count]]); ?>
         </div>
     </div>
+    <?php if($user_info['uid']!=1): ?>
     <div class="row mb-2">
         <div class="col-sm-3 pr-2"></div>
         <div class="col-sm-9">
@@ -139,6 +140,7 @@
                    value="<?php echo $user_info['status']?YiluPHP::I()->lang('block_account'):YiluPHP::I()->lang('enable_account'); ?>" >
         </div>
     </div>
+    <?php endif; ?>
 </div>
 
 <script>
