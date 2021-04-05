@@ -173,10 +173,10 @@ class model
      */
     function count($where, $field_value=null, string $extend_sql='', array $extend_params=[], $table_name='', $connection='')
     {
-        if ($table_name==='') {
+        if ($table_name==='' || $table_name===null || $table_name===false) {
             $table_name = $this->sub_table($field_value);
         }
-        if ($connection==='') {
+        if ($connection==='' || $connection===null || $connection===false) {
             $connection = $this->sub_connection($field_value);
         }
 
@@ -263,10 +263,10 @@ class model
     function paging_select(array $where, int $page, int $page_size, string $order_by='', string $fields='*',
                            string $field_value=null, string $extend_sql='', array $extend_params=[], $table_name='', $connection='')
     {
-        if ($table_name==='') {
+        if ($table_name==='' || $table_name===null || $table_name===false) {
             $table_name = $this->sub_table($field_value);
         }
-        if ($connection==='') {
+        if ($connection==='' || $connection===null || $connection===false) {
             $connection = $this->sub_connection($field_value);
         }
 
@@ -366,10 +366,10 @@ class model
     function select_all($where, $order_by='', $fields='*', $field_value=null, string $extend_sql='', array $extend_params=[],
                         $table_name='', $connection='')
     {
-        if ($table_name==='') {
+        if ($table_name==='' || $table_name===null || $table_name===false) {
             $table_name = $this->sub_table($field_value);
         }
-        if ($connection==='') {
+        if ($connection==='' || $connection===null || $connection===false) {
             $connection = $this->sub_connection($field_value);
         }
 
@@ -455,10 +455,10 @@ class model
      */
     function find_table($where, $fields='*', $field_value=null, string $extend_sql='', array $extend_params=[], $table_name='', $connection='')
     {
-        if ($table_name==='') {
+        if ($table_name==='' || $table_name===null || $table_name===false) {
             $table_name = $this->sub_table($field_value);
         }
-        if ($connection==='') {
+        if ($connection==='' || $connection===null || $connection===false) {
             $connection = $this->sub_connection($field_value);
         }
 
@@ -697,10 +697,10 @@ class model
         }
 
         $tables = [];
-        if ($table_name==='') {
+        if ($table_name==='' || $table_name===null || $table_name===false) {
             $table_name = $this->sub_table($field_value);
         }
-        if ($connection==='') {
+        if ($connection==='' || $connection===null || $connection===false) {
             $connection = $this->sub_connection($field_value);
         }
         if($table_name != $this->_table){
@@ -795,10 +795,10 @@ class model
         }
 
         $tables = [];
-        if ($table_name==='') {
+        if ($table_name==='' || $table_name===null || $table_name===false) {
             $table_name = $this->sub_table($field_value);
         }
-        if ($connection==='') {
+        if ($connection==='' || $connection===null || $connection===false) {
             $connection = $this->sub_connection($field_value);
         }
         if($table_name != $this->_table){
@@ -903,10 +903,10 @@ class model
         foreach ($where as $key => $value){
             $where_arr[] = '`'.$key.'`=:'.$key;
         }
-        if ($table_name==='') {
+        if ($table_name==='' || $table_name===null || $table_name===false) {
             $table_name = $this->get_table();
         }
-        if ($connection==='') {
+        if ($connection==='' || $connection===null || $connection===false) {
             $connection = $this->sub_connection();
         }
 
