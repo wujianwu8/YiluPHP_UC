@@ -25,10 +25,17 @@ class model
     protected $_table = null;
     //数据库连接名
     protected $_connection = 'default';
-    //拆分表的方式，null表示不拆分，last_two_digits表示根据（如ID）末尾2位数拆分成100个表
+    /**
+     * 拆分表的方式
+     * null表示不拆分
+     * last_two_digits表示根据（如ID）末尾2位数拆分成100个表
+     * time_and_quantity表示按时间和数量分表，在一定时间内数量未达到 $_max_quantity_per_table 设置的数量时不分表，否则分表，每天凌晨4点检测是否需要分表，
+     *      如果需要分表会设置好第二天开始需要使用的表，所以表中的最终数据量会比预设的数值多一天的数据量
+     */
     protected $_split_method = null;
     //用于分表的字段名
     protected $_split_by_field = null;
+    public $_max_quantity_per_table = 500;
 
     public function __construct()
     {
@@ -62,7 +69,7 @@ class model
 
     /**
      * @name 获取分表名
-     * @desc 分表所在的数据库连接名与分表名的后缀需要保持一致
+     * @desc 分表所在的数据库连接名与分表名的前缀需要保持一致
      * @param string $field_value 用于分表的字段的值
      * @return string 分表名
      */
@@ -71,21 +78,45 @@ class model
         if (empty($GLOBALS['config']['split_table']) || empty($this->_split_method)){
             return $this->_table;
         }
-	    if ($field_value===null){
-            return $this->_table;
+        if ($this->_split_method=='last_two_digits') {
+            if ($field_value === null) {
+                return $this->_table;
+            }
+            $suffix = $this->split_suffix($field_value);
+            if ($suffix !== '') {
+                unset($field_value);
+                return $this->_table . '_' . $suffix;
+            }
+            unset($suffix, $field_value);
         }
-	    $suffix = $this->split_suffix($field_value);
-	    if($suffix!==''){
-            unset($field_value);
-	        return $this->_table . '_'.$suffix;
+        else if ($this->_split_method=='time_and_quantity') {
+            if (empty($this->_max_quantity_per_table)){
+                return $this->_table;
+            }
+            $redis_key = REDIS_SUB_TABLE.$this->_table;
+            if ($sub_table = redis_y::I()->get($redis_key)){
+                return $sub_table;
+            }
+            //从"主表和分表的管理"的表中读取表名
+            $where = [
+                'main_table' => $this->_table,
+                'start_time' => [
+                    'value' => time(),
+                    'symbol' => '<=',
+                ],
+            ];
+            if($sub_table = model_sub_table_manage::I()->find_table($where,'sub_table',null,'ORDER BY start_time DESC')){
+                redis_y::I()->set($redis_key,$sub_table['sub_table']);
+                redis_y::I()->expireAt( strtotime('tomorrow') );
+                return $sub_table['sub_table'];
+            }
         }
-        unset($suffix, $field_value);
         return $this->_table;
 	}
 
     /**
      * @name 获取分表的库连接名
-     * @desc 分表所在的数据库连接名与分表名的后缀需要保持一致，数据库连接名是指在配置文件中用户自定的库连接名，默认库连接名为default
+     * @desc 分表所在的数据库连接名与分表名的前缀需要保持一致，数据库连接名是指在配置文件中用户自定的库连接名，默认库连接名为default
      * @param string $field_value 用于分表的字段的值
      * @return string 分表所在的数据库连接名
      */
@@ -136,12 +167,18 @@ class model
      * @param string $field_value 用于分表的字段的值
      * @param string $extend_sql 延伸的SQL语句，主要用于补充where条件
      * @param array $extend_params 延伸的SQL参数及其值，主要用于给延伸的SQL语句赋值参数值
+     * @param string $table_name 指定操作的表名
+     * @param string $connection 指定操作的连接名
      * @return array 数据列表
      */
-    function count($where, $field_value=null, string $extend_sql='', array $extend_params=[])
+    function count($where, $field_value=null, string $extend_sql='', array $extend_params=[], $table_name='', $connection='')
     {
-        $table_name = $this->sub_table($field_value);
-        $connection = $this->sub_connection($field_value);
+        if ($table_name==='') {
+            $table_name = $this->sub_table($field_value);
+        }
+        if ($connection==='') {
+            $connection = $this->sub_connection($field_value);
+        }
 
         $sql = 'SELECT COUNT(1) AS c FROM `'.$table_name.'`';
         $arr = [];
@@ -219,13 +256,19 @@ class model
      * @param string $field_value 用于分表的字段的值
      * @param string $extend_sql 延伸的SQL语句，主要用于补充where条件
      * @param array $extend_params 延伸的SQL参数及其值，主要用于给延伸的SQL语句赋值参数值
+     * @param string $table_name 指定操作的表名
+     * @param string $connection 指定操作的连接名
      * @return array 数据列表
      */
     function paging_select(array $where, int $page, int $page_size, string $order_by='', string $fields='*',
-                           string $field_value=null, string $extend_sql='', array $extend_params=[])
+                           string $field_value=null, string $extend_sql='', array $extend_params=[], $table_name='', $connection='')
     {
-        $table_name = $this->sub_table($field_value);
-        $connection = $this->sub_connection($field_value);
+        if ($table_name==='') {
+            $table_name = $this->sub_table($field_value);
+        }
+        if ($connection==='') {
+            $connection = $this->sub_connection($field_value);
+        }
 
         if(!preg_match("/^[\(\)\d\s\w\-_,`]*$/",$order_by)){
             write_applog('ERROR', 'arguments $order_by is illegal: '.$order_by);
@@ -316,12 +359,19 @@ class model
      * @param string $field_value 用于分表的字段的值
      * @param string $extend_sql 延伸的SQL语句，主要用于补充where条件
      * @param array $extend_params 延伸的SQL参数及其值，主要用于给延伸的SQL语句赋值参数值
+     * @param string $table_name 指定操作的表名
+     * @param string $connection 指定操作的连接名
      * @return array 数据列表
      */
-    function select_all($where, $order_by='', $fields='*', $field_value=null, string $extend_sql='', array $extend_params=[])
+    function select_all($where, $order_by='', $fields='*', $field_value=null, string $extend_sql='', array $extend_params=[],
+                        $table_name='', $connection='')
     {
-        $table_name = $this->sub_table($field_value);
-        $connection = $this->sub_connection($field_value);
+        if ($table_name==='') {
+            $table_name = $this->sub_table($field_value);
+        }
+        if ($connection==='') {
+            $connection = $this->sub_connection($field_value);
+        }
 
         if(!preg_match("/^[\(\)\d\s\w\-_,`]*$/i",$order_by)){
             write_applog('ERROR', 'arguments $order_by is illegal: '.$order_by);
@@ -399,27 +449,29 @@ class model
      * @param string $field_value 用于分表的字段的值
      * @param string $extend_sql 延伸的SQL语句，主要用于补充where条件
      * @param array $extend_params 延伸的SQL参数及其值，主要用于给延伸的SQL语句赋值参数值
+     * @param string $table_name 指定操作的表名
+     * @param string $connection 指定操作的连接名
      * @return array/boolean 有数据返回数组，没有返回false
      */
-    function find_table($where, $fields='*', $field_value=null, string $extend_sql='', array $extend_params=[])
+    function find_table($where, $fields='*', $field_value=null, string $extend_sql='', array $extend_params=[], $table_name='', $connection='')
     {
-        $table_name = $this->sub_table($field_value);
-        $connection = $this->sub_connection($field_value);
+        if ($table_name==='') {
+            $table_name = $this->sub_table($field_value);
+        }
+        if ($connection==='') {
+            $connection = $this->sub_connection($field_value);
+        }
 
         if($fields!=="*" && !preg_match("/^[\(\)\d\s\w\-_,`]*$/",$fields)){
             write_applog('ERROR', 'arguments $fields is illegal: '.$fields);
             throw new Exception('arguments $fields is illegal: '.$fields, CODE_ERROR_IN_MODEL);
-        }
-        if (!$where) {
-            write_applog('ERROR', 'arguments $where is empty');
-            throw new Exception('arguments $where is empty', CODE_ERROR_IN_MODEL);
         }
         if (!$table_name) {
             write_applog('ERROR', 'arguments $table_name is empty');
             throw new Exception('arguments $table_name is empty', CODE_ERROR_IN_MODEL);
         }
 
-        $sql = 'SELECT '.$fields.' FROM `'.$table_name.'` WHERE ';
+        $sql = 'SELECT '.$fields.' FROM `'.$table_name.'` ';
         $arr = [];
         foreach ($where as $key => $value) {
             if(is_array($value)){
@@ -434,6 +486,9 @@ class model
             else{
                 $arr[] = ' `'.$key.'`=:'.$key;
             }
+        }
+        if ($where || $extend_sql) {
+            $sql .= ' WHERE ';
         }
         $sql .= implode(' AND ', $arr) . ' ' .$extend_sql . ' LIMIT 1 ';
         try {
@@ -481,9 +536,11 @@ class model
      * @name 往数据表中插入一条数据
      * @desc
      * @param array $data 需要插入的数据,对应所有的字段
+     * @param string $table_name 指定操作的表名
+     * @param string $connection 指定操作的连接名
      * @return integer 如果表中有id字段,则返回之，没有就返回0，发生错误抛出异常
      */
-    function insert_table($data)
+    function insert_table($data, $table_name='', $connection='')
     {
         if (!empty($GLOBALS['config']['split_table']) && !empty($this->_split_method) && !isset($data[$this->_split_by_field])){
             throw new Exception('缺少分表用的字段值:'.$this->_split_by_field, CODE_ERROR_IN_MODEL);
@@ -493,24 +550,16 @@ class model
             $field_value = $data[$this->_split_by_field];
         }
 
-        $tables = [
-            [
-                'table_name' => $this->_table,
-                'connection' => $this->_connection,
-            ]
+        $tables = [];
+        $tables[] = [
+            'table_name' => $table_name==='' ? $this->sub_table($field_value) : $table_name,
+            'connection' => $connection==='' ? $this->sub_connection($field_value) : $connection,
         ];
-        $table_name = $this->sub_table($field_value);
-        $connection = $this->sub_connection($field_value);
-        if($table_name != $this->_table){
-            $tables[] = [
-                'table_name' => $table_name,
-                'connection' => $connection,
-            ];
-        }
+
         unset($table_name, $connection, $field_value);
         $keys = array_keys($data);
         foreach($tables as $item) {
-            $sql = 'INSERT INTO ' . $item['table_name'] . ' (`' . implode('`, `', $keys) . '`) VALUES (:' . implode(', :', $keys) . ')';
+            $sql = 'INSERT INTO `' . $item['table_name'] . '` (`' . implode('`, `', $keys) . '`) VALUES (:' . implode(', :', $keys) . ')';
             try {
                 $stmt = mysql::I($item['connection'])->prepare($sql);
                 foreach ($data as $key => $value) {
@@ -541,9 +590,11 @@ class model
      * @param array $data 需要修改的数据
      * @param string $extend_sql 延伸的SQL语句，主要用于补充where条件
      * @param array $extend_params 延伸的SQL参数及其值，主要用于给延伸的SQL语句赋值参数值
+     * @param string $table_name 指定操作的表名
+     * @param string $connection 指定操作的连接名
      * @return boolean
      */
-    function update_table(&$where, &$data, string $extend_sql='', array $extend_params=[])
+    function update_table(&$where, &$data, string $extend_sql='', array $extend_params=[], $table_name='', $connection='')
     {
         if (!empty($GLOBALS['config']['split_table']) && !empty($this->_split_method) && (!isset($where[$this->_split_by_field]) && !isset($data[$this->_split_by_field]))){
             throw new Exception('缺少分表用的字段值:'.$this->_split_by_field, CODE_ERROR_IN_MODEL);
@@ -553,20 +604,11 @@ class model
             $field_value = isset($where[$this->_split_by_field]) ? $where[$this->_split_by_field] : $data[$this->_split_by_field];
         }
 
-        $tables = [
-            [
-                'table_name' => $this->_table,
-                'connection' => $this->_connection,
-            ]
+        $tables = [];
+        $tables[] = [
+            'table_name' => $table_name==='' ? $this->sub_table($field_value) : $table_name,
+            'connection' => $connection==='' ? $this->sub_connection($field_value) : $connection,
         ];
-        $table_name = $this->sub_table($field_value);
-        $connection = $this->sub_connection($field_value);
-        if($table_name != $this->_table){
-            $tables[] = [
-                'table_name' => $table_name,
-                'connection' => $connection,
-            ];
-        }
         unset($table_name, $connection, $field_value);
 
         $set = [];
@@ -590,7 +632,7 @@ class model
         }
         $where = array_merge($where, $extend_params);
         foreach($tables as $item) {
-            $sql = 'UPDATE ' . $item['table_name'] . ' SET ' . implode(',', $set) . ' WHERE ' . implode(' AND ', $where_sql) . $extend_sql;
+            $sql = 'UPDATE `' . $item['table_name'] . '` SET ' . implode(',', $set) . ' WHERE ' . implode(' AND ', $where_sql) . $extend_sql;
             try {
                 $stmt = mysql::I($item['connection'])->prepare($sql);
                 foreach ($data as $key => $value) {
@@ -620,6 +662,7 @@ class model
                     }
                 }
                 $stmt->execute();
+                $count = $stmt->rowCount();
                 unset($stmt);
             } catch (PDOException $e) {
                 unset($tables, $set, $where_sql, $sql);
@@ -629,7 +672,7 @@ class model
             }
         }
         unset($tables, $set, $where_sql, $sql);
-        return true;
+        return $count;
     }
 
     /**
@@ -639,9 +682,11 @@ class model
      * @param array $data 传分表用的字段及其值过来，如果没有分表则可不传此参数
      * @param string $extend_sql 延伸的SQL语句，主要用于补充where条件
      * @param array $extend_params 延伸的SQL参数及其值，主要用于给延伸的SQL语句赋值参数值
+     * @param string $table_name 指定操作的表名
+     * @param string $connection 指定操作的连接名
      * @return integer 返回删除的数量
      */
-    function delete($where, $data=[], string $extend_sql='', array $extend_params=[])
+    function delete($where, $data=[], string $extend_sql='', array $extend_params=[], $table_name='', $connection='')
     {
         if (!empty($GLOBALS['config']['split_table']) && !empty($this->_split_method) && (!isset($where[$this->_split_by_field]) && !isset($data[$this->_split_by_field]))){
             throw new Exception('缺少分表用的字段值:'.$this->_split_by_field, CODE_ERROR_IN_MODEL);
@@ -651,14 +696,13 @@ class model
             $field_value = isset($where[$this->_split_by_field]) ? $where[$this->_split_by_field] : $data[$this->_split_by_field];
         }
 
-        $tables = [
-            [
-                'table_name' => $this->_table,
-                'connection' => $this->_connection,
-            ]
-        ];
-        $table_name = $this->sub_table($field_value);
-        $connection = $this->sub_connection($field_value);
+        $tables = [];
+        if ($table_name==='') {
+            $table_name = $this->sub_table($field_value);
+        }
+        if ($connection==='') {
+            $connection = $this->sub_connection($field_value);
+        }
         if($table_name != $this->_table){
             $tables[] = [
                 'table_name' => $table_name,
@@ -691,7 +735,7 @@ class model
         $count = 0;
         foreach($tables as $item) {
             try {
-                $stmt = mysql::I($item['connection'])->prepare('DELETE FROM ' . $item['table_name'].$sql);
+                $stmt = mysql::I($item['connection'])->prepare('DELETE FROM `' . $item['table_name'].'` '.$sql);
                 foreach ($where as $key => $value) {
                     $direct_assign = true;
                     if(is_array($value)){
@@ -736,9 +780,11 @@ class model
      * @param array $data 传分表用的字段及其值过来，如果没有分表则可不传此参数
      * @param string $extend_sql 延伸的SQL语句，主要用于补充where条件
      * @param array $extend_params 延伸的SQL参数及其值，主要用于给延伸的SQL语句赋值参数值
+     * @param string $table_name 指定操作的表名
+     * @param string $connection 指定操作的连接名
      * @return integer 返回删除的数量
      */
-    function destroy($where, $data=[], string $extend_sql='', array $extend_params=[])
+    function destroy($where, $data=[], string $extend_sql='', array $extend_params=[], $table_name='', $connection='')
     {
         if (!empty($GLOBALS['config']['split_table']) && !empty($this->_split_method) && (!isset($where[$this->_split_by_field]) && !isset($data[$this->_split_by_field]))){
             throw new Exception('缺少分表用的字段值:'.$this->_split_by_field, CODE_ERROR_IN_MODEL);
@@ -748,14 +794,13 @@ class model
             $field_value = isset($where[$this->_split_by_field]) ? $where[$this->_split_by_field] : $data[$this->_split_by_field];
         }
 
-        $tables = [
-            [
-                'table_name' => $this->_table,
-                'connection' => $this->_connection,
-            ]
-        ];
-        $table_name = $this->sub_table($field_value);
-        $connection = $this->sub_connection($field_value);
+        $tables = [];
+        if ($table_name==='') {
+            $table_name = $this->sub_table($field_value);
+        }
+        if ($connection==='') {
+            $connection = $this->sub_connection($field_value);
+        }
         if($table_name != $this->_table){
             $tables[] = [
                 'table_name' => $table_name,
@@ -788,7 +833,7 @@ class model
         $count = 0;
         foreach($tables as $item) {
             try {
-                $stmt = mysql::I($item['connection'])->prepare('DELETE FROM ' . $item['table_name'].$sql);
+                $stmt = mysql::I($item['connection'])->prepare('DELETE FROM `' . $item['table_name'].'` '.$sql);
                 foreach ($where as $key => $value) {
                     $direct_assign = true;
                     if(is_array($value)){
@@ -833,9 +878,11 @@ class model
      * @param array $fields 需要更新的字段及其增加或减少的数量，增加用正数，减少用负数
      * @param string $extend_sql 延伸的SQL语句，主要用于补充where条件
      * @param array $extend_params 延伸的SQL参数及其值，主要用于给延伸的SQL语句赋值参数值
+     * @param string $table_name 指定操作的表名
+     * @param string $connection 指定操作的连接名
      * @return boolean
      */
-    public function update_count_field(array $where, array $fields, string $extend_sql='', array $extend_params=[]){
+    public function update_count_field(array $where, array $fields, string $extend_sql='', array $extend_params=[], $table_name='', $connection=''){
         if (!$where || !$fields){
             return true;
         }
@@ -856,9 +903,14 @@ class model
         foreach ($where as $key => $value){
             $where_arr[] = '`'.$key.'`=:'.$key;
         }
+        if ($table_name==='') {
+            $table_name = $this->get_table();
+        }
+        if ($connection==='') {
+            $connection = $this->sub_connection();
+        }
 
-        $sql = 'UPDATE '.$this->get_table().' SET '.implode(',', $arr).' WHERE '.implode(' AND ', $where_arr). $extend_sql;
-        $connection = $this->sub_connection();
+        $sql = 'UPDATE '.$table_name.' SET '.implode(',', $arr).' WHERE '.implode(' AND ', $where_arr). $extend_sql;
         $stmt = mysql::I($connection)->prepare($sql);
         $where = array_merge($where, $extend_params);
         foreach ($where as $key => $value){
@@ -866,8 +918,9 @@ class model
                 (is_bool($value)?PDO::PARAM_BOOL:(is_null($value)?PDO::PARAM_NULL:PDO::PARAM_STR))));
         }
         $stmt->execute();
+        $count = $stmt->rowCount();
         unset($uid, $arr, $fields, $sql, $stmt, $connection, $key, $value, $where, $where_arr);
-        return true;
+        return $count;
     }
 
     /**
@@ -881,11 +934,13 @@ class model
      * @param array $data 更新数据库的增加值，即在原来的基础上需要再增加的数量
      * @param string $extend_sql 延伸的SQL语句，主要用于补充where条件
      * @param array $extend_params 延伸的SQL参数及其值，主要用于给延伸的SQL语句赋值参数值
+     * @param string $table_name 指定操作的表名
+     * @param string $connection 指定操作的连接名
      * @return boolean
      * @throws
      */
-    public function add_limit_field_count($vk_redis_key, $ip_redis_key, $ip_short_count_limit,
-                                          $ip_hour_count_limit, $where, $data, string $extend_sql='', array $extend_params=[]){
+    public function add_limit_field_count($vk_redis_key, $ip_redis_key, $ip_short_count_limit, $ip_hour_count_limit, $where, $data,
+                                          string $extend_sql='', array $extend_params=[], $table_name=null, $connection=null){
         $max_time = round(microtime(true)*10000);
         //增加该ip的浏览记录
         redis_y::I()->rpush($ip_redis_key, $max_time);
@@ -909,7 +964,7 @@ class model
             return false;
         }
         //增加浏览次数
-        $this->update_count_field($where, $data, $extend_sql, $extend_params);
+        $this->update_count_field($where, $data, $extend_sql, $extend_params, $table_name, $connection);
 
         //更新该vk最新增加浏览次数的时间
         redis_y::I()->set($vk_redis_key, 1);
@@ -922,12 +977,11 @@ class model
      * @desc
      * @param string $sql
      * @param array $args 参数
-     * @param string $field_value 用于分表的字段的值
+     * @param string $connection 数据库连接的配置名
      * @return array 数据列表
      */
-    function select_sql(string $sql, $args=[], $field_value=null)
+    function select_sql(string $sql, $args=[], $connection='default')
     {
-        $connection = $this->sub_connection($field_value);
         try {
             $stmt = mysql::I($connection)->prepare($sql);
             foreach ($args as $key => &$value) {
@@ -941,6 +995,37 @@ class model
             $res = $stmt->fetchAll(PDO::FETCH_ASSOC);
             unset($args, $field_value, $connection, $sql, $stmt);
             return $res;
+        } catch (PDOException $e) {
+            unset($args, $field_value, $connection, $sql);
+            //这里要写文件日志
+            write_applog('ERROR', $e->getMessage());
+            throw new Exception($e->getMessage(), CODE_DB_ERR);
+        }
+    }
+
+    /**
+     * @name 执行SQL语句进行修改操作
+     * @desc
+     * @param string $sql
+     * @param array $args 参数
+     * @param string $connection 数据库连接的配置名
+     * @return array 数据列表
+     */
+    function execute_sql(string $sql, $args=[], $connection='default')
+    {
+        try {
+            $stmt = mysql::I($connection)->prepare($sql);
+            foreach ($args as $key => &$value) {
+                $val = $value;
+                //第三个参数data_type，使用 PDO::PARAM_* 常量明确地指定参数的类型，如：
+                //PDO::PARAM_INT、PDO::PARAM_STR、PDO::PARAM_BOOL、PDO::PARAM_NULL
+                $stmt->bindValue(':'.$key, $val, is_numeric($val)?PDO::PARAM_INT:(is_string($val)?PDO::PARAM_STR:
+                    (is_bool($val)?PDO::PARAM_BOOL:(is_null($val)?PDO::PARAM_NULL:PDO::PARAM_STR))));
+            }
+            $stmt->execute();
+            $count = $stmt->rowCount();
+            unset($args, $field_value, $connection, $sql, $stmt);
+            return $count;
         } catch (PDOException $e) {
             unset($args, $field_value, $connection, $sql);
             //这里要写文件日志
