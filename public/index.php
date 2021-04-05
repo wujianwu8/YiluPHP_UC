@@ -125,7 +125,7 @@ function write_applog(string $level, string $data='')
     }
     $file = $path.date('Y-m-d').'.log';
     file_put_contents($file, $txt."\n\n", FILE_APPEND);
-//    chmod($file,0755);
+    chmod($file,0755);
 }
 
 /**
@@ -234,6 +234,11 @@ function result($template, $data=[], $return_html=false)
     //取出数据
     extract($YiluPHP['data']);
     unset($YiluPHP['data']);
+    foreach ($GLOBALS as $YiluPHP_key=>$YiluPHP_value){
+        if (isset($$YiluPHP_key)){
+            throw new validate_exception('在输出模板时传递的变量与全局变量 $'.$YiluPHP_key.' 重名了，如果此全局变量是你声明的，你不传此变量也可以在模板中使用，如果输出模板时你一定要传此值，请换一个变量名。（做此限制是为了防止存在同名参数时，模板函数接收的参数无效的问题）',CODE_PARAM_ERROR);
+        }
+    }
     extract($GLOBALS);
 
     ob_start(); //打开缓冲区
@@ -497,7 +502,6 @@ class YiluPHP
     protected $page_lang = [];
     public $autoload_class = null;
     public static $file_content=[]; //装载文件内容
-    public static $swoole_data=[]; //装载返回给swoole的数据
 
     /**
      * 获取单例
@@ -648,7 +652,7 @@ class YiluPHP
             }
             else{
                 $res = $lang_key;
-                write_applog('ERROR', YiluPHP::I()->lang('no_translation'). '('.$GLOBALS['config']['lang'].')：'.$lang_key);
+                write_applog('NOTICE', YiluPHP::I()->lang('no_translation'). '('.$GLOBALS['config']['lang'].')：'.$lang_key);
 //                throw new validate_exception(YiluPHP::I()->lang('no_translation'). '('.$GLOBALS['config']['lang'].')：'.$lang_key,CODE_UNDEFINED_ERROR_TYPE);
             }
         }
@@ -1049,7 +1053,7 @@ else{
     catch (validate_exception $exception){
         $data = $exception->getData();
         if (is_array($data) && isset($data['dtype']) && in_array($data['dtype'], ['json','jsonp'])){
-            if($data['dtype']=='json'){
+            if($data['dtype']==json){
                 echo json($exception->getCode(), $exception->getMessage(), $data);
             }
             else{
@@ -1061,15 +1065,9 @@ else{
         }
     }
     catch (Exception $exception){
+        write_applog('ERROR', $exception->getMessage().'['.$exception->getCode().']');
         $msg = YiluPHP::I()->lang('inner_error');
-        write_applog('ERROR', $exception->getMessage().'[code:'.$exception->getCode().']');
-        global $config;
-        if (empty($config['debug_mode'])) {
-            echo code(CODE_SYSTEM_ERR, $msg);
-        }
-        else{
-            echo code($exception->getCode(), $exception->getMessage());
-        }
+        echo code(CODE_SYSTEM_ERR, $msg);
         unset($msg);
     }
 }
