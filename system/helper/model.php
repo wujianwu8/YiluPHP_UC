@@ -910,7 +910,7 @@ class model
             $connection = $this->sub_connection();
         }
 
-        $sql = 'UPDATE '.$table_name.' SET '.implode(',', $arr).' WHERE '.implode(' AND ', $where_arr). $extend_sql;
+        $sql = 'UPDATE `'.$table_name.'` SET '.implode(',', $arr).' WHERE '.implode(' AND ', $where_arr). $extend_sql;
         $stmt = mysql::I($connection)->prepare($sql);
         $where = array_merge($where, $extend_params);
         foreach ($where as $key => $value){
