@@ -612,66 +612,54 @@ class model
         unset($table_name, $connection, $field_value);
 
         $set = [];
+        $args = [];
         foreach($data as $key => $value){
             $set[] = '`'.$key.'`=:'.$key;
+            $args[$key] = $value;
         }
         $where_sql = [];
         foreach ($where as $key => $value) {
+            $key2 = isset($args[$key]) ? $key.'_'.rand(1,999999) : $key;
             if(is_array($value)){
                 if(is_array($value['value'])){
-                    $plist = ':'.$key.'_'.implode(',:'.$key.'_', array_keys($value['value']));
+                    $plist = [];
+                    foreach($value['value'] as $key3 => $param){
+                        $plist[] = ':'.$key2.'_'.$key3;
+                        $args[$key2.'_'.$key3] = $param;
+                    }
+                    $plist = implode(',', $plist);
                     $where_sql[] = ' `'.$key.'` '.$value['symbol'].' ('.$plist.') ';
                 }
                 else{
-                    $where_sql[] = ' `'.$key.'` '.$value['symbol'].' :'.$key;
+                    $where_sql[] = ' `'.$key.'` '.$value['symbol'].' :'.$key2;
+                    $args[$key2] = $value;
                 }
             }
             else{
-                $where_sql[] = ' `'.$key.'`=:'.$key;
+                $where_sql[] = ' `'.$key.'`=:'.$key2;
+                $args[$key2] = $value;
             }
         }
         $where = array_merge($where, $extend_params);
         foreach($tables as $item) {
-            $sql = 'UPDATE `' . $item['table_name'] . '` SET ' . implode(',', $set) . ' WHERE ' . implode(' AND ', $where_sql) . $extend_sql;
+            $sql = 'UPDATE `' . $item['table_name'] . '` SET ' . implode(',', $set) . ($where?' WHERE ':' ') . implode(' AND ', $where_sql) . $extend_sql;
             try {
                 $stmt = mysql::I($item['connection'])->prepare($sql);
-                foreach ($data as $key => $value) {
-                    $stmt->bindValue(':' . $key, $value);
-                }
-                foreach ($where as $key => $value) {
-                    $direct_assign = true;
-                    if(is_array($value)){
-                        if(is_array($value['value'])){
-                            $direct_assign = false;
-                            $plist = ':'.$key.'_'.implode(',:'.$key.'_', array_keys($value['value']));
-                            $params = array_combine(explode(",", $plist), $value['value']);
-                            foreach($params as $key2 => $param){
-                                $stmt->bindValue($key2, $param, is_numeric($param)?PDO::PARAM_INT:(is_string($param)?PDO::PARAM_STR:
-                                    (is_bool($param)?PDO::PARAM_BOOL:(is_null($param)?PDO::PARAM_NULL:PDO::PARAM_STR))));
-                            }
-                        }
-                        else{
-                            $val = $value['value'];
-                        }
-                    }
-                    else{
-                        $val = $value;
-                    }
-                    if($direct_assign) {
-                        $stmt->bindValue(':' . $key, $val);
-                    }
+                foreach ($args as $key => $value) {
+                    $stmt->bindValue(':'.$key, $value, is_numeric($value)?PDO::PARAM_INT:(is_string($value)?PDO::PARAM_STR:
+                        (is_bool($value)?PDO::PARAM_BOOL:(is_null($value)?PDO::PARAM_NULL:PDO::PARAM_STR))));
                 }
                 $stmt->execute();
                 $count = $stmt->rowCount();
                 unset($stmt);
             } catch (PDOException $e) {
-                unset($tables, $set, $where_sql, $sql);
+                unset($tables, $set, $where_sql, $sql, $args);
                 //写文件日志
                 write_applog('ERROR', $e->getMessage());
                 throw new Exception($e->getMessage(), CODE_DB_ERR);
             }
         }
-        unset($tables, $set, $where_sql, $sql);
+        unset($tables, $set, $where_sql, $sql, $args);
         return $count;
     }
 
