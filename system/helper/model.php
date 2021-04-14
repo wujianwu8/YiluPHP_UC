@@ -101,9 +101,19 @@ class model
             $where = [
                 'main_table' => $this->_table,
                 'start_time' => [
-                    'value' => time(),
+                    'value' => $field_value,
                     'symbol' => '<=',
                 ],
+            ];
+            if($sub_table = model_sub_table_manage::I()->find_table($where,'sub_table',null,'ORDER BY start_time DESC')){
+                redis_y::I()->set($redis_key,$sub_table['sub_table']);
+                redis_y::I()->expireAt( strtotime('tomorrow') );
+                return $sub_table['sub_table'];
+            }
+            //若上面没读取分表，则读结束时间为0的表，即未结束的表
+            $where = [
+                'main_table' => $this->_table,
+                'end_time' => 0,
             ];
             if($sub_table = model_sub_table_manage::I()->find_table($where,'sub_table',null,'ORDER BY start_time DESC')){
                 redis_y::I()->set($redis_key,$sub_table['sub_table']);
