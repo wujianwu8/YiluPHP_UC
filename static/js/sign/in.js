@@ -1,6 +1,18 @@
 
 var diffTime = Math.round(Date.parse(new Date())/1000) - serverTime;
 function submitLoginForm(_this){
+    // if (!$("#agree_agreement:checked").val()){
+    //     $(document).dialog({
+    //         type: "notice"
+    //         ,position: "bottom"
+    //         ,dialogClass:"dialog_warn"
+    //         ,infoText: getLang("请阅读并同意《服务协议》和《隐私声明》。")
+    //         ,autoClose: 3000
+    //         ,overlayShow: false
+    //     });
+    //     return false;
+    // }
+
     var params = {
         dtype:"json"
     };

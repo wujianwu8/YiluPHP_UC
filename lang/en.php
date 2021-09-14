@@ -1,10 +1,10 @@
 <?php
 /**
  * Created by UserCenter System
- * User: Admin
- * UID: 1
- * Date: 2021/03/02
- * Time: 04:39
+ * User: Jim
+ * UID: 83
+ * Date: 2021/04/23
+ * Time: 08:24
  */
 return [
     'access_required_permission' => 'Access required permission',
@@ -52,7 +52,7 @@ return [
     'city' => 'City',
     'class_not_found' => 'Class not found: ',
     'clean_up' => 'Clean Up',
-    'click_ok_to_jump_page' => 'Click \\\\\\\\\"OK\\\\\\\\\" to jump to the page',
+    'click_ok_to_jump_page' => 'Click \\\\\\\\\\\"OK\\\\\\\\\\\" to jump to the page',
     'click_to_view_secret' => 'Click to view secret',
     'close' => 'Close',
     'close_this_page' => 'Close this page',
@@ -271,7 +271,7 @@ return [
     'edit_role' => 'Edit Role',
     'email' => 'Email',
     'email_error' => 'The format of your email is incorrect',
-    'email_verify_code_body' => 'This is your verification vode: <strong style=\\\\\\\\\\\"color: #d00000;\\\\\\\\\\\">{$code}</strong>, you can copy it to the input box.',
+    'email_verify_code_body' => 'This is your verification vode: <strong style=\\\\\\\\\\\\\"color: #d00000;\\\\\\\\\\\\\">{$code}</strong>, you can copy it to the input box.',
     'email_verify_code_subject' => 'This is your verify code',
     'enable_account' => 'Activate',
     'enable_account_confirm' => 'Are you sure you want to activate {$nickname}\'s account?',
@@ -299,8 +299,9 @@ return [
     'gender_male' => 'Male',
     'geo_position' => 'Geo Position',
     'got_it' => 'OK',
-    'grant_for_grant_permission_name' => 'Grant[Grant\\\\\\\\\\\"{$name}\\\\\\\\\\\"]',
-    'grant_permission_name' => 'Grant \\\\\\\\\\\"{$name}\\\\\\\\\\\"',
+    'grant_for_grant_permission_name' => 'Grant[Grant\\\\\\\\\\\\\"{$name}\\\\\\\\\\\\\"]',
+    'grant_permission_name' => 'Grant \\\\\\\\\\\\\"{$name}\\\\\\\\\\\\\"',
+    'have_agree_agreement' => 'I have read and agree to the <a href=\"{$website_index}/sign/user_agreement\" target=\"_blank\" style=\"color: #aaaaaa; border-bottom: #aaaaaa dotted 1px;\"><i>Service Agreement</i></a> and <a href=\"{$website_index}/sign/privacy_policy\" target=\"_blank\" style=\"color: #aaaaaa; border-bottom: #aaaaaa dotted 1px;\"><i>Privacy Statement</i></a>.',
     'head_menu' => 'Head Menu',
     'home_page' => 'Home',
     'icon_style_or_html_code' => 'Icon style or HTML code',
@@ -370,6 +371,7 @@ return [
     'no_account_sign_up_of_mobile' => 'No account is sign up of this mobile phone',
     'no_data' => 'No data',
     'no_jump_after_saving' => 'Do not jump after saving',
+    'no_open_sign_up' => 'No open sign up, please contact the admin to get account',
     'numeral_time_s' => '<--singular{$numeral} time--><--plural{$numeral} times-->',
     'operation' => 'Operation',
     'parameter_error' => 'Parameter error',
@@ -379,7 +381,7 @@ return [
     'password_reset_succeeded' => 'Password reset succeeded',
     'password_too_simple' => 'The password is too simple. The password should be 6-20 characters long and contain both upper and lower case letters, digits, and at lest one symbol in @#$!-',
     'permission_key' => 'Permission Key',
-    'permission_key_rule_notice' => '3-25 characters long limit and can only contain letters, digits and underscores. It can\'t start with \\\\\\\\\"grant_\\\\\\\\\", and the permission key name in the same application can\'t be duplicate',
+    'permission_key_rule_notice' => '3-25 characters long limit and can only contain letters, digits and underscores. It can\'t start with \\\\\\\\\\\"grant_\\\\\\\\\\\", and the permission key name in the same application can\'t be duplicate',
     'permission_name' => 'Permission Name',
     'permission_of_application' => 'Permission of Application {$app_name}',
     'permission_of_role' => 'Permission of role {$role_name}',
@@ -397,6 +399,7 @@ return [
     'please_select_a_picture_file' => 'Please select a picture file',
     'please_select_xxx' => 'Please select the {$field}',
     'please_set_your_password' => 'Please set your password',
+    'pls_agree_agreement' => 'Please read and agree to the  <i>Service Agreement</i> and <i>Privacy Statement</i>.',
     'previous_page' => 'Previous',
     'privacy_statement_title' => 'Privacy Statement',
     'privacy_statement_url' => 'https://www.yiluphp.com/sign/privacy_policy',
@@ -405,7 +408,7 @@ return [
     'project_name' => 'Project Name',
     'province' => 'Province',
     'regenerate_secret' => 'Regenerate secret',
-    'regenerate_secret_confirm' => 'After regenerating the App Secret, <span class=\\\\\\\\\"text-danger\\\\\\\\\">the old App Secret will not be available.</span> Please be careful.',
+    'regenerate_secret_confirm' => 'After regenerating the App Secret, <span class=\\\\\\\\\\\"text-danger\\\\\\\\\\\">the old App Secret will not be available.</span> Please be careful.',
     'regexp_such_as' => 'RegExp, such as: \\\\\\\\\\\\\\/menus\\\\\\\\\\\\\\/.*',
     'register_sms_verify_code' => '【YuluPHP】Your verification code is: {$code}, please do not disclose it to others.',
     'remark' => 'Remark',
@@ -468,6 +471,7 @@ return [
     'unbind' => 'Unbind',
     'unbind_now' => 'Unbind Now',
     'usability' => 'Usability',
+    'username_is_signed_up' => 'This username in use by someone',
     'username_rule_notice' => 'The username for login is composed of letters, digits, underscores, middle bars and dots, and at least contains one non number, with a length of 3-50 characters',
     'users_with_the_permission' => 'Users with {$permission_name} permission',
     'users_with_the_role' => 'Users with {$role_name} role',

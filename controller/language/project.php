@@ -22,8 +22,5 @@ $page_size<1 && $page_size = 1;
 $data_list = model_language_project::I()->paging_select([], $page, $page_size, 'id DESC');
 
 return result('language/project', [
-    'data_list' => $data_list,
     'data_count' => model_language_project::I()->count([]),
-    'page' => $page,
-    'page_size' => $page_size,
 ]);

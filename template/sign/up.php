@@ -72,17 +72,17 @@
                   </div>
               </div>
           </div>
+          <div style="color: #aaaaaa; font-size: 12px; margin-bottom: 10px;">
+              <input type="checkbox" checked id="agree_agreement" value="1">
+              <?php echo YiluPHP::I()->lang('have_agree_agreement', ['website_index'=>$config['website_index']]); ?>
+          </div>
         <button class="btn btn-lg btn-primary btn-block" type="submit" id="registerButton"><?php echo YiluPHP::I()->lang('sign_up'); ?></button>
-        <div class="checkbox" style="overflow: hidden;zoom:1;margin-top: 20px;margin-bottom: 30px;">
+        <div class="checkbox" style="overflow: hidden;zoom:1;margin-top: 20px;margin-bottom: 130px;">
           <a href="/find_password" style="float: left;"><?php echo YiluPHP::I()->lang('forgot_password'); ?></a>
             <?php if(!is_webview()): ?>
           <a href="/sign/in" style="float: right;"><?php echo YiluPHP::I()->lang('sign_in'); ?></a>
             <?php endif; ?>
         </div>
-          <div style="color: #aaaaaa; font-size: 12px; margin-bottom: 100px;">点击登录和注册即代表您已同意
-              《<a href="<?php echo $config['website_index']; ?>/sign/user_agreement" target="_blank" style="color: #aaaaaa">服务协议</a>》与
-              《<a href="<?php echo $config['website_index']; ?>/sign/privacy_policy" target="_blank" style="color: #aaaaaa">隐私声明</a>》。
-          </div>
       </form>
 
       <?php echo load_static('/include/js_no_logged_in.shtml'); ?>

@@ -31,7 +31,7 @@
 </div>
 <?php endif; ?>
 
-<form class="form-signin" onsubmit="return submitLoginForm(this)" method="post">
+<form class="form-signin" onsubmit="return submitLoginForm(this)" method="post" style="padding-bottom: 100px;">
   <div class="text-center mb-3">
     <h1 class="h3 font-weight-normal"><?php echo YiluPHP::I()->lang('please_login'); ?></h1>
   </div>
@@ -62,6 +62,11 @@
     <label class="custom-control-label" for="remember_me"><?php echo YiluPHP::I()->lang('stay_logged_in'); ?></label>
   </div>
 
+    <div  style="color: #aaaaaa; font-size: 12px; margin-bottom: 10px; display: none;">
+        <input type="checkbox" checked id="agree_agreement" value="1">
+        <?php echo YiluPHP::I()->lang('have_agree_agreement', ['website_index'=>$config['website_index']]); ?>
+    </div>
+
   <button class="btn btn-lg btn-primary btn-block" type="submit" onfocus="this.blur();"><?php echo YiluPHP::I()->lang('login_now'); ?></button>
   <div class="row mb-3 mt-3">
     <div class="col-6">
@@ -73,7 +78,10 @@
     </div>
       <?php endif; ?>
   </div>
-    <?php if(true): ?>
+
+    <?php if(!empty($config['oauth_plat']['qq']['usable']) || !empty($config['oauth_plat']['wechat']['usable'])
+        || !empty($config['oauth_plat']['wechat_open']['usable']) || !empty($config['oauth_plat']['linkedin']['usable'])
+        || !empty($config['oauth_plat']['alipay']['usable'])): ?>
   <div class="gray_title">
       <?php echo YiluPHP::I()->lang('login_use_following_platform'); ?>
   </div>
@@ -98,10 +106,6 @@
       </a>
   </div>
     <?php endif; ?>
-    <div  style="color: #aaaaaa; font-size: 12px; margin-top: 20px; margin-bottom: 100px;">点击登录和注册即代表您已同意
-        《<a href="<?php echo $config['website_index']; ?>/sign/user_agreement" target="_blank" style="color: #aaaaaa">服务协议</a>》与
-        《<a href="<?php echo $config['website_index']; ?>/sign/privacy_policy" target="_blank" style="color: #aaaaaa">隐私声明</a>》。
-    </div>
 </form>
 
 <?php echo load_static('/include/js_jquery.shtml'); ?>

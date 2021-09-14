@@ -15,27 +15,27 @@ if (!defined('APP_PATH')){
     define('APP_PATH', substr(dirname(__FILE__), 0, -6));
 }
 
-global $config;
-if (empty($config)) {
-    $config = require(APP_PATH.'config'.DIRECTORY_SEPARATOR.'app.php');
-}
+$config = require(APP_PATH.'config'.DIRECTORY_SEPARATOR.'app.php');
 //当前登录用户的基本信息
 $self_info = ['uid'=>0,'nickname'=>'','avatar'=>''];
 
-if (!defined('SYSTEM_PATH')) {
-    if (empty($config['system_path'])) {
-        $system_path = APP_PATH . 'system' . DIRECTORY_SEPARATOR;
-    }
-    else {
-        $system_path = $config['system_path'];
-    }
-    define('SYSTEM_PATH', $system_path);
-    unset($system_path);
+if (empty($config['system_path'])) {
+    $system_path = APP_PATH . 'system' . DIRECTORY_SEPARATOR;
 }
+else {
+    $system_path = $config['system_path'];
+}
+define('SYSTEM_PATH', $system_path);
+unset($system_path);
 
 if(isset($config['error_level']) && is_integer($config['error_level'])) {
     error_reporting($config['error_level']);
 }
+
+//用户跟踪请求和返回的日志,id一样即同一次请求写的日志
+$Yilu_request_id = rand(1000,999999);
+//请求到达即写访问日志
+write_applog('VISIT');
 
 require_once(APP_PATH . 'functions.php');
 
@@ -142,7 +142,7 @@ function add_to_queue($class_name, $data, $queue_name='default', $delay_second=0
 {
     if(!$queue_name){
         write_applog('ERROR', '添加到消息队列时,消息队列的名称不正确');
-        throw new validate_exception('添加到消息队列时,消息队列的名称不正确',CODE_UNDEFINED_ERROR_TYPE);
+        return code(CODE_UNDEFINED_ERROR_TYPE,'添加到消息队列时,消息队列的名称不正确');
     }
 
     //如果是同步模式,则不写redis,直接运行队列文件
@@ -150,12 +150,12 @@ function add_to_queue($class_name, $data, $queue_name='default', $delay_second=0
         $file = APP_PATH.'cli'.DIRECTORY_SEPARATOR.'queue'.DIRECTORY_SEPARATOR.$class_name.'.php';
         if(!file_exists($file)){
             write_applog('ERROR', '未找到消息列表的实现文件:'.$file);
-            throw new validate_exception('未找到消息列表的实现文件:'.$file,CODE_UNDEFINED_ERROR_TYPE);
+            return code(CODE_UNDEFINED_ERROR_TYPE,'未找到消息列表的实现文件:'.$file);
         }
         include_once $file;
         if(!class_exists($class_name)){
             write_applog('ERROR', '在文件'.$file.'中，未找到消息列表的实现类:class '.$class_name);
-            throw new validate_exception('在文件'.$file.'中，未找到消息列表的实现类:class '.$class_name,CODE_UNDEFINED_ERROR_TYPE);
+            return code(CODE_UNDEFINED_ERROR_TYPE,'在文件'.$file.'中，未找到消息列表的实现类:class '.$class_name);
         }
         $queue = new $class_name();
         return $queue->run($data);
@@ -188,13 +188,57 @@ function add_to_queue($class_name, $data, $queue_name='default', $delay_second=0
     return $res;
 }
 
+/**
+ * @name 设置cookie
+ * @param string $name  cookie 的名称
+ * @param string $value cookie 的值
+ * @param integer $expire   cookie 的过期时间，时间戳，如果这个参数没有设置，那么 cookie 将在 session 结束后（即浏览器关闭时）自动失效
+ * @param string $path  cookie 的服务器路径
+ * @param string $domain    cookie 的域名
+ * @param string $secure    是否需要在安全的 HTTPS 连接来传输 cookie。如果 cookie 需要在安全的 HTTPS 连接下传输，则设置为 TRUE。默认是 FALSE
+ **/
+function set_cookie($name, $value, $expire=0, $path='', $domain='', $secure=false){
+    setcookie($name, $value, $expire, $path, $domain, $secure);
+}
 
 function throw404($mgs='Not Found')
 {
     //抛出404
     header('HTTP/1.1 404 Not Found');
     header("status: 404 Not Found");
-    exit();
+}
+
+function redirect($url, $http_code=302)
+{
+    if ($http_code){
+        Header('HTTP/1.1 '.$http_code);
+    }
+    header('Location: '.$url);
+    return '';
+}
+
+function send_file($file, $name='')
+{
+    if (empty($name)) {
+        $path_info = pathinfo($file);
+        $name = empty($path_info['basename']) ? uniqid() : $path_info['basename'];
+    }
+    $fp=fopen($file,"r");
+    $file_size=filesize($file);//获取文件的字节
+    //下载文件需要用到的头
+    header("Content-type: application/octet-stream");
+    header("Accept-Ranges: bytes");
+    header("Accept-Length:".$file_size);
+    header("Content-Disposition: attachment; filename=$name");
+    $buffer=1024; //设置一次读取的字节数，每读取一次，就输出数据（即返回给浏览器）
+    $file_count=0; //读取的总字节数
+    //向浏览器返回数据 如果下载完成就停止输出，如果未下载完成就一直在输出。根据文件的字节大小判断是否下载完成
+    while(!feof($fp) && $file_count<$file_size){
+        $file_con=fread($fp,$buffer);
+        $file_count+=$buffer;
+        echo $file_con;
+    }
+    return '';
 }
 
 /**
@@ -229,16 +273,11 @@ function result($template, $data=[], $return_html=false)
     $YiluPHP['file'] = APP_PATH.'template'.DIRECTORY_SEPARATOR.$YiluPHP['template_name'].'.php';
     if(!file_exists($YiluPHP['file'])) {
         unset($YiluPHP['template_name'], $YiluPHP['return_html']);
-        throw new validate_exception('模板不存在：' . $YiluPHP['file'],CODE_UNDEFINED_ERROR_TYPE);
+        return code(CODE_UNDEFINED_ERROR_TYPE,'模板不存在：' . $YiluPHP['file']);
     }
     //取出数据
     extract($YiluPHP['data']);
     unset($YiluPHP['data']);
-    foreach ($GLOBALS as $YiluPHP_key=>$YiluPHP_value){
-        if (isset($$YiluPHP_key)){
-            throw new validate_exception('在输出模板时传递的变量与全局变量 $'.$YiluPHP_key.' 重名了，如果此全局变量是你声明的，你不传此变量也可以在模板中使用，如果输出模板时你一定要传此值，请换一个变量名。（做此限制是为了防止存在同名参数时，模板函数接收的参数无效的问题）',CODE_PARAM_ERROR);
-        }
-    }
     extract($GLOBALS);
 
     ob_start(); //打开缓冲区
@@ -250,11 +289,11 @@ function result($template, $data=[], $return_html=false)
     $YiluPHP['check_layout_status'] = preg_match_all('/<!--\{use_layout\s+(\S+)\}-->\s*/', $YiluPHP['cache_string'], $YiluPHP['matches'], PREG_SET_ORDER);
     if(false === $YiluPHP['check_layout_status']){
         unset($YiluPHP['template_name'], $YiluPHP['check_layout_status'], $YiluPHP['matches'], $YiluPHP['cache_string'], $YiluPHP['return_html']);
-        throw new validate_exception(YiluPHP::I()->lang('parsing_template_fail').'：'.$YiluPHP['file'],CODE_UNDEFINED_ERROR_TYPE);
+        return code(CODE_UNDEFINED_ERROR_TYPE,YiluPHP::I()->lang('parsing_template_fail').'：'.$YiluPHP['file']);
     }
     if($YiluPHP['check_layout_status']>1){
         unset($YiluPHP['template_name'], $YiluPHP['check_layout_status'], $YiluPHP['matches'], $YiluPHP['cache_string'], $YiluPHP['return_html']);
-        throw new validate_exception(YiluPHP::I()->lang('one_template_only_one_layout').'：'.$YiluPHP['file'],CODE_UNDEFINED_ERROR_TYPE);
+        return code(CODE_UNDEFINED_ERROR_TYPE,YiluPHP::I()->lang('one_template_only_one_layout').'：'.$YiluPHP['file']);
     }
     $YiluPHP['loop_time'] = 0;
     //层层向上解析模板中使用到的布局
@@ -267,14 +306,14 @@ function result($template, $data=[], $return_html=false)
         if($YiluPHP['loop_time']>20){
             unset($YiluPHP['template_name'], $YiluPHP['check_layout_status'], $YiluPHP['matches'], $YiluPHP['cache_string'], $YiluPHP['return_html'], $YiluPHP['loop_time']);
             //模板嵌套太多布局了
-            throw new validate_exception(YiluPHP::I()->lang('too_many_nested_layouts').'：'.$YiluPHP['file'],CODE_UNDEFINED_ERROR_TYPE);
+            return code(CODE_UNDEFINED_ERROR_TYPE,YiluPHP::I()->lang('too_many_nested_layouts').'：'.$YiluPHP['file']);
         }
         $YiluPHP['loop_time']++;
 
         $YiluPHP['file'] = APP_PATH.'template/'.$YiluPHP['matches'][0][1].'.php';
         if(!file_exists($YiluPHP['file'])) {
             unset($YiluPHP['template_name'], $YiluPHP['check_layout_status'], $YiluPHP['matches'], $YiluPHP['cache_string'], $YiluPHP['return_html']);
-            throw new validate_exception(YiluPHP::I()->lang('layout_file_not_exists') . '：' . $YiluPHP['file'],CODE_UNDEFINED_ERROR_TYPE);
+            return code(CODE_UNDEFINED_ERROR_TYPE,YiluPHP::I()->lang('layout_file_not_exists') . '：' . $YiluPHP['file']);
         }
 
         ob_start(); //打开缓冲区
@@ -287,7 +326,7 @@ function result($template, $data=[], $return_html=false)
         //检查layout中是否存在内容的占位符
         if(false === strpos($YiluPHP['layout_cache_string'], '<!--{$contents}-->')){
             unset($YiluPHP['template_name'], $YiluPHP['matches'], $YiluPHP['cache_string'], $YiluPHP['return_html'], $YiluPHP['layout_cache_string']);
-            throw new validate_exception(YiluPHP::I()->lang('layout_file_have_no_content_replacer').'：'.$YiluPHP['file'],CODE_UNDEFINED_ERROR_TYPE);
+            return code(CODE_UNDEFINED_ERROR_TYPE,YiluPHP::I()->lang('layout_file_have_no_content_replacer').'：'.$YiluPHP['file']);
         }
 
         //把模板插入到布局中
@@ -295,11 +334,11 @@ function result($template, $data=[], $return_html=false)
         $YiluPHP['check_layout_status'] = preg_match_all('/<!--\{use_layout\s+(\S+)\}-->\s*/', $YiluPHP['cache_string'], $YiluPHP['matches'], PREG_SET_ORDER);
         if(false === $YiluPHP['check_layout_status']){
             unset($YiluPHP['template_name'], $YiluPHP['check_layout_status'], $YiluPHP['matches'], $YiluPHP['cache_string'], $YiluPHP['return_html']);
-            throw new validate_exception(YiluPHP::I()->lang('parsing_template_fail').'：'.$YiluPHP['file'],CODE_UNDEFINED_ERROR_TYPE);
+            return code(CODE_UNDEFINED_ERROR_TYPE,YiluPHP::I()->lang('parsing_template_fail').'：'.$YiluPHP['file']);
         }
         if($YiluPHP['check_layout_status']>1){
             unset($YiluPHP['template_name'], $YiluPHP['check_layout_status'], $YiluPHP['matches'], $YiluPHP['cache_string'], $YiluPHP['return_html']);
-            throw new validate_exception(YiluPHP::I()->lang('one_template_only_one_layout').'：'.$YiluPHP['file'],CODE_UNDEFINED_ERROR_TYPE);
+            return code(CODE_UNDEFINED_ERROR_TYPE,YiluPHP::I()->lang('one_template_only_one_layout').'：'.$YiluPHP['file']);
         }
         unset($YiluPHP['layout_cache_string']);
     }
@@ -502,6 +541,7 @@ class YiluPHP
     protected $page_lang = [];
     public $autoload_class = null;
     public static $file_content=[]; //装载文件内容
+    public static $swoole_data=[]; //装载返回给swoole的数据
 
     /**
      * 获取单例
@@ -639,7 +679,7 @@ class YiluPHP
                 $this->lang = array_merge(require_once(APP_PATH.'lang'.DIRECTORY_SEPARATOR.'cn.php'), $this->lang);
             }
             else{
-//                throw new validate_exception(YiluPHP::I()->lang('no_translation_file'). '：'.DIRECTORY_SEPARATOR.'lang'.DIRECTORY_SEPARATOR.$GLOBALS['config']['lang'].'.php',CODE_UNDEFINED_ERROR_TYPE);
+                return code(CODE_UNDEFINED_ERROR_TYPE,YiluPHP::I()->lang('no_translation_file'). '：'.DIRECTORY_SEPARATOR.'lang'.DIRECTORY_SEPARATOR.$GLOBALS['config']['lang'].'.php');
             }
         }
         if(!isset($this->lang[$lang_key])){
@@ -653,7 +693,7 @@ class YiluPHP
             else{
                 $res = $lang_key;
                 write_applog('NOTICE', YiluPHP::I()->lang('no_translation'). '('.$GLOBALS['config']['lang'].')：'.$lang_key);
-//                throw new validate_exception(YiluPHP::I()->lang('no_translation'). '('.$GLOBALS['config']['lang'].')：'.$lang_key,CODE_UNDEFINED_ERROR_TYPE);
+//               return code(CODE_UNDEFINED_ERROR_TYPE,YiluPHP::I()->lang('no_translation'). '('.$GLOBALS['config']['lang'].')：'.$lang_key);
             }
         }
         else{
@@ -691,7 +731,7 @@ class YiluPHP
     public function page_lang($lang_key, $data=[])
     {
         if(!isset($this->page_lang[$lang_key])){
-            throw new validate_exception(YiluPHP::I()->lang('no_translation'). '('.$GLOBALS['config']['lang'].')：'.$lang_key,CODE_UNDEFINED_ERROR_TYPE);
+            return code(CODE_UNDEFINED_ERROR_TYPE,YiluPHP::I()->lang('no_translation'). '('.$GLOBALS['config']['lang'].')：'.$lang_key);
         }
         return $this->page_lang[$lang_key];
     }
@@ -708,7 +748,7 @@ class YiluPHP
             $this->page_lang = array_merge(require_once($file), $this->page_lang);
         }
         else{
-            throw new validate_exception(YiluPHP::I()->lang('file_not_exists'). '：'.$file,CODE_UNDEFINED_ERROR_TYPE);
+            return code(CODE_UNDEFINED_ERROR_TYPE,YiluPHP::I()->lang('file_not_exists'). '：'.$file);
         }
     }
 
@@ -927,16 +967,11 @@ function find_file_in_dir($path, $filename){
 //设置需要使用的语言
 if(isset($_REQUEST['lang']) && trim($_REQUEST['lang'])!='' ){
     $config['lang'] = strtolower(trim($_REQUEST['lang']));
-    setcookie('lang', $config['lang'], 0, '/', empty($config['root_domain'])?'':$config['root_domain']);
+    set_cookie('lang', $config['lang'], 0, '/', empty($config['root_domain'])?'':$config['root_domain']);
 }
 else if(isset($_COOKIE['lang']) && trim($_COOKIE['lang'])!='' ){
     $config['lang'] = strtolower($_COOKIE['lang']);
 }
-
-//用户跟踪请求和返回的日志,id一样即同一次请求写的日志
-$Yilu_request_id = rand(1000,999999);
-//请求到达即写访问日志
-write_applog('VISIT');
 
 if(PHP_SAPI=='cli'){
     //解析参数，传参数方式：在php文件名的加空格 再加用双引号包含的querystring格式的参数，例如：
@@ -961,7 +996,11 @@ else{
         //例如防csrf攻击、验证访问权限等等，可在配置文件中配置多个类，每个类必须包含run方法，因为从此方法开始执行
         if (!empty($config['before_controller']) && is_array($config['before_controller'])) {
             foreach ($config['before_controller'] as $class_name) {
-                $class_name::I()->run();
+                $res = $class_name::I()->run();
+                if (true !== $res && null !== $res){
+                    echo $res;
+                    return;
+                }
             }
         }
 
@@ -1016,11 +1055,14 @@ else{
         $file = APP_PATH . 'controller/';
         $index = 0;
         $is_find_file = false;
+        //控制器及其方法名
+        $controller = empty($config['default_controller'])?'index':$config['default_controller'];
+        $action = empty($config['default_action'])?'home':$config['default_action'];
         foreach ($request_uri as $key => $val) {
             //找到文件以后的数据都作为GET参数
             if ($is_find_file) {
                 $index++;
-                if ($index % 2 == 0) {
+                if ($index==0 || $index % 2 == 0) {
                     continue;
                 }
                 $_REQUEST[$val] = $_GET[$val] = isset($request_uri[$key + 1]) ? $request_uri[$key + 1] : '';
@@ -1029,40 +1071,41 @@ else{
                 if (file_exists($file . $val . '.php')) {
                     $is_find_file = true;
                     $file = $file . $val . '.php';
+                    $controller = $val;
+                    if (!empty($request_uri[$key + 1])){
+                        $action = $request_uri[$key + 1];
+                    }
                 }
                 else {
-                    $file .= $val . '/';
+                    $file .= $val . DIRECTORY_SEPARATOR;
                 }
                 //允许最多2级目录名
                 if ($index > 2 && !$is_find_file) {
-                    throw404();
+                    return throw404();
                 }
                 $index++;
                 if ($is_find_file) {
-                    $index = 0;
+                    $index = -1;
                 }
             }
         }
 
         if (!$is_find_file) {
-            throw404();
+            return throw404();
         }
         unset($index, $key, $val, $is_find_file, $url, $request_uri);
-        echo require($file);
+        require_once($file);
+        echo $controller::I()->$action();
     }
     catch (validate_exception $exception){
         $data = $exception->getData();
         if (is_array($data) && isset($data['dtype']) && in_array($data['dtype'], ['json','jsonp'])){
-            if($data['dtype']==json){
-                echo json($exception->getCode(), $exception->getMessage(), $data);
-            }
-            else{
-                echo jsonp($exception->getCode(), $exception->getMessage(), $data);
-            }
+            $fun = $data['dtype'];
         }
         else{
-            echo code($exception->getCode(), $exception->getMessage(), $data);
+            $fun = 'code';
         }
+        echo $fun($exception->getCode(), $exception->getMessage(), $data);
     }
     catch (Exception $exception){
         write_applog('ERROR', $exception->getMessage().'['.$exception->getCode().']');

@@ -104,9 +104,9 @@ if ($language_key_list = model_language_value::I()->paging_select_project_distin
 
 unset($params, $where, $keyword);
 return result('language/table', [
-    'project_info' => $project_info,
-    'data_list' => $data_list,
-    'data_count' => $data_count,
-    'page' => $page,
-    'page_size' => $page_size,
+//    'project_info' => $project_info,
+//    'data_list' => $data_list,
+//    'data_count' => $data_count,
+//    'page' => $page,
+//    'page_size' => $page_size,
 ]);

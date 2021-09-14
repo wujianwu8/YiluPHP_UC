@@ -47,6 +47,7 @@ var language = {
     please_input_your_password: "请输入您的密码",
     please_select_a_picture_file: "请选择图片文件",
     please_set_your_password: "请设置您的密码",
+    pls_agree_agreement: "请先阅读并同意《服务协议》与《隐私声明》。",
     project_key_rule_notice: "项目键名只能使用字母、数字、下划线，长度在3-30个字",
     regenerate_secret: "重新生成密钥",
     regenerate_secret_confirm: "重新生成应用密匙后，<span class=\"text-danger\">旧的应用密匙将不可使用</span>，请谨慎操作。",

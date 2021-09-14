@@ -1,5 +1,17 @@
 
 function submitRegisterForm(_this){
+    if (!$("#agree_agreement:checked").val()){
+        $(document).dialog({
+            type: "notice"
+            ,position: "bottom"
+            ,dialogClass:"dialog_warn"
+            ,infoText: getLang("pls_agree_agreement")
+            ,autoClose: 3000
+            ,overlayShow: false
+        });
+        return false;
+    }
+
     var params = {
         dtype:"json"
     };
