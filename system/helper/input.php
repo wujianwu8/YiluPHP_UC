@@ -14,9 +14,26 @@ if(!trait_exists('input_extend')){
     trait input_extend{}
 }
 
-class input extends base_class
+class input
 {
     use input_extend;
+    //存储所有类的单例
+    protected static $instances = [];
+
+    /**
+     * 获取单例
+     * @return model|null 返回单例
+     */
+    public static function I(){
+        $class_name = get_called_class();
+        if (empty($class_name) && empty(self::$instances[$class_name])){
+            return static::$instances[$class_name] = new self();
+        }
+        if (empty(static::$instances[$class_name])){
+            return static::$instances[$class_name] = new $class_name();
+        }
+        return static::$instances[$class_name];
+    }
 
     protected $_default_error_code = [
         'required' => CODE_REQUIRED_PARAM_ERROR,
@@ -33,20 +50,6 @@ class input extends base_class
         'equal' => CODE_EQUAL_PARAM_ERROR,
         'rsa_encrypt' => CODE_RSA_PARAM_ERROR,
     ];
-
-    /**
-     * 获取单例
-     */
-    public static function I(){
-        $class_name = get_called_class();
-        if (empty($class_name) && empty(self::$instances[$class_name])){
-            return self::$instances[$class_name] = new self();
-        }
-        if (empty(self::$instances[$class_name])){
-            return self::$instances[$class_name] = new $class_name();
-        }
-        return self::$instances[$class_name];
-    }
 
     /**
      * @name 获取默认错误在数组中的键
@@ -551,7 +554,7 @@ class input extends base_class
     public function get_trim($key, $default=null)
     {
         $val = isset($_GET[$key]) ? trim($_GET[$key]) : null;
-        if(($val===null || $val==='') && $default!==null && $default!==''){
+        if($val===null){
             return $default;
         }
         return $val;
@@ -567,7 +570,7 @@ class input extends base_class
     public function post_trim($key, $default=null)
     {
         $val = isset($_POST[$key]) ? trim($_POST[$key]) : null;
-        if(($val===null || $val==='') && $default!==null && $default!==''){
+        if($val===null){
             return $default;
         }
         return $val;
@@ -583,7 +586,7 @@ class input extends base_class
     public function request_trim($key, $default=null)
     {
         $val = isset($_REQUEST[$key]) ? trim($_REQUEST[$key]) : null;
-        if(($val===null || $val==='') && $default!==null && $default!==''){
+        if($val===null){
             return $default;
         }
         return $val;
@@ -599,7 +602,7 @@ class input extends base_class
     public function get($key, $default=null)
     {
         $val = isset($_GET[$key]) ? $_GET[$key] : null;
-        if(($val===null || $val==='') && $default!==null && $default!==''){
+        if($val===null){
             return $default;
         }
         return $val;
@@ -615,7 +618,7 @@ class input extends base_class
     public function post($key, $default=null)
     {
         $val = isset($_POST[$key]) ? $_POST[$key] : null;
-        if(($val===null || $val==='') && $default!==null && $default!==''){
+        if($val===null){
             return $default;
         }
         return $val;
@@ -631,7 +634,7 @@ class input extends base_class
     public function request($key, $default=null)
     {
         $val = isset($_REQUEST[$key]) ? $_REQUEST[$key] : null;
-        if(($val===null || $val==='') && $default!==null && $default!==''){
+        if($val===null){
             return $default;
         }
         return $val;
@@ -647,7 +650,7 @@ class input extends base_class
     public function get_int($key, $default=null)
     {
         $val = isset($_GET[$key]) ? $_GET[$key] : null;
-        if($val===null || $val===''){
+        if($val===null){
             return $default;
         }
         return intval($val);
@@ -663,7 +666,7 @@ class input extends base_class
     public function post_int($key, $default=null)
     {
         $val = isset($_POST[$key]) ? $_POST[$key] : null;
-        if($val===null || $val===''){
+        if($val===null){
             return $default;
         }
         return intval($val);
@@ -679,7 +682,7 @@ class input extends base_class
     public function request_int($key, $default=null)
     {
         $val = isset($_REQUEST[$key]) ? $_REQUEST[$key] : null;
-        if($val===null || $val===''){
+        if($val===null){
             return $default;
         }
         return intval($val);
