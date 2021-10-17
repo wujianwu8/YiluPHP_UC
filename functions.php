@@ -46,20 +46,43 @@ function client_ip(){
  */
 function ten_to_54($int)
 {
-	$result = '';
-	$step = 54;
-	$str = '0123456789abcdefghijklmnopqrstuvwxyz_-^%@!()[];,.*$=|?';
-	$yu = 0;
-	do{
-		//求余
-		$yu = floor($int%$step);
-		//求商
-		$int = $int/$step;
-		$result = $str[$yu].$result;
-	}
-	while($int>1);
-	unset($int, $step, $str, $yu);
-	return $result;
+    $result = '';
+    $step = 54;
+    $str = '0123456789abcdefghijklmnopqrstuvwxyz_-^%@!()[];,.*$=|?';
+    $str = str_split($str);
+    do{
+        //求余
+        $yu = floor($int%$step);
+        //求商
+        $int = $int/$step;
+        $result = $str[$yu].$result;
+    }
+    while($int>1);
+    unset($int, $step, $str, $yu);
+    return $result;
+}
+
+/**
+ * @name 将10进制的数字转换成64进制
+ * @desc
+ * @return string
+ */
+function ten_to_64($int)
+{
+    $result = '';
+    $step = 64;
+    $str = '0123456789abcdefghijklmnopqrstuvwxyz_-ABCDEFGHIJKLMNOPQRSTUVWXYZ';
+    $str = str_split($str);
+    do{
+        //求余
+        $yu = floor($int%$step);
+        //求商
+        $int = $int/$step;
+        $result = $str[$yu].$result;
+    }
+    while($int>1);
+    unset($int, $step, $str, $yu);
+    return $result;
 }
 
 /**
