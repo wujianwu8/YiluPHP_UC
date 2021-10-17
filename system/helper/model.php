@@ -701,12 +701,10 @@ class model
         if ($connection==='' || $connection===null || $connection===false) {
             $connection = $this->sub_connection($field_value);
         }
-        if($table_name != $this->_table){
-            $tables[] = [
-                'table_name' => $table_name,
-                'connection' => $connection,
-            ];
-        }
+        $tables[] = [
+            'table_name' => $table_name==='' ? $this->sub_table($field_value) : $table_name,
+            'connection' => $connection==='' ? $this->sub_connection($field_value) : $connection,
+        ];
         unset($table_name, $connection, $field_value);
 
         $where_sql = [];
@@ -803,6 +801,12 @@ class model
             $tables[] = [
                 'table_name' => $table_name,
                 'connection' => $connection,
+            ];
+        }
+        if (!$tables){
+            $tables[] = [
+                'table_name' => $this->_table,
+                'connection' => $this->_connection,
             ];
         }
         unset($table_name, $connection, $field_value);
