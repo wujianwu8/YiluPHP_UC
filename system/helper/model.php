@@ -901,9 +901,20 @@ class model
         if (!$arr){
             return true;
         }
-        $where_arr = [];
-        foreach ($where as $key => $value){
-            $where_arr[] = '`'.$key.'`=:'.$key;
+        $where_sql = [];
+        foreach ($where as $key => $value) {
+            if(is_array($value)){
+                if(is_array($value['value'])){
+                    $plist = ':'.$key.'_'.implode(',:'.$key.'_', array_keys($value['value']));
+                    $where_sql[] = ' `'.$key.'` '.$value['symbol'].' ('.$plist.') ';
+                }
+                else{
+                    $where_sql[] = ' `'.$key.'` '.$value['symbol'].' :'.$key;
+                }
+            }
+            else{
+                $where_sql[] = ' `'.$key.'`=:'.$key;
+            }
         }
         if ($table_name==='' || $table_name===null || $table_name===false) {
             $table_name = $this->get_table();
@@ -912,16 +923,35 @@ class model
             $connection = $this->sub_connection();
         }
 
-        $sql = 'UPDATE `'.$table_name.'` SET '.implode(',', $arr).' WHERE '.implode(' AND ', $where_arr). $extend_sql;
+        $sql = 'UPDATE `'.$table_name.'` SET '.implode(',', $arr).' WHERE '.implode(' AND ', $where_sql). $extend_sql;
         $stmt = mysql::I($connection)->prepare($sql);
         $where = array_merge($where, $extend_params);
         foreach ($where as $key => $value){
-            $stmt->bindValue(':'.$key, $value, is_numeric($value)?PDO::PARAM_INT:(is_string($value)?PDO::PARAM_STR:
-                (is_bool($value)?PDO::PARAM_BOOL:(is_null($value)?PDO::PARAM_NULL:PDO::PARAM_STR))));
+            $direct_assign = true;
+            if(is_array($value)){
+                if(is_array($value['value'])){
+                    $direct_assign = false;
+                    $plist = ':'.$key.'_'.implode(',:'.$key.'_', array_keys($value['value']));
+                    $params = array_combine(explode(",", $plist), $value['value']);
+                    foreach($params as $key2 => $param){
+                        $stmt->bindValue($key2, $param, is_numeric($param)?PDO::PARAM_INT:(is_string($param)?PDO::PARAM_STR:
+                            (is_bool($param)?PDO::PARAM_BOOL:(is_null($param)?PDO::PARAM_NULL:PDO::PARAM_STR))));
+                    }
+                }
+                else{
+                    $val = $value['value'];
+                }
+            }
+            else{
+                $val = $value;
+            }
+            if($direct_assign) {
+                $stmt->bindValue(':' . $key, $val);
+            }
         }
         $stmt->execute();
         $count = $stmt->rowCount();
-        unset($uid, $arr, $fields, $sql, $stmt, $connection, $key, $value, $where, $where_arr);
+        unset($uid, $arr, $fields, $sql, $stmt, $connection, $key, $value, $where, $where_sql);
         return $count;
     }
 
