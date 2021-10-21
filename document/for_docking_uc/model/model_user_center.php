@@ -7,8 +7,21 @@
  * Time: 22:33
  */
 
-class model_user_center extends base_class
+class model_user_center
 {
+    //存储单例
+    private static $_instance = null;
+
+    /**
+     * 获取单例
+     * @return input|null
+     */
+    public static function I(){
+        if (!static::$_instance){
+            return static::$_instance = new self();
+        }
+        return static::$_instance;
+    }
 
     /**
      * @name 获取当前用户的信息，可用于判断当前用户是否登录
@@ -122,6 +135,21 @@ class model_user_center extends base_class
         return $this->_curl_post('/internal/delete_permission_by_key', ['permission_key'=>$permission_key]);
     }
 
+    public function grant_permission($uid, $permission_key){
+        return $this->_curl_post('/internal/grant_permission', [
+            'uid'=>$uid,
+            'permission_key'=>$permission_key,
+        ]);
+    }
+
+    public function select_permission_users($permission_key, $page=1, $page_size=20){
+        return $this->_curl_post('/internal/select_permission_users', [
+            'permission_key'=>$permission_key,
+            'page'=>$page,
+            'page_size'=>$page_size,
+        ]);
+    }
+
     /**
      * @name 获取当前用户的信息，可用于判断当前用户是否登录
      * @desc 不读数据库，只读存在SESSION中的基本信息
@@ -149,7 +177,7 @@ class model_user_center extends base_class
             }
         }
         //使用uid查询用户中心
-        if($user_info = $this->check_login_by_uid($uid) ){
+        if($uid && $user_info = $this->check_login_by_uid($uid) ){
             if ($user_info['code']==0){
                 //缓存用户登录的信息
                 redis_y::I()->hmset(REDIS_LOGIN_USER_INFO.$_COOKIE['vk'], $user_info['data']['user_info']);
@@ -182,7 +210,7 @@ class model_user_center extends base_class
             'dtype' => 'json',
             'time' => time(),
             'app_id' => $config['user_center']['app_id'],
-            'lang' => $config['user_center']['lang'],
+            'lang' => $config['lang'],
         ]);
         $params['sign'] = $this->_create_sign($params);
         $url = $config['user_center']['host'].$uri;
@@ -230,6 +258,5 @@ class model_user_center extends base_class
         unset($params, $key, $param);
         return implode('&', $arr);
     }
-
 
 }

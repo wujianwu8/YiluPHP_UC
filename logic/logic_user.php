@@ -7,8 +7,21 @@
  * Time: 21:19
  */
 
-class logic_user extends base_class
+class logic_user
 {
+
+    protected static $instance = null;
+
+    /**
+     * 获取单例
+     */
+    public static function I(){
+        if (empty(self::$instance)){
+            return self::$instance = new static();
+        }
+        return self::$instance;
+    }
+
 	public function __construct()
 	{
 	}
@@ -170,7 +183,7 @@ class logic_user extends base_class
             $vk = $_COOKIE['vk'];
         }
         if(!empty($vk)) {
-            $cache_key_vk = REDIS_KEY_LOGIN_USER_INFO_BY_VK.$vk;
+            $cache_key_vk = REDIS_KEY_LOGIN_USER_INFO_BY_VK.md5($vk);
             if($info = redis_y::I()->hgetall($cache_key_vk)){
                 $cache_key_uid = REDIS_KEY_LOGIN_USER_INFO_BY_UID.$info['uid'];
                 redis_y::I()->del($cache_key_vk);
@@ -203,13 +216,13 @@ class logic_user extends base_class
             throw new Exception('登录失败', CODE_ERROR_IN_SERVICE);
         }
         $vk = $_COOKIE['vk'];
-        $cache_key_vk = REDIS_KEY_LOGIN_USER_INFO_BY_VK.$vk;
+        $cache_key_vk = REDIS_KEY_LOGIN_USER_INFO_BY_VK.md5($vk);
         $cache_key_uid = REDIS_KEY_LOGIN_USER_INFO_BY_UID.$user_info['uid'];
         redis_y::I()->hmset($cache_key_vk, $arr);
         $arr['vk'] = $vk;
         redis_y::I()->hmset($cache_key_uid, $arr);
-        if (!empty($_SERVER['HTTP_CLIENTTYPE']) && in_array($_SERVER['HTTP_CLIENTTYPE'], [3,4])) {
-            //请求头信息中还有一个参数：clienttype，表示客户端类型，1PC浏览器，2手机浏览器，3安卓原生调接口，4ios原生调接口，3安卓webview，4 ios webview，5微信小程序调接口
+        if (!empty($_SERVER['HTTP_CLIENTTYPE']) && in_array($_SERVER['HTTP_CLIENTTYPE'], [3,4,7])) {
+            //请求头信息中还有一个参数：clienttype，表示客户端类型，1PC浏览器，2手机浏览器，3安卓原生调接口，4ios原生调接口，5安卓webview，6ios webview，7微信小程序调接口
             $expire = TIME_60_DAY;
         }
 		else if($remember_me){
@@ -264,7 +277,7 @@ class logic_user extends base_class
             return null;
         }
         $vk = $_COOKIE['vk'];
-        return redis_y::I()->hgetall(REDIS_KEY_LOGIN_USER_INFO_BY_VK.$vk);
+        return redis_y::I()->hgetall(REDIS_KEY_LOGIN_USER_INFO_BY_VK.md5($vk));
     }
 
     /**
@@ -276,7 +289,7 @@ class logic_user extends base_class
      */
     public function get_login_user_info_by_vk($vk)
     {
-        return redis_y::I()->hgetall(REDIS_KEY_LOGIN_USER_INFO_BY_VK.$vk);
+        return redis_y::I()->hgetall(REDIS_KEY_LOGIN_USER_INFO_BY_VK.md5($vk));
     }
 
     /**
@@ -312,8 +325,8 @@ class logic_user extends base_class
             unset($where, $data);
         }
         if ($vk){
-            redis_y::I()->hset(REDIS_KEY_LOGIN_USER_INFO_BY_VK.$vk, 'last_active', $time);
-            redis_y::I()->expire(REDIS_KEY_LOGIN_USER_INFO_BY_VK.$vk, $expire);
+            redis_y::I()->hset(REDIS_KEY_LOGIN_USER_INFO_BY_VK.md5($vk), 'last_active', $time);
+            redis_y::I()->expire(REDIS_KEY_LOGIN_USER_INFO_BY_VK.md5($vk), $expire);
         }
         unset($uid, $vk, $expire, $time);
         return true;
@@ -333,7 +346,7 @@ class logic_user extends base_class
             return null;
         }
         $vk = $_COOKIE['vk'];
-        $cache_key_vk = REDIS_KEY_LOGIN_USER_INFO_BY_VK.$vk;
+        $cache_key_vk = REDIS_KEY_LOGIN_USER_INFO_BY_VK.md5($vk);
         if($current_infor = redis_y::I()->hgetall($cache_key_vk)){
             isset($data['nickname']) && $current_infor['nickname'] = $data['nickname'];
             isset($data['avatar']) && $current_infor['avatar'] = $data['avatar'];
@@ -370,6 +383,48 @@ class logic_user extends base_class
 		}
 		return 'username';
 	}
+
+    /**
+     * @name 根据UID获取用户名
+     * @desc
+     * @param integer $uid
+     * @return string 用户名
+     */
+    public function get_username_by_uid($uid){
+        if (empty($uid)){
+            return '';
+        }
+        $username = '';
+        $identity = model_user_identity::I()->select_all(['type'=>'INNER', 'uid'=>$uid], '', 'type,identity', $uid);
+        foreach ($identity as $item){
+            if (logic_user::I()->get_identity_type($item['identity'])=='username'){
+                $username = $item['identity'];
+                break;
+            }
+        }
+        return $username;
+    }
+
+    /**
+     * @name 根据UID获取用户绑定的手机号
+     * @desc
+     * @param integer $uid
+     * @return string 用户绑定的手机号
+     */
+    public function get_mobile_by_uid($uid){
+        if (empty($uid)){
+            return '';
+        }
+        $mobile = '';
+        $identity = model_user_identity::I()->select_all(['type'=>'INNER', 'uid'=>$uid], '', 'type,identity', $uid);
+        foreach ($identity as $item){
+            if (logic_user::I()->get_identity_type($item['identity'])=='mobile'){
+                $mobile = $item['identity'];
+                break;
+            }
+        }
+        return $mobile;
+    }
 
 	/**
 	 * @name 修改用户信息

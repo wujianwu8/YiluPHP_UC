@@ -3,8 +3,8 @@
  * Created by UserCenter System
  * User: Jim
  * UID: 83
- * Date: 2021/04/23
- * Time: 08:24
+ * Date: 2021/10/22
+ * Time: 07:09
  */
 return [
     'access_required_permission' => 'Access required permission',
@@ -383,6 +383,7 @@ return [
     'permission_key' => 'Permission Key',
     'permission_key_rule_notice' => '3-25 characters long limit and can only contain letters, digits and underscores. It can\'t start with \\\\\\\\\\\"grant_\\\\\\\\\\\", and the permission key name in the same application can\'t be duplicate',
     'permission_name' => 'Permission Name',
+    'permission_not_found' => 'No such permission',
     'permission_of_application' => 'Permission of Application {$app_name}',
     'permission_of_role' => 'Permission of role {$role_name}',
     'permission_of_user' => 'Permission of user {$nickname}',

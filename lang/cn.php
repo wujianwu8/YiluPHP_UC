@@ -3,8 +3,8 @@
  * Created by UserCenter System
  * User: Jim
  * UID: 83
- * Date: 2021/04/23
- * Time: 08:24
+ * Date: 2021/10/22
+ * Time: 07:09
  */
 return [
     'access_required_permission' => '访问所需权限',
@@ -383,6 +383,7 @@ return [
     'permission_key' => '权限键名',
     'permission_key_rule_notice' => '长度在3-25个字符，只能包含字母、数字、下划线组成，不能以grant_开头，且同一个应用内权限键名不可重复',
     'permission_name' => '权限名称',
+    'permission_not_found' => '无此权限',
     'permission_of_application' => '应用\\\\\\\\\\\"{$app_name}\\\\\\\\\\\"的权限',
     'permission_of_role' => '角色\\\\\\\\\\\"{$role_name}\\\\\\\\\\\"的权限',
     'permission_of_user' => '用户\\\\\\\\\\\"{$nickname}\\\\\\\\\\\"的权限',
