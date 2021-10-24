@@ -59,6 +59,10 @@ class model_user_center
         return $this->_curl_post('/internal/find_uid_by_username', ['username'=>$username]);
     }
 
+    public function find_user_by_identity($identity){
+        return $this->_curl_post('/internal/find_user_by_identity', ['identity'=>$identity]);
+    }
+
     public function find_username_by_uid($uid){
         $result = $this->_curl_post('/internal/find_username_by_uid', ['uid'=>$uid]);
         if ($result && $result['code']==0){
@@ -258,5 +262,6 @@ class model_user_center
         unset($params, $key, $param);
         return implode('&', $arr);
     }
+
 
 }
