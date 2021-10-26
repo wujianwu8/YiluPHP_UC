@@ -146,6 +146,13 @@ class model_user_center
         ]);
     }
 
+    public function revoke_permission($uid, $permission_key){
+        return $this->_curl_post('/internal/revoke_permission', [
+            'uid'=>$uid,
+            'permission_key'=>$permission_key,
+        ]);
+    }
+
     public function select_permission_users($permission_key, $page=1, $page_size=20){
         return $this->_curl_post('/internal/select_permission_users', [
             'permission_key'=>$permission_key,
