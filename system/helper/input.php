@@ -199,8 +199,28 @@ class input
     }
 
     /**
+     * @name HTML标签转义，同时转义单引号和双引号
+     * @param mixed $value 可接受任何类型的值
+     * @return mixed
+     */
+    private function _htmlspecialchars_value($value)
+    {
+        if (is_string($value)){
+            return htmlspecialchars($value,ENT_QUOTES);
+        }
+        else if (is_array($value)){
+            foreach ($value as $key=>$val){
+                $value[$key] = $this->_htmlspecialchars_value($val);
+            }
+        }
+        else{
+            return $value;
+        }
+    }
+
+    /**
      * @name 去掉字符串前后的空格
-     * @param mixed $value 可接受任务类型的值
+     * @param mixed $value 可接受任何类型的值
      * @return mixed
      */
     private function _trim_value($value)
@@ -463,6 +483,10 @@ class input
                 );
             }
             $val = $this->request($key);
+            //HTML标签转义，同时转义单引号和双引号
+            if (in_array('htmlspecialchars', $rule_arr)){
+                $val = $this->_htmlspecialchars_value($val);
+            }
             //去掉前后空格后再检验
             if (in_array('trim', $rule_arr)){
                 $val = $this->_trim_value($val);
@@ -501,7 +525,7 @@ class input
                 if (!in_array('required', $rule_arr) && ($val===null || $val==='')) {
                     continue;
                 }
-                if(!in_array($item_rule, ['required', 'trim', 'return', 'rsa_encrypt'])){
+                if(!in_array($item_rule, ['required', 'trim', 'return', 'rsa_encrypt', 'htmlspecialchars'])){
                     $split_rule = explode(':', $item_rule,2);
                     if(method_exists($this, '_check_'.$split_rule[0])){
                         $method = '_check_'.$split_rule[0];
