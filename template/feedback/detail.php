@@ -1,4 +1,4 @@
-<!--{use_layout layout/main}-->
+<!--{use_layout layout/admin_main}-->
 <?php
 $head_info = [
     'title' => YiluPHP::I()->lang('feedback_detail'),
@@ -13,7 +13,7 @@ $head_info = [
         <div class="mr-5">
             <span class="title mr-2"><?php echo YiluPHP::I()->lang('feedback_user'); ?></span>
             <span>
-                <a class="detail" href="/user/detail/<?php echo $feedback_info['uid']; ?>" uid="<?php echo $feedback_info['uid']; ?>">
+                <a class="detail" href="<?php echo url_pre_lang(); ?>/user/detail/<?php echo $feedback_info['uid']; ?>" uid="<?php echo $feedback_info['uid']; ?>">
                     <img src="<?php echo $feedback_info['avatar']; ?>" width="20" height="20">
                     <?php echo $feedback_info['nickname']; ?>
                 </a>
@@ -103,7 +103,7 @@ $head_info = [
             $.ajax({
                     type: 'post'
                     , dataType: 'json'
-                    , url: "/feedback/save_edit"
+                    , url: "<?php echo url_pre_lang(); ?>/feedback/save_edit"
                     , data: params
                     , success: function (data, textStatus, jqXHR) {
                         toast.close();

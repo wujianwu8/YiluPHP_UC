@@ -6,3 +6,6 @@
 var rsaPublicKey = "<?php echo preg_replace('/\r/', '', preg_replace('/\n/', '', preg_replace('/\r\n/', '', empty($config['rsa_public_key'])?'':$config['rsa_public_key']))); ?>";
 var rootDomain = "<?php echo $config['root_domain']; ?>";
 var serverTime = <?php echo time(); ?>;
+var main_lang = "<?php echo $config['main_lang']; ?>";
+var support_lang = <?php echo json_encode(YiluPHP::I()->support_lang()); ?>;
+var url_pre_lang = "<?php echo url_pre_lang(); ?>";

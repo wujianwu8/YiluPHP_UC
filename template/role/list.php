@@ -1,4 +1,4 @@
-<!--{use_layout layout/main}-->
+<!--{use_layout layout/admin_main}-->
 <?php
 $head_info = [
     'title' =>  YiluPHP::I()->lang('user_role'),
@@ -24,7 +24,7 @@ $head_info = [
                 <option value="200"<?php echo isset($_REQUEST['page_size'])&&$_REQUEST['page_size']=='200'? ' selected':''; ?>>200<?php echo YiluPHP::I()->lang('data_number_per_page'); ?></option>
                 <option value="500"<?php echo isset($_REQUEST['page_size'])&&$_REQUEST['page_size']=='500'? ' selected':''; ?>>500<?php echo YiluPHP::I()->lang('data_number_per_page'); ?></option>
             </select>
-            <a href="/role/add" class="btn btn-sm btn-outline-primary ml-4 mb-2 ajax_main_content">
+            <a href="<?php echo url_pre_lang(); ?>/role/add" class="btn btn-sm btn-outline-primary ml-4 mb-2 ajax_main_content">
                 <i class="fa fa-plus" aria-hidden="true"></i>
                 <?php echo YiluPHP::I()->lang('create_role'); ?>
             </a>
@@ -51,16 +51,16 @@ $head_info = [
             <td><?php echo $item['role_name']; ?></td>
             <td><?php echo $item['description']; ?></td>
             <td>
-                <a class="show_title show_users mr-2" href="/role/users/<?php echo $item['id']; ?>" title="<?php echo YiluPHP::I()->lang('view_people_with_this_role'); ?>">
+                <a class="show_title show_users mr-2" href="<?php echo url_pre_lang(); ?>/role/users/<?php echo $item['id']; ?>" title="<?php echo YiluPHP::I()->lang('view_people_with_this_role'); ?>">
                     <i class="fa fa-users" aria-hidden="true"></i>
                 </a>
-                <a class="show_title ajax_main_content mr-2" href="/role/grant_permission/<?php echo $item['id']; ?>" title="<?php echo YiluPHP::I()->lang('to_grant_authorization'); ?>">
+                <a class="show_title ajax_main_content mr-2" href="<?php echo url_pre_lang(); ?>/role/grant_permission/<?php echo $item['id']; ?>" title="<?php echo YiluPHP::I()->lang('to_grant_authorization'); ?>">
                     <i class="fa fa-cubes" aria-hidden="true"></i>
                 </a>
-                <a class="ajax_main_content mr-1" href="/role/edit/<?php echo $item['id']; ?>">
+                <a class="ajax_main_content mr-1" href="<?php echo url_pre_lang(); ?>/role/edit/<?php echo $item['id']; ?>">
                     <i class="fa fa-edit" aria-hidden="true"></i>
                 </a>
-                <a href="/role/delete" class="delete"><i class="fa fa-close"></i></a>
+                <a href="<?php echo url_pre_lang(); ?>/role/delete" class="delete"><i class="fa fa-close"></i></a>
             </td>
         </tr>
         <?php endforeach; ?>

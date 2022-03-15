@@ -1,4 +1,4 @@
-<!--{use_layout layout/main}-->
+<!--{use_layout layout/admin_main}-->
 <?php
     $head_info = [
         'title' => YiluPHP::I()->lang('role_of_user', ['nickname'=>$user_info['nickname']]),
@@ -61,9 +61,9 @@
             };
             params.uid = $("#uid").val();
             if (obj.prop('checked')) {
-                url = "/user/save_add_role";
+                url = "<?php echo url_pre_lang(); ?>/user/save_add_role";
             } else {
-                url = "/user/save_delete_role";
+                url = "<?php echo url_pre_lang(); ?>/user/save_delete_role";
             }
             var toast = loading();
             $.ajax({

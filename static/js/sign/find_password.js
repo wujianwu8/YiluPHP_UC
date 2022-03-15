@@ -122,7 +122,7 @@ function checkMobileCodeForm(_this){
     $.ajax({
             type: 'post'
             , dataType: 'json'
-            , url: "/sign/check_sms_code"
+            , url: url_pre_lang+"/sign/check_sms_code"
             , data: params
             , success: function (data, textStatus, jqXHR) {
                 $("#checkMobileCodeBtn").removeClass("btn_loading").removeAttr("disabled", true);
@@ -208,7 +208,7 @@ function checkEmailCodeForm(_this){
     $.ajax({
             type: 'post'
             , dataType: 'json'
-            , url: "/sign/check_email_code"
+            , url: url_pre_lang+"/sign/check_email_code"
             , data: params
             , success: function (data, textStatus, jqXHR) {
                 $("#checkEmailCodeBtn").removeClass("btn_loading").removeAttr("disabled", true);
@@ -347,7 +347,7 @@ function resetPasswordForm(_this){
     $.ajax({
             type: 'post'
             , dataType: 'json'
-            , url: "/sign/reset_password"
+            , url: url_pre_lang+"/sign/reset_password"
             , data: params
             , success: function (data, textStatus, jqXHR) {
                 btn.removeClass("btn_loading").removeAttr("disabled", true);
@@ -424,7 +424,7 @@ $(function(){
         };
         params = rsaEncryptData(params, ["email"]);
         $.post(
-            "/send_email_code",
+            url_pre_lang+"/send_email_code",
             params,
             function(data,status){
                 $("#btn_send_email_code").removeClass("btn_loading");

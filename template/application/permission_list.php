@@ -1,4 +1,4 @@
-<!--{use_layout layout/main}-->
+<!--{use_layout layout/admin_main}-->
 <?php
 $head_info = [
     'title' => YiluPHP::I()->lang('manage_permission'),
@@ -7,7 +7,7 @@ $head_info = [
 
 <h4>
     <?php echo YiluPHP::I()->lang('permission_of_application', ['app_name'=>$application_info['app_name']]); ?>
-    <a class="btn btn-sm btn-outline-primary ml-4 ajax_main_content" href="/application/add_permission/<?php echo $application_info['app_id']; ?>">
+    <a class="btn btn-sm btn-outline-primary ml-4 ajax_main_content" href="<?php echo url_pre_lang(); ?>/application/add_permission/<?php echo $application_info['app_id']; ?>">
         <i class="fa fa-plus" aria-hidden="true"></i>
         <?php echo YiluPHP::I()->lang('lang_add_permission'); ?>
     </a>
@@ -33,14 +33,14 @@ $head_info = [
             <td><?php echo $item['permission_key']; ?></td>
             <td class="show_title" title="<?php echo htmlspecialchars($item['description']); ?>"><?php echo mb_substr($item['description'],0,60); ?></td>
             <td>
-                <a class="show_title show_users mr-2" href="/application/permission_users/<?php echo $item['permission_id']; ?>" title="<?php echo YiluPHP::I()->lang('view_people_with_this_permission'); ?>">
+                <a class="show_title show_users mr-2" href="<?php echo url_pre_lang(); ?>/application/permission_users/<?php echo $item['permission_id']; ?>" title="<?php echo YiluPHP::I()->lang('view_people_with_this_permission'); ?>">
                     <i class="fa fa-users" aria-hidden="true"></i>
                 </a>
                 <?php if (empty($item['is_fixed'])){ ?>
-                    <a class="ajax_main_content mr-1" href="/application/edit_permission/<?php echo $item['permission_id']; ?>">
+                    <a class="ajax_main_content mr-1" href="<?php echo url_pre_lang(); ?>/application/edit_permission/<?php echo $item['permission_id']; ?>">
                         <i class="fa fa-edit" aria-hidden="true"></i>
                     </a>
-                    <a href="/application/delete_permission" class="delete"><i class="fa fa-close"></i></a>
+                    <a href="<?php echo url_pre_lang(); ?>/application/delete_permission" class="delete"><i class="fa fa-close"></i></a>
                 <?php } ?>
             </td>
         </tr>

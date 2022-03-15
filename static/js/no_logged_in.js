@@ -130,7 +130,7 @@ function submitRegisterForm(_this){
     $.ajax({
             type: 'post'
             , dataType: 'json'
-            , url: "/sign/create_user"
+            , url: url_pre_lang+"/sign/create_user"
             , data: params
             , success: function (data, textStatus, jqXHR) {
                 $("#registerButton").removeClass("btn_loading").removeAttr("disabled", true);
@@ -224,7 +224,7 @@ $(function(){
         }
         params = rsaEncryptData(params, ["mobile"]);
         $.post(
-            "/send_sms_code",
+            url_pre_lang+"/send_sms_code",
             params,
             function(data,status){
                 $("#btn_send_sms_code").removeClass("btn_loading");

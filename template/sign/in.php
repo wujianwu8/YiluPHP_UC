@@ -70,11 +70,11 @@
   <button class="btn btn-lg btn-primary btn-block" type="submit" onfocus="this.blur();"><?php echo YiluPHP::I()->lang('login_now'); ?></button>
   <div class="row mb-3 mt-3">
     <div class="col-6">
-      <a href="/find_password"><?php echo YiluPHP::I()->lang('forgot_password'); ?></a>
+      <a href="<?php echo url_pre_lang(); ?>/find_password"><?php echo YiluPHP::I()->lang('forgot_password'); ?></a>
     </div>
       <?php if(!empty($config['open_sign_up'])): ?>
     <div class="col-6 text-right">
-      <a href="/sign/up"><?php echo YiluPHP::I()->lang('sign_up'); ?></a>
+      <a href="<?php echo url_pre_lang(); ?>/sign/up"><?php echo YiluPHP::I()->lang('sign_up'); ?></a>
     </div>
       <?php endif; ?>
   </div>
@@ -98,7 +98,7 @@
               </span>
           <br/><?php echo YiluPHP::I()->lang('user_identity_type_QQ'); ?>
       </a>
-      <a href="/sign/alipay_login" id="alipaylogin_btn">
+      <a href="<?php echo url_pre_lang(); ?>/sign/alipay_login" id="alipaylogin_btn">
               <span>
                 <img src="/img/icons.png" height="47" style="margin-left: -112px;">
               </span>
@@ -110,7 +110,7 @@
 
 <?php echo load_static('/include/js_jquery.shtml'); ?>
 <?php echo load_static('/include/js_jquery_cookie.shtml'); ?>
-<?php echo load_static('/include/js_config_js.shtml'); ?>
+<script src="<?php echo url_pre_lang(); ?>/config_js" type="text/javascript"></script>
 <?php echo load_static('/include/js_jsencrypt.shtml'); ?>
 <?php echo load_static('/include/js_dialog_diy.shtml'); ?>
 <?php echo load_static('/include/js_jweixin.shtml'); ?>

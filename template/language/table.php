@@ -1,4 +1,4 @@
-<!--{use_layout layout/main}-->
+<!--{use_layout layout/admin_main}-->
 
 <?php if (empty($_REQUEST['pager_ignore_just_table'])){ ?>
 <?php
@@ -68,8 +68,8 @@ $head_info = [
         <tr _language_key="<?php echo $language_key; ?>">
             <td>
                 <div class="links">
-                    <a href="/language/delete_lang_key" class="delete mr-2"><i class="fa fa-close"></i></a>
-                    <a class="insert_key" href="/language/check_language_key_usable">
+                    <a href="<?php echo url_pre_lang(); ?>/language/delete_lang_key" class="delete mr-2"><i class="fa fa-close"></i></a>
+                    <a class="insert_key" href="<?php echo url_pre_lang(); ?>/language/check_language_key_usable">
                         <i class="fa fa-indent" aria-hidden="true"></i>
                     </a>
                     <span class="custom-control custom-checkbox">
@@ -132,7 +132,7 @@ $head_info = [
         }
         arr.push("page_size="+$("#page_size").val());
 
-        url = "/language/table/"+$("#project_id").val();
+        url = "<?php echo url_pre_lang(); ?>/language/table/"+$("#project_id").val();
         if(arr.length>0){
             url = url+"?"+arr.join("&");
         }
@@ -273,7 +273,7 @@ $head_info = [
             $.ajax({
                 type: 'post'
                 , dataType: 'json'
-                , url: "/language/save_lang_output_type"
+                , url: "<?php echo url_pre_lang(); ?>/language/save_lang_output_type"
                 , data: params
                 , success: function (data, textStatus, jqXHR) {
                     if (data.code != 0) {
@@ -314,7 +314,7 @@ $head_info = [
             $.ajax({
                 type: 'post'
                 , dataType: 'json'
-                , url: "/language/save_edit_lang_value"
+                , url: "<?php echo url_pre_lang(); ?>/language/save_edit_lang_value"
                 , data: params
                 , success: function (data, textStatus, jqXHR) {
                     obj.attr("last_save", 0);

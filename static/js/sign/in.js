@@ -102,7 +102,7 @@ function submitLoginForm(_this){
     $.ajax({
             type: 'post'
             , dataType: 'json'
-            , url: "/sign/login"
+            , url: url_pre_lang+"/sign/login"
             , data: params
             , success: function (data, textStatus, jqXHR) {
                 load_dialog.close();

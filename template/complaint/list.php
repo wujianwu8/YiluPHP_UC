@@ -1,4 +1,4 @@
-<!--{use_layout layout/main}-->
+<!--{use_layout layout/admin_main}-->
 <?php
 $head_info = [
     'title' => YiluPHP::I()->lang('menu_complained_user'),
@@ -69,13 +69,13 @@ $head_info = [
             <td><?php echo $item['id']; ?></td>
             <td><img src="<?php echo $item['respondent_avatar']; ?>" width="18" height="18"></td>
             <td>
-                <a href="/user/detail/<?php echo $item['respondent_uid']; ?>" uid="<?php echo $item['respondent_uid']; ?>">
+                <a href="<?php echo url_pre_lang(); ?>/user/detail/<?php echo $item['respondent_uid']; ?>" uid="<?php echo $item['respondent_uid']; ?>">
                     <?php echo $item['respondent_nickname']; ?>
                 </a>
             </td>
             <td><img src="<?php echo $item['complaint_avatar']; ?>" width="18" height="18"></td>
             <td>
-                <a href="/user/detail/<?php echo $item['complaint_uid']; ?>" uid="<?php echo $item['complaint_uid']; ?>">
+                <a href="<?php echo url_pre_lang(); ?>/user/detail/<?php echo $item['complaint_uid']; ?>" uid="<?php echo $item['complaint_uid']; ?>">
                     <?php echo $item['complaint_nickname']; ?>
                 </a>
             </td>
@@ -97,7 +97,7 @@ $head_info = [
             <td><?php echo mb_substr(strip_tags($item['remark']), 0, 50); ?></td>
             <td><?php echo date('Y-m-d H:i:s', $item['ctime']); ?></td>
             <td>
-                <a class="detail" href="/complaint/detail/<?php echo $item['id']; ?>" target="_blank">
+                <a class="detail" href="<?php echo url_pre_lang(); ?>/complaint/detail/<?php echo $item['id']; ?>" target="_blank">
                     <i class="fa fa-ellipsis-h" aria-hidden="true"></i>
                 </a>
             </td>
@@ -137,7 +137,7 @@ $head_info = [
         $.ajax({
                 type: 'post'
                 , dataType: 'json'
-                , url: "/complaint/save_edit"
+                , url: "<?php echo url_pre_lang(); ?>/complaint/save_edit"
                 , data: params
                 , success: function (data, textStatus, jqXHR) {
                     toast.close();
@@ -213,7 +213,7 @@ $head_info = [
                 }
                 arr.push(item.name+"="+item.value);
             }
-            url = "/complaint/list";
+            url = "<?php echo url_pre_lang(); ?>/complaint/list";
             if(arr.length>0){
                 url = url+"?"+arr.join("&");
             }

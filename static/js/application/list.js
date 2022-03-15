@@ -8,7 +8,7 @@ function changeApplicationStatus(obj){
     $.ajax({
             type: 'post'
             , dataType: 'json'
-            , url: "/application/save_edit"
+            , url: url_pre_lang+"/application/save_edit"
             , data: params
             , success: function (data, textStatus, jqXHR) {
                 toast.close();

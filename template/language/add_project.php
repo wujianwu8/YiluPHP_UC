@@ -1,4 +1,4 @@
-<!--{use_layout layout/main}-->
+<!--{use_layout layout/admin_main}-->
 <?php
 $head_info = [
     'title' => YiluPHP::I()->lang('add_lang_pack_project'),
@@ -122,13 +122,13 @@ $head_info = [
                     }
                     params[item.name] = item.value;
                 }
-                ajaxPost("/language/save_add_project", params, function (data) {
+                ajaxPost("<?php echo url_pre_lang(); ?>/language/save_add_project", params, function (data) {
                     $(document).dialog({
                         overlayClose: true
                         , titleShow: false
                         , content: getLang("save_successfully")
                         , onClosed: function() {
-                            $.getMainHtml("/language/project", {with_layout:0,dtype:'json'});
+                            $.getMainHtml("<?php echo url_pre_lang(); ?>/language/project", {with_layout:0,dtype:'json'});
                         }
                     });
                 });

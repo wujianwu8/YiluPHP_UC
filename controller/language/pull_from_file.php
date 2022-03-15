@@ -79,14 +79,16 @@ foreach ($file_list as $file){
                 }
                 $output_type = '-'.implode('-', $output_type).'-';
             }
+
             $data = [
                 'project_key' => $project_info['project_key'],
                 'language_type' => $file_info['filename'],
                 'language_key' => $lang_key,
-                'language_value' => $lang_value,
+                'language_value' => addslashes(stripslashes($lang_value)),
                 'output_type' => $output_type,
                 'ctime' => time(),
             ];
+
             //保存入库
             if(false === model_language_value::I()->insert_language_value($data)){
                 unset($params, $project_info, $data, $file_info, $file, $lang_arr, $lang_key, $lang_value);

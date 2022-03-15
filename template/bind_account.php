@@ -14,7 +14,7 @@
     <?php echo load_static('/include/css_sign.shtml'); ?>
     <?php echo load_static('/include/js_jquery.shtml'); ?>
     <?php echo load_static('/include/js_jquery_cookie.shtml'); ?>
-    <?php echo load_static('/include/js_config_js.shtml'); ?>
+    <script src="<?php echo url_pre_lang(); ?>/config_js" type="text/javascript"></script>
     <?php echo load_static('/include/js_jsencrypt.shtml'); ?>
     <?php echo load_static('/include/js_dialog_diy.shtml'); ?>
     <?php echo load_static('/include/js_base.shtml'); ?>
@@ -107,7 +107,7 @@
                 <button class="btn btn-lg btn-primary btn-block" type="submit" id="loginBind"><?php echo YiluPHP::I()->lang('sign_in_and_bind'); ?></button>
             </div>
             <div class="checkbox" style="overflow: hidden;zoom:1;margin-top: 20px;margin-bottom: 30px;">
-                <a href="/find_password" style="float: left;"><?php echo YiluPHP::I()->lang('forgot_password'); ?></a>
+                <a href="<?php echo url_pre_lang(); ?>/find_password" style="float: left;"><?php echo YiluPHP::I()->lang('forgot_password'); ?></a>
             </div>
         </form>
     </div>
@@ -195,7 +195,7 @@
         $.ajax({
                 type: 'post'
                 , dataType: 'json'
-                , url: "/sign/login"
+                , url: "<?php echo url_pre_lang(); ?>/sign/login"
                 , data: params
                 , success: function (data, textStatus, jqXHR) {
                     $("#loginBind").removeClass("btn_loading").removeAttr("disabled", true);

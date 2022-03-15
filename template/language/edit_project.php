@@ -1,4 +1,4 @@
-<!--{use_layout layout/main}-->
+<!--{use_layout layout/admin_main}-->
 <?php
 $head_info = [
     'title' => YiluPHP::I()->lang('edit_lang_pack_project_info'),
@@ -127,7 +127,7 @@ $head_info = [
                         , titleShow: false
                         , content: getLang("save_successfully")
                         , onClosed: function() {
-                            $.getMainHtml("/language/project", {with_layout:0,dtype:'json'});
+                            $.getMainHtml("<?php echo url_pre_lang(); ?>/language/project", {with_layout:0,dtype:'json'});
                         }
                     });
                 });

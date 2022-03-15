@@ -16,7 +16,7 @@
 
       <?php echo load_static('/include/js_jquery.shtml'); ?>
       <?php echo load_static('/include/js_jquery_cookie.shtml'); ?>
-      <?php echo load_static('/include/js_config_js.shtml'); ?>
+      <script src="<?php echo url_pre_lang(); ?>/config_js" type="text/javascript"></script>
       <?php echo load_static('/include/js_jsencrypt.shtml'); ?>
       <?php echo load_static('/include/js_dialog_diy.shtml'); ?>
       <?php echo load_static('/include/js_base.shtml'); ?>
@@ -78,9 +78,9 @@
           </div>
         <button class="btn btn-lg btn-primary btn-block" type="submit" id="registerButton"><?php echo YiluPHP::I()->lang('sign_up'); ?></button>
         <div class="checkbox" style="overflow: hidden;zoom:1;margin-top: 20px;margin-bottom: 130px;">
-          <a href="/find_password" style="float: left;"><?php echo YiluPHP::I()->lang('forgot_password'); ?></a>
+          <a href="<?php echo url_pre_lang(); ?>/find_password" style="float: left;"><?php echo YiluPHP::I()->lang('forgot_password'); ?></a>
             <?php if(!is_webview()): ?>
-          <a href="/sign/in" style="float: right;"><?php echo YiluPHP::I()->lang('sign_in'); ?></a>
+          <a href="<?php echo url_pre_lang(); ?>/sign/in" style="float: right;"><?php echo YiluPHP::I()->lang('sign_in'); ?></a>
             <?php endif; ?>
         </div>
       </form>

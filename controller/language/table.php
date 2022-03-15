@@ -90,6 +90,7 @@ if ($language_key_list = model_language_value::I()->paging_select_project_distin
         unset($temp);
         foreach ($language_key_list as $language_key){
             if (isset($value_list[$language_key])){
+                $value_list[$language_key]['language_value'] = stripslashes($value_list[$language_key]['language_value']);
                 $data_list[$language_key][$lang] = $value_list[$language_key];
                 $data_list[$language_key]['output_type'] = $output_type[$language_key];
             }

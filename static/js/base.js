@@ -68,6 +68,7 @@ function getCurrentHost()
     var host = arrUrl[1].substring(0,start);
     return arrUrl[0]+"//"+host;
 }
+
 function getUrlHost(url)
 {
     var arrUrl = url.split("//");
@@ -110,7 +111,7 @@ function loading(overlayShow){
 }
 
 function dialogShowUserInfo(uid, nickname) {
-    $.get("/user/detail/"+uid, function(data){
+    $.get(url_pre_lang+"/user/detail/"+uid, function(data){
         $(document).dialog({
             titleText: getLang("details_of_user", {nickname:nickname}),
             content: data,
@@ -122,7 +123,7 @@ function dialogShowUserInfo(uid, nickname) {
 function changeUserStatus(uid, nickname, status){
     $.ajax({
         type: "POST",
-        url: "/user/change_user_status",
+        url: url_pre_lang+"/user/change_user_status",
         data: {uid:uid, status:status, dtype:"json"},
         dataType: "json",
         success: function(res){
@@ -143,8 +144,8 @@ function changeUserStatus(uid, nickname, status){
     });
 }
 
-/*
-* 使用RSA方法加密某个对象中的指定值
+/**
+ * 使用RSA方法加密某个对象中的指定值
  * @param object objData 包含键值对的对象
  * @param array field 需要加密的键名
 * */
@@ -216,6 +217,7 @@ function getUrlParam(name) {
     var r = window.location.search.substr(1).match(reg);  //匹配目标参数
     if (r != null) return unescape(r[2]); return null; //返回参数值
 }
+
 function getUrlParms(){
     var args=new Object();
     var query=location.search.substring(1);//获取查询串
@@ -301,6 +303,7 @@ function checkUsername(str){
     // res.status=false;
     return res;
 }
+
 function checkPassword(password){
     if(getStringLen(password)>20 || getStringLen(password)<6){
         return getLang("password_too_simple");
@@ -387,7 +390,7 @@ function checkWeixinQRLoginStatus(for_bind)
     $.ajax({
             type: 'post'
             , dataType: 'json'
-            , url: "/sign/wechat_check_qr_login"+(for_bind==1?'/for_bind/1':'')
+            , url: url_pre_lang+"/sign/wechat_check_qr_login"+(for_bind==1?'/for_bind/1':'')
             , success: function (data, textStatus, jqXHR) {
                 if (onShowWeixinQRCode && data.code != 4) {
                     if (data.code == 30 || data.code == 31 || data.code == 32) {
@@ -497,22 +500,34 @@ function changeLanguage(lang)
         return false;
     }
     url = document.location.href;
-    tmp = url.split("#");
-    tmp2 = tmp[0].split("?");
-    args = getUrlParms();
-    args.lang = lang;
-    params = [];
-    for (var i in args){
-        params.push(i+"="+args[i]);
+    tmp = url.split(getCurrentHost());
+    tmp = tmp[1].split('/');
+    arr = [getCurrentHost()];
+    var num = 0;
+    $.each(tmp, function (i,v){
+        v = $.trim(v);
+        if (v!=""){
+            num++;
+            if (num==1){
+                if (lang!=main_lang) {
+                    arr.push(lang);
+                }
+                if ($.inArray(v, support_lang)<0) {
+                    arr.push(v);
+                }
+            }
+            else {
+                arr.push(v);
+            }
+        }
+    });
+    if (arr.length==1 && $.inArray(lang, support_lang)>=0 && lang!=main_lang){
+        arr.push(lang);
     }
-    url = tmp2[0] + "?" + params.join("&");
-    if (tmp.length>1){
-        url += "#"+tmp[1];
-    }
-    document.location.href = url;
+    document.location.href =  arr.join('/');
 }
 
-/*
+/**
  * 根据语言键名和参数返回当前语言类型下的翻译文本
  * @param string key 语言键名
  * @param object param 翻译里的变量参数及值，如果没有可以不传此参数

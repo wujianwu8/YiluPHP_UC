@@ -1,4 +1,4 @@
-<!--{use_layout layout/main}-->
+<!--{use_layout layout/admin_main}-->
 <?php
 $head_info = [
     'title' => YiluPHP::I()->lang('menu_custom_menu'),
@@ -8,7 +8,7 @@ $head_info = [
 <div class="table-responsive" id="edit_menus_table">
     <h2>
         <?php echo YiluPHP::I()->lang('head_menu'); ?>
-        <a href="/menus/add" class="btn btn-sm btn-outline-primary ml-4 ajax_main_content">
+        <a href="<?php echo url_pre_lang(); ?>/menus/add" class="btn btn-sm btn-outline-primary ml-4 ajax_main_content">
             <i class="fa fa-plus" aria-hidden="true"></i>
             <?php echo YiluPHP::I()->lang('add_menu'); ?>
         </a>
@@ -60,7 +60,7 @@ $head_info = [
                 <input type="number" name="weight" value="<?php echo $item['weight']; ?>">
             </td>
             <td>
-                <a href="/menus/edit/<?php echo $item['id'] ?>" class="ajax_main_content"><i class="fa fa-edit"></i></a>
+                <a href="<?php echo url_pre_lang(); ?>/menus/edit/<?php echo $item['id'] ?>" class="ajax_main_content"><i class="fa fa-edit"></i></a>
                 <?php if($item['type']!='SYSTEM'): ?>
                 <a class="delete delete_menu"><i class="fa fa-close"></i></a>
                 <?php endif; ?>
@@ -104,7 +104,7 @@ $head_info = [
                             <input type="number" name="weight" value="<?php echo $child['weight']; ?>">
                         </td>
                         <td>
-                            <a href="/menus/edit/<?php echo $child['id'] ?>" class="ajax_main_content"><i class="fa fa-edit"></i></a>
+                            <a href="<?php echo url_pre_lang(); ?>/menus/edit/<?php echo $child['id'] ?>" class="ajax_main_content"><i class="fa fa-edit"></i></a>
                             <?php if($child['type']!='SYSTEM'): ?>
                                 <a class="delete delete_menu"><i class="fa fa-close"></i></a>
                             <?php endif; ?>
@@ -118,7 +118,7 @@ $head_info = [
 
     <h2>
         <?php echo YiluPHP::I()->lang('left_menu'); ?>
-        <a href="/menus/add" class="btn btn-sm btn-outline-primary ml-4 ajax_main_content">
+        <a href="<?php echo url_pre_lang(); ?>/menus/add" class="btn btn-sm btn-outline-primary ml-4 ajax_main_content">
             <i class="fa fa-plus" aria-hidden="true"></i>
             <?php echo YiluPHP::I()->lang('add_menu'); ?>
         </a>
@@ -170,7 +170,7 @@ $head_info = [
                     <input type="number" name="weight" value="<?php echo $item['weight']; ?>">
                 </td>
                 <td>
-                    <a href="/menus/edit/<?php echo $item['id'] ?>" class="ajax_main_content"><i class="fa fa-edit"></i></a>
+                    <a href="<?php echo url_pre_lang(); ?>/menus/edit/<?php echo $item['id'] ?>" class="ajax_main_content"><i class="fa fa-edit"></i></a>
                     <?php if($item['type']!='SYSTEM'): ?>
                         <a class="delete delete_menu"><i class="fa fa-close"></i></a>
                     <?php endif; ?>
@@ -214,7 +214,7 @@ $head_info = [
                             <input type="number" name="weight" value="<?php echo $child['weight']; ?>">
                         </td>
                         <td>
-                            <a href="/menus/edit/<?php echo $child['id'] ?>" class="ajax_main_content"><i class="fa fa-edit"></i></a>
+                            <a href="<?php echo url_pre_lang(); ?>/menus/edit/<?php echo $child['id'] ?>" class="ajax_main_content"><i class="fa fa-edit"></i></a>
                             <?php if($child['type']!='SYSTEM'): ?>
                                 <a class="delete delete_menu"><i class="fa fa-close"></i></a>
                             <?php endif; ?>
@@ -238,7 +238,7 @@ $head_info = [
         $.ajax({
                 type: 'post'
                 , dataType: 'json'
-                , url: "/menus/save_edit"
+                , url: "<?php echo url_pre_lang(); ?>/menus/save_edit"
                 , data: params
                 , success: function (data, textStatus, jqXHR) {
                     toast.close();
@@ -301,7 +301,7 @@ $head_info = [
                 $.ajax({
                     type: 'post'
                     , dataType: 'json'
-                    , url: "/menus/delete"
+                    , url: "<?php echo url_pre_lang(); ?>/menus/delete"
                     , data: params
                     , success: function (data, textStatus, jqXHR) {
                         toast.close();

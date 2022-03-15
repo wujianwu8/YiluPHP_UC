@@ -1,4 +1,4 @@
-<!--{use_layout layout/main}-->
+<!--{use_layout layout/admin_main}-->
 <?php
 $head_info = [
     'title' => YiluPHP::I()->lang('details_of_complaint'),
@@ -13,7 +13,7 @@ $head_info = [
         <div class="mr-5">
             <span class="title mr-2"><?php echo YiluPHP::I()->lang('complainant')?></span>
             <span>
-                <a class="detail" href="/user/detail/<?php echo $complaint_info['complaint_uid']; ?>" uid="<?php echo $complaint_info['complaint_uid']; ?>">
+                <a class="detail" href="<?php echo url_pre_lang(); ?>/user/detail/<?php echo $complaint_info['complaint_uid']; ?>" uid="<?php echo $complaint_info['complaint_uid']; ?>">
                     <img src="<?php echo $complaint_info['complaint_avatar']; ?>" width="20" height="20">
                     <?php echo $complaint_info['complaint_nickname']; ?>
                 </a>
@@ -22,7 +22,7 @@ $head_info = [
         <div class="mr-5">
             <span class="title mr-2"><?php echo YiluPHP::I()->lang('respondent')?></span>
             <span>
-                <a class="detail" href="/user/detail/<?php echo $complaint_info['respondent_uid']; ?>" uid="<?php echo $complaint_info['respondent_uid']; ?>">
+                <a class="detail" href="<?php echo url_pre_lang(); ?>/user/detail/<?php echo $complaint_info['respondent_uid']; ?>" uid="<?php echo $complaint_info['respondent_uid']; ?>">
                     <img src="<?php echo $complaint_info['respondent_avatar']; ?>" width="20" height="20">
                     <?php echo $complaint_info['respondent_nickname']; ?>
                 </a>
@@ -112,7 +112,7 @@ $head_info = [
             $.ajax({
                     type: 'post'
                     , dataType: 'json'
-                    , url: "/complaint/save_edit"
+                    , url: "<?php echo url_pre_lang(); ?>/complaint/save_edit"
                     , data: params
                     , success: function (data, textStatus, jqXHR) {
                         toast.close();

@@ -151,10 +151,11 @@ class hook_route_auth extends hook
 	    //获取当前使用的请求方法
 		$method = strtolower($_SERVER['REQUEST_METHOD']);
 		//获取当前url
+        $request_uri = YiluPHP::I()->origin_uri();
 		foreach($this->url_auth as $rules => $patterns){
             $rules = explode('_', $rules);
             foreach ($patterns as  $pattern) {
-                if (preg_match($pattern, $_SERVER['REQUEST_URI'])) {
+                if (preg_match($pattern, $request_uri)) {
                     if ((in_array('get', $rules) || in_array('post', $rules)) && !in_array($method, $rules)) {
                         //请求方法错误
                         throw new validate_exception(YiluPHP::I()->lang('request_method_error'), CODE_REQUEST_METHOD_ERROR);

@@ -1,4 +1,4 @@
-<!--{use_layout layout/main}-->
+<!--{use_layout layout/admin_main}-->
 <?php
 if ($page_name == 'role_permission'){
     $head_info = [
@@ -72,10 +72,10 @@ else if($page_name=='user_permission'){
 
     function changeApplication(_this){
         if ($("#param_id").attr("name") == "role_id"){
-            $.getMainHtml("/role/grant_permission/"+$("#param_id").val()+"?app_id="+_this.value, {with_layout:0,dtype:'json'});
+            $.getMainHtml("<?php echo url_pre_lang(); ?>/role/grant_permission/"+$("#param_id").val()+"?app_id="+_this.value, {with_layout:0,dtype:'json'});
         }
         else{
-            $.getMainHtml("/user/grant_permission/"+$("#param_id").val()+"?app_id="+_this.value, {with_layout:0,dtype:'json'});
+            $.getMainHtml("<?php echo url_pre_lang(); ?>/user/grant_permission/"+$("#param_id").val()+"?app_id="+_this.value, {with_layout:0,dtype:'json'});
         }
     }
 
@@ -101,9 +101,9 @@ else if($page_name=='user_permission'){
             else{
                 params.uid = $("#param_id").val();
                 if (obj.prop('checked')) {
-                    url = "/user/save_add_permission";
+                    url = "<?php echo url_pre_lang(); ?>/user/save_add_permission";
                 } else {
-                    url = "/user/save_delete_permission";
+                    url = "<?php echo url_pre_lang(); ?>/user/save_delete_permission";
                 }
             }
             var toast = loading();

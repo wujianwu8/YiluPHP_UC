@@ -1,4 +1,4 @@
-<!--{use_layout layout/main}-->
+<!--{use_layout layout/admin_main}-->
 <?php
 $head_info = [
     'title' => YiluPHP::I()->lang('menu_language_pack'),
@@ -42,7 +42,7 @@ $head_info = [
             <option value="200"<?php echo $page_size=='200'? ' selected':''; ?>>200<?php echo YiluPHP::I()->lang('data_number_per_page'); ?></option>
             <option value="500"<?php echo $page_size=='500'? ' selected':''; ?>>500<?php echo YiluPHP::I()->lang('data_number_per_page'); ?></option>
         </select>
-        <a href="/language/add_project" class="btn btn-sm btn-outline-primary ml-4 mb-2 ajax_main_content">
+        <a href="<?php echo url_pre_lang(); ?>/language/add_project" class="btn btn-sm btn-outline-primary ml-4 mb-2 ajax_main_content">
             <i class="fa fa-plus" aria-hidden="true"></i>
             <?php echo YiluPHP::I()->lang('add_project'); ?>
         </a>
@@ -74,25 +74,25 @@ $head_info = [
             <td><?php echo $item['file_dir']; ?></td>
             <td><?php echo $item['language_types']; ?></td>
             <td>
-                <a class="mr-2 ajax_main_content" href="/language/table/<?php echo $item['id']; ?>">
+                <a class="mr-2 ajax_main_content" href="<?php echo url_pre_lang(); ?>/language/table/<?php echo $item['id']; ?>">
                     <i class="fa fa-language" aria-hidden="true"></i>
                 </a>
-                <a class="pull_lang mr-2 php" href="/language/pull_from_file" title="从PHP文件中拉取语言(追加和覆盖)">
+                <a class="pull_lang mr-2 php" href="<?php echo url_pre_lang(); ?>/language/pull_from_file" title="从PHP文件中拉取语言(追加和覆盖)">
                     <i class="fa fa-upload" aria-hidden="true"></i><sub>ᵖʰᵖ</sub>
                 </a>
-                <a class="write_lang mr-2 php" href="/language/write_to_file" title="把语言写入PHP文件(替换)">
+                <a class="write_lang mr-2 php" href="<?php echo url_pre_lang(); ?>/language/write_to_file" title="把语言写入PHP文件(替换)">
                     <i class="fa fa-download" aria-hidden="true"></i><sub>ᵖʰᵖ</sub>
                 </a>
-                <a class="pull_lang mr-2" href="/language/pull_from_js_file" title="从JS文件中拉取语言(追加和覆盖)">
+                <a class="pull_lang mr-2" href="<?php echo url_pre_lang(); ?>/language/pull_from_js_file" title="从JS文件中拉取语言(追加和覆盖)">
                     <i class="fa fa-upload" aria-hidden="true"></i><sub>ʲˢ</sub>
                 </a>
-                <a class="write_lang mr-2" href="/language/write_to_js_file" title="把语言写入JS文件(替换)">
+                <a class="write_lang mr-2" href="<?php echo url_pre_lang(); ?>/language/write_to_js_file" title="把语言写入JS文件(替换)">
                     <i class="fa fa-download" aria-hidden="true"></i><sub>ʲˢ</sub>
                 </a>
-                <a class="ajax_main_content mr-1" href="/language/edit_project/<?php echo $item['id']; ?>">
+                <a class="ajax_main_content mr-1" href="<?php echo url_pre_lang(); ?>/language/edit_project/<?php echo $item['id']; ?>">
                     <i class="fa fa-edit" aria-hidden="true"></i>
                 </a>
-                <a href="/language/delete_project" class="delete"><i class="fa fa-close"></i></a>
+                <a href="<?php echo url_pre_lang(); ?>/language/delete_project" class="delete"><i class="fa fa-close"></i></a>
             </td>
         </tr>
         <?php endforeach; ?>
@@ -123,7 +123,7 @@ $head_info = [
             with_layout:0
             ,dtype:"json"
         };
-        url = "/language/project?page_size="+_this.value;
+        url = "<?php echo url_pre_lang(); ?>/language/project?page_size="+_this.value;
         $.getMainHtml(url, params);
     }
 

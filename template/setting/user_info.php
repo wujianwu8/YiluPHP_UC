@@ -1,4 +1,4 @@
-<!--{use_layout layout/main}-->
+<!--{use_layout layout/admin_main}-->
 <?php
 $head_info = [
     'title' => YiluPHP::I()->lang('menu_account_setting'),
@@ -106,12 +106,12 @@ $head_info = [
         </div>
         <div class="col-sm-7">
             <?php if(empty($user_info['email'])){ ?>
-                <a href="/setting/bind_email" class="btn btn-sm btn-outline-primary ajax_main_content">
+                <a href="<?php echo url_pre_lang(); ?>/setting/bind_email" class="btn btn-sm btn-outline-primary ajax_main_content">
                     <?php echo YiluPHP::I()->lang('set_login_email'); ?>
                 </a>
             <?php }else{ ?>
                 <?php echo $user_info['email']; ?>
-                <a href="/setting/bind_email" class="ml-2 ajax_main_content">
+                <a href="<?php echo url_pre_lang(); ?>/setting/bind_email" class="ml-2 ajax_main_content">
                     <?php echo YiluPHP::I()->lang('change_login_email'); ?>
                 </a>
             <?php } ?>
@@ -133,7 +133,7 @@ $head_info = [
                 </div>
             <?php }else{ ?>
                 <?php echo YiluPHP::I()->lang('bind_already'); ?>
-                <a href="/setting/unbind_wechat" class="ml-2 unbind_wechat">
+                <a href="<?php echo url_pre_lang(); ?>/setting/unbind_wechat" class="ml-2 unbind_wechat">
                     <?php echo YiluPHP::I()->lang('unbind'); ?>
                 </a>
             <?php } ?>
@@ -145,7 +145,7 @@ $head_info = [
         </div>
         <div class="col-sm-7">
             <?php if(empty($user_info['QQ'])){ ?>
-                <a href="/sign/qq_login/for_bind/1" class="btn btn-sm btn-outline-primary">
+                <a href="<?php echo url_pre_lang(); ?>/sign/qq_login/for_bind/1" class="btn btn-sm btn-outline-primary">
                     <?php echo YiluPHP::I()->lang('bind_now'); ?>
                 </a>
                 <div class="text-info">
@@ -155,7 +155,7 @@ $head_info = [
                 </div>
             <?php }else{ ?>
                 <?php echo YiluPHP::I()->lang('bind_already'); ?>
-                <a href="/setting/unbind_qq" class="ml-2 unbind_qq">
+                <a href="<?php echo url_pre_lang(); ?>/setting/unbind_qq" class="ml-2 unbind_qq">
                     <?php echo YiluPHP::I()->lang('unbind'); ?>
                 </a>
             <?php } ?>
@@ -167,7 +167,7 @@ $head_info = [
         </div>
         <div class="col-sm-7">
             <?php if(empty($user_info['ALIPAY'])){ ?>
-                <a href="/sign/alipay_login/for_bind/1" class="btn btn-sm btn-outline-primary">
+                <a href="<?php echo url_pre_lang(); ?>/sign/alipay_login/for_bind/1" class="btn btn-sm btn-outline-primary">
                     <?php echo YiluPHP::I()->lang('bind_now'); ?>
                 </a>
                 <div class="text-info">
@@ -177,7 +177,7 @@ $head_info = [
                 </div>
             <?php }else{ ?>
                 <?php echo YiluPHP::I()->lang('bind_already'); ?>
-                <a href="/setting/unbind_alipay" class="ml-2 unbind_alipay">
+                <a href="<?php echo url_pre_lang(); ?>/setting/unbind_alipay" class="ml-2 unbind_alipay">
                     <?php echo YiluPHP::I()->lang('unbind'); ?>
                 </a>
             <?php } ?>
@@ -189,7 +189,7 @@ $head_info = [
 </form>
 <div class="mb-5"></div>
 
-<?php echo load_static('/include/js_config_js.shtml'); ?>
+<script src="<?php echo url_pre_lang(); ?>/config_js" type="text/javascript"></script>
 <?php echo load_static('/include/js_jsencrypt.shtml'); ?>
 <?php echo load_static('/include/js_jweixin.shtml'); ?>
 <script>
@@ -251,7 +251,7 @@ $head_info = [
                 $.ajax({
                         type: 'post'
                         , dataType: 'json'
-                        , url: "/setting/save_info"
+                        , url: "<?php echo url_pre_lang(); ?>/setting/save_info"
                         , data: params
                         , success: function (data, textStatus, jqXHR) {
                             toast.close();

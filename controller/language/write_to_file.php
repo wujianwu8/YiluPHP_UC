@@ -112,6 +112,7 @@ return [\r\n";
         ]
     ], 'language_key ASC','language_key,language_value')){
         foreach ($lang_list as $item){
+            $item['language_value'] = stripslashes($item['language_value']);
             $txt = "    '".$item['language_key']."' => '".addslashes($item['language_value'])."',\r\n";
             //写入文件
             fwrite($langfile, $txt);

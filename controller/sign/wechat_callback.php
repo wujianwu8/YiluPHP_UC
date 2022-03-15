@@ -129,7 +129,7 @@ $data = [
 ];
 
 //存入临时表
-$data ['id'] = model_try_to_sign_in::I()->insert_table($data);
+$data['id'] = model_try_to_sign_in::I()->insert_table($data);
 if ($is_qrcode){
     $code = $_SESSION['weixin_qr_login_code'];
     $_SESSION['weixin_qr_login_code']=null;

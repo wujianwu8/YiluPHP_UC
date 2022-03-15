@@ -1,4 +1,4 @@
-<!--{use_layout layout/main}-->
+<!--{use_layout layout/admin_main}-->
 <?php
 $head_info = [
     'title' => YiluPHP::I()->lang('create_role'),
@@ -56,7 +56,7 @@ $head_info = [
                 $.ajax({
                         type: 'post'
                         , dataType: 'json'
-                        , url: "/role/save_add"
+                        , url: "<?php echo url_pre_lang(); ?>/role/save_add"
                         , data: params
                         , success: function (data, textStatus, jqXHR) {
                             toast.close();
@@ -66,7 +66,7 @@ $head_info = [
                                     , titleShow: false
                                     , content: getLang("add_role_succ_and_goto_set_permission")
                                     , onClosed: function() {
-                                        $.getMainHtml("/role/grant_permission/"+data.data.role_id, {with_layout:0,dtype:'json'});
+                                        $.getMainHtml("<?php echo url_pre_lang(); ?>/role/grant_permission/"+data.data.role_id, {with_layout:0,dtype:'json'});
                                     }
                                 });
                             }

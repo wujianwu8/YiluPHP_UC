@@ -1,11 +1,11 @@
-<!--{use_layout layout/main}-->
+<!--{use_layout layout/admin_main}-->
 <?php
 $head_info = [
     'title' => '绑定登录邮箱',
 ];
 ?>
 
-<?php echo load_static('/include/js_config_js.shtml'); ?>
+<script src="<?php echo url_pre_lang(); ?>/config_js" type="text/javascript"></script>
 <?php echo load_static('/include/js_jsencrypt.shtml'); ?>
 <h4 class="mb-3"><?php echo $head_info['title']; ?></h4>
 <form class="needs-validation title_content" novalidate="" method="post">
@@ -87,7 +87,7 @@ $head_info = [
             };
             params = rsaEncryptData(params, ["email"]);
             $.post(
-                "/send_email_code",
+                url_pre_lang+"/send_email_code",
                 params,
                 function(data,status){
                     $("#btn_send_email_code").removeClass("btn_loading");
@@ -172,7 +172,7 @@ $head_info = [
                 $.ajax({
                         type: 'post'
                         , dataType: 'json'
-                        , url: "/setting/save_email"
+                        , url: "<?php echo url_pre_lang(); ?>/setting/save_email"
                         , data: params
                         , success: function (data, textStatus, jqXHR) {
                             toast.close();
@@ -182,7 +182,7 @@ $head_info = [
                                     , titleShow: false
                                     , content: "绑定成功"
                                     , onClickConfirmBtn: function(){
-                                        $.getMainHtml("/setting/user_info", {with_layout:0,dtype:'json'});
+                                        $.getMainHtml("<?php echo url_pre_lang(); ?>/setting/user_info", {with_layout:0,dtype:'json'});
                                     }
                                 });
                             }

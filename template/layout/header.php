@@ -63,7 +63,7 @@ defined('BASEPATH') OR exit('No direct script access allowed');
             <span class="icon-bar"></span>
             <span class="icon-bar"></span>
           </button>
-          <a class="navbar-brand" href="/home">用户中心</a>
+          <a class="navbar-brand" href="<?php echo url_pre_lang(); ?>/home">用户中心</a>
         </div>
         <div id="navbar" class="collapse navbar-collapse">
           <ul class="nav navbar-nav">
@@ -75,7 +75,7 @@ defined('BASEPATH') OR exit('No direct script access allowed');
 				<?php endforeach; ?>
               </ul>
             </li>
-            <li><a href="/sign/out">欢迎<?php echo $self_info['nickname']; ?>回来，退出</a></li>
+            <li><a href="<?php echo url_pre_lang(); ?>/sign/out">欢迎<?php echo $self_info['nickname']; ?>回来，退出</a></li>
           </ul>
         </div><!-- /.nav-collapse -->
       </div><!-- /.container -->

@@ -1,11 +1,11 @@
-<!--{use_layout layout/main}-->
+<!--{use_layout layout/admin_main}-->
 <?php
 $head_info = [
     'title' => YiluPHP::I()->lang('menu_change_password'),
 ];
 ?>
 
-<?php echo load_static('/include/js_config_js.shtml'); ?>
+<script src="<?php echo url_pre_lang(); ?>/config_js" type="text/javascript"></script>
 <?php echo load_static('/include/js_jsencrypt.shtml'); ?>
 <h4 class="mb-3"><?php echo $head_info['title']; ?></h4>
 <form class="needs-validation title_content" novalidate="" method="post">
@@ -128,7 +128,7 @@ $head_info = [
                 $.ajax({
                         type: 'post'
                         , dataType: 'json'
-                        , url: "/setting/save_password"
+                        , url: "<?php echo url_pre_lang(); ?>/setting/save_password"
                         , data: params
                         , success: function (data, textStatus, jqXHR) {
                             toast.close();

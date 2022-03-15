@@ -1,4 +1,4 @@
-<!--{use_layout layout/main}-->
+<!--{use_layout layout/admin_main}-->
 <?php
 $head_info = [
     'title' => YiluPHP::I()->lang('lang_edit_permission'),
@@ -95,7 +95,7 @@ $head_info = [
                 $.ajax({
                         type: 'post'
                         , dataType: 'json'
-                        , url: "/application/save_edit_permission"
+                        , url: "<?php echo url_pre_lang(); ?>/application/save_edit_permission"
                         , data: params
                         , success: function (data, textStatus, jqXHR) {
                             toast.close();
@@ -106,7 +106,7 @@ $head_info = [
                                     , content: getLang("save_successfully")
                                     , onClosed: function() {
                                         if (!$("#keeping_form").is(":checked")){
-                                            $.getMainHtml("/application/permission_list/"+params.app_id, {with_layout:0,dtype:'json'});
+                                            $.getMainHtml("<?php echo url_pre_lang(); ?>/application/permission_list/"+params.app_id, {with_layout:0,dtype:'json'});
                                         }
                                     }
                                 });

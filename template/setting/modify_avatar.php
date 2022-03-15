@@ -1,4 +1,4 @@
-<!--{use_layout layout/main}-->
+<!--{use_layout layout/admin_main}-->
 <?php
 $head_info = [
     'title' => YiluPHP::I()->lang('menu_modify_avatar'),
@@ -183,7 +183,7 @@ $head_info = [
             });
             // console.log(img.toDataURL());
             var toast = loading();
-            $.post("/setting/save_avatar", {avatar:img.toDataURL()}, function(data) {
+            $.post("<?php echo url_pre_lang(); ?>/setting/save_avatar", {avatar:img.toDataURL()}, function(data) {
                 toast.close();
                 if (data.code===0) {
                     toast.dialog({

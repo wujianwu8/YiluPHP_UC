@@ -41,17 +41,41 @@ class model
     {
         if (!empty($GLOBALS['config']['split_table']) && !empty($this->_split_method)){
             if (empty($this->_table)){
-                throw new Exception('分表必须设置 $_table ,且不为空', CODE_ERROR_IN_MODEL);
+                throw new Exception('分表必须设置类变量 $_table ,且不为空', CODE_ERROR_IN_MODEL);
             }
             if (empty($this->_connection)){
-                throw new Exception('分表必须设置 $_connection ,且不为空', CODE_ERROR_IN_MODEL);
+                throw new Exception('分表必须设置类变量 $_connection ,且不为空', CODE_ERROR_IN_MODEL);
             }
             if (empty($this->_split_method)){
-                throw new Exception('分表必须设置 $_split_method ,且不为空', CODE_ERROR_IN_MODEL);
+                throw new Exception('分表必须设置类变量 $_split_method ,且不为空', CODE_ERROR_IN_MODEL);
             }
             if (empty($this->_split_by_field)){
-                throw new Exception('分表必须设置 $_split_by_field ,且不为空', CODE_ERROR_IN_MODEL);
+                throw new Exception('分表必须设置类变量 $_split_by_field ,且不为空', CODE_ERROR_IN_MODEL);
             }
+        }
+    }
+
+    public function create_sub_table(){
+        if (empty($this->_table)){
+            throw new Exception('分表必须设置类变量 $_table ,且不为空', CODE_ERROR_IN_MODEL);
+        }
+        if (empty($this->_connection)){
+            throw new Exception('分表必须设置类变量 $_connection ,且不为空', CODE_ERROR_IN_MODEL);
+        }
+        if (empty($this->_split_method)){
+            throw new Exception('分表必须设置类变量 $_split_method ,且不为空', CODE_ERROR_IN_MODEL);
+        }
+        if (empty($this->_split_by_field)){
+            throw new Exception('分表必须设置类变量 $_split_by_field ,且不为空', CODE_ERROR_IN_MODEL);
+        }
+        if ($this->_split_method == 'last_two_digits'){
+
+        }
+        elseif ($this->_split_method == 'time_and_quantity'){
+            if (empty($this->_max_quantity_per_table) || $this->_max_quantity_per_table<1){
+                throw new Exception('请设置类变量 $_max_quantity_per_table，达到此值后会自动分表', CODE_ERROR_IN_MODEL);
+            }
+
         }
     }
 

@@ -1,4 +1,4 @@
-<!--{use_layout layout/main}-->
+<!--{use_layout layout/admin_main}-->
 <?php
 $head_info = [
     'title' => YiluPHP::I()->lang('application_manage'),
@@ -45,7 +45,7 @@ $head_info = [
             <option value="200"<?php echo isset($_REQUEST['page_size'])&&$_REQUEST['page_size']=='200'? ' selected':''; ?>>200<?php echo YiluPHP::I()->lang('data_number_per_page'); ?></option>
             <option value="500"<?php echo isset($_REQUEST['page_size'])&&$_REQUEST['page_size']=='500'? ' selected':''; ?>>500<?php echo YiluPHP::I()->lang('data_number_per_page'); ?></option>
         </select>
-        <a href="/application/add" class="btn btn-sm btn-outline-primary ml-4 ajax_main_content">
+        <a href="<?php echo url_pre_lang(); ?>/application/add" class="btn btn-sm btn-outline-primary ml-4 ajax_main_content">
             <i class="fa fa-plus" aria-hidden="true"></i>
             <?php echo YiluPHP::I()->lang('add_application'); ?>
         </a>
@@ -73,16 +73,16 @@ $head_info = [
             <td><?php echo $item['app_id']; ?></td>
             <td><?php echo $item['app_name']; ?></td>
             <td>
-                <a href="/application/show_secret" class="show_title show_secret" title="<?php echo YiluPHP::I()->lang('click_to_view_secret'); ?>">
+                <a href="<?php echo url_pre_lang(); ?>/application/show_secret" class="show_title show_secret" title="<?php echo YiluPHP::I()->lang('click_to_view_secret'); ?>">
                     <i class="fa fa-eye" aria-hidden="true"></i>
                 </a>
-                <a href="/application/refresh_secret" class="show_title refresh_secret ml-3" title="<?php echo YiluPHP::I()->lang('regenerate_secret'); ?>">
+                <a href="<?php echo url_pre_lang(); ?>/application/refresh_secret" class="show_title refresh_secret ml-3" title="<?php echo YiluPHP::I()->lang('regenerate_secret'); ?>">
                     <i class="fa fa-refresh" aria-hidden="true"></i>
                 </a>
             </td>
             <td>
                 <?php if($item['uid']){ ?>
-                <a href="/user/detail/<?php echo $item['uid']; ?>" class="user_detail" uid="<?php echo $item['uid']; ?>">
+                <a href="<?php echo url_pre_lang(); ?>/user/detail/<?php echo $item['uid']; ?>" class="user_detail" uid="<?php echo $item['uid']; ?>">
                     <?php echo $item['nickname']; ?>
                 </a>
                 <?php }else{ ?>
@@ -113,14 +113,14 @@ $head_info = [
             </td>
             <td><?php echo date('Y-m-d H:i:s', $item['ctime']); ?></td>
             <td>
-                <a class="show_title ajax_main_content mr-2" href="/application/permission_list/<?php echo $item['app_id']; ?>" title="<?php echo YiluPHP::I()->lang('manage_permission'); ?>">
+                <a class="show_title ajax_main_content mr-2" href="<?php echo url_pre_lang(); ?>/application/permission_list/<?php echo $item['app_id']; ?>" title="<?php echo YiluPHP::I()->lang('manage_permission'); ?>">
                     <i class="fa fa-cubes" aria-hidden="true"></i>
                 </a>
                 <?php if (empty($item['is_fixed'])){ ?>
-                    <a class="ajax_main_content mr-1" href="/application/edit/<?php echo $item['app_id']; ?>">
+                    <a class="ajax_main_content mr-1" href="<?php echo url_pre_lang(); ?>/application/edit/<?php echo $item['app_id']; ?>">
                         <i class="fa fa-edit" aria-hidden="true"></i>
                     </a>
-                    <a href="/application/delete" class="delete"><i class="fa fa-close"></i></a>
+                    <a href="<?php echo url_pre_lang(); ?>/application/delete" class="delete"><i class="fa fa-close"></i></a>
                 <?php } ?>
             </td>
         </tr>

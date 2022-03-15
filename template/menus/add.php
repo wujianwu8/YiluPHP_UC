@@ -1,4 +1,4 @@
-<!--{use_layout layout/main}-->
+<!--{use_layout layout/admin_main}-->
 <?php
 $head_info = [
     'title' => YiluPHP::I()->lang('add_menu'),
@@ -123,7 +123,7 @@ $head_info = [
                 $.ajax({
                         type: 'post'
                         , dataType: 'json'
-                        , url: "/menus/save_add"
+                        , url: "<?php echo url_pre_lang(); ?>/menus/save_add"
                         , data: params
                         , success: function (data, textStatus, jqXHR) {
                             toast.close();
@@ -134,7 +134,7 @@ $head_info = [
                                     , content: getLang("save_successfully")
                                     , onClosed: function() {
                                         if (!$("#keeping_form").is(":checked")){
-                                            $.getMainHtml("/menus/list", {with_layout:0,dtype:'json'});
+                                            $.getMainHtml("<?php echo url_pre_lang(); ?>/menus/list", {with_layout:0,dtype:'json'});
                                         }
                                     }
                                 });

@@ -14,7 +14,7 @@
 
     <?php echo load_static('/include/js_jquery.shtml'); ?>
     <?php echo load_static('/include/js_jquery_cookie.shtml'); ?>
-    <?php echo load_static('/include/js_config_js.shtml'); ?>
+    <script src="<?php echo url_pre_lang(); ?>/config_js" type="text/javascript"></script>
     <?php echo load_static('/include/js_jsencrypt.shtml'); ?>
     <?php echo load_static('/include/js_dialog_diy.shtml'); ?>
     <?php echo load_static('/include/js_base.shtml'); ?>
@@ -51,7 +51,7 @@
         <a class="btn btn-primary" href="#by_mobile"><?php echo YiluPHP::I()->lang('reset_password_by_mobile'); ?> »</a>
         <a class="btn btn-primary" href="#by_email"><?php echo YiluPHP::I()->lang('reset_password_by_email'); ?> »</a>
         <?php if(!is_webview()): ?>
-        <a href="/" class="btn btn-xs btn-default"><?php echo YiluPHP::I()->lang('return_to_login'); ?></a>
+        <a href="<?php echo url_pre_lang(); ?>/" class="btn btn-xs btn-default"><?php echo YiluPHP::I()->lang('return_to_login'); ?></a>
         <?php endif; ?>
     </div>
 
@@ -86,7 +86,7 @@
         <div class="mt-4">
             <a href="#by_email" style="margin-right: 20px;"><?php echo YiluPHP::I()->lang('reset_password_by_email'); ?></a>
             <?php if(!is_webview()): ?>
-            <a href="/"><?php echo YiluPHP::I()->lang('return_to_login'); ?></a>
+            <a href="<?php echo url_pre_lang(); ?>/"><?php echo YiluPHP::I()->lang('return_to_login'); ?></a>
             <?php endif; ?>
         </div>
     </div>
@@ -110,7 +110,7 @@
         <div class="mt-4">
             <a href="#by_mobile" style="margin-right: 20px;"><?php echo YiluPHP::I()->lang('reset_password_by_mobile'); ?></a>
             <?php if(!is_webview()): ?>
-            <a href="/"><?php echo YiluPHP::I()->lang('return_to_login'); ?></a>
+            <a href="<?php echo url_pre_lang(); ?>/"><?php echo YiluPHP::I()->lang('return_to_login'); ?></a>
             <?php endif; ?>
         </div>
     </div>
@@ -134,7 +134,7 @@
         <a href="#by_mobile" class="btn btn-xs btn-default pl-0 resend_link"><?php echo YiluPHP::I()->lang('resend_verify_code'); ?></a>
         <a href="#by_email" class="btn btn-xs btn-default pl-0"><?php echo YiluPHP::I()->lang('reset_password_by_email'); ?></a>
         <?php if(!is_webview()): ?>
-        <a href="/" class="btn btn-xs btn-default pl-0"><?php echo YiluPHP::I()->lang('return_to_login'); ?></a>
+        <a href="<?php echo url_pre_lang(); ?>/" class="btn btn-xs btn-default pl-0"><?php echo YiluPHP::I()->lang('return_to_login'); ?></a>
         <?php endif; ?>
     </div>
 
@@ -157,7 +157,7 @@
         <a href="#by_email" class="btn btn-xs btn-default pl-0 resend_link"><?php echo YiluPHP::I()->lang('resend_verify_code'); ?></a>
         <a href="#by_mobile" class="btn btn-xs btn-default pl-0"><?php echo YiluPHP::I()->lang('reset_password_by_mobile'); ?></a>
         <?php if(!is_webview()): ?>
-        <a href="/" class="btn btn-xs btn-default pl-0"><?php echo YiluPHP::I()->lang('return_to_login'); ?></a>
+        <a href="<?php echo url_pre_lang(); ?>/" class="btn btn-xs btn-default pl-0"><?php echo YiluPHP::I()->lang('return_to_login'); ?></a>
         <?php endif; ?>
     </div>
 </div>

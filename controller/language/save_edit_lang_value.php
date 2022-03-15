@@ -71,7 +71,7 @@ $data = [
     'project_key' => $project_info['project_key'],
     'language_type' => $params['language_type'],
     'language_key' => $params['language_key'],
-    'language_value' => $params['language_value'],
+    'language_value' => addslashes($params['language_value']),
     'ctime' => time(),
 ];
 //保存入库
