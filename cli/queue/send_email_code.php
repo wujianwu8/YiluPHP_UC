@@ -8,7 +8,7 @@
  * * Date: 2021/01/23
  * Time: 20:45
  */
-class send_email_code{
+class send_email_code extends queue {
 
     /**
      * @name 开始执行队列的函数

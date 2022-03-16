@@ -24,14 +24,17 @@ class queue{
 
         //如果是同步模式,则不运行后台的程序
         if(!empty($GLOBALS['config']['queue_mode']) && $GLOBALS['config']['queue_mode']=='sync'){
-            write_applog('NOTICE', '当前配置的消息列队是同步模式，不在后台运行消息队列程序');
+			$msg = '当前配置的消息列队是同步模式，无需在后台运行消息队列程序';
+            echo $msg."\r\n";
+            write_applog('NOTICE', $msg);
             return;
         }
 
         $this->redis_key = 'yiluphp_queue'.$this->queue_name;
         if(!redis_y::I()->hexists('yiluphp_queue_list_for_manage', $this->queue_name)){
-            echo "消息队列的管理列表中不存在此队列：".$this->queue_name."\r\n";
-            write_applog('ERROR', '消息队列的管理列表中不存在此队列：'.$this->queue_name);
+			$msg = "消息队列的管理列表中不存在此队列：".$this->queue_name;
+            echo $msg."\r\n";
+            write_applog('ERROR', $msg);
             return;
         }
         //如果有参数,则执行参数的命令:stop pause delete

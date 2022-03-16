@@ -1,7 +1,9 @@
 <?php
 /*
  * CLI命令入口
- * 运行方式如：/usr/local/php7/bin/php yilu 命令名 "query string形式的参数"
+ * 运行方式如：/usr/local/php7/bin/php /data/web/www.yiluphp.com/yilu 命令名 "query string格式的参数"
+ * 其中“/usr/local/php7/bin/php”为你的php的安装位置，“/data/web/www.yiluphp.com/”为你的项目的根目录
+ * “命令名”是项目中cli目录下的文件名，后面双引号内的是参数，参数为可选项，参数为query string格式
  * YiluPHP vision 2.0
  * User: Jim.Wu
  * Date: 2021/01/27
@@ -18,7 +20,7 @@ if (!isset($argv[1]) || trim($argv[1])==''){
     exit("缺少命令名，即命令的文件名。\r\n正确格式：php yilu 命令名 \"query string形式的参数\"\r\n\r\n");
 }
 $commend = trim($argv[1]);
-if(strtolower($commend)=='swoole'){
+if(in_array(strtolower($commend), ['create_sub_table'])){
     $file = SYSTEM_PATH.'cli'.DIRECTORY_SEPARATOR.$commend.'.php';
 }
 else{
