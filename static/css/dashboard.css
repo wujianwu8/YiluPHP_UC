@@ -31,6 +31,12 @@ body {
     }
   }
 }
+@media screen and(-ms-high-contrast:active),(-ms-high-contrast:none) {
+  /*IE10和IE11的兼容样式*/
+  .sidebar {
+    position: relative;
+  }
+}
 
 .sidebar-sticky {
   position: -webkit-sticky;

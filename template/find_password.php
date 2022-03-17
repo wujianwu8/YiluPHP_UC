@@ -41,10 +41,15 @@
 </head>
 
 <body>
+<div class="website_index">
+    <a href="<?php echo $config['website_index']; ?>"><?php echo YiluPHP::I()->lang('website_home'); ?></a>
+</div>
+<?php if(!empty($config['multi_Lang'])): ?>
 <div class="language_handle">
     <a href="javascript:changeLanguage('<?php echo YiluPHP::I()->current_lang()=='cn' ?'selected':'cn'; ?>');" class="<?php echo YiluPHP::I()->current_lang()=='cn' ?'selected':''; ?>" >简体中文</a>
     <a href="javascript:changeLanguage('<?php echo YiluPHP::I()->current_lang()=='en' ?'selected':'en'; ?>');" class="<?php echo YiluPHP::I()->current_lang()=='en' ?'selected':''; ?>" >English</a>
 </div>
+<?php endif; ?>
 
 <div class="form-signin">
     <div id="select_method">

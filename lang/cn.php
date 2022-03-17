@@ -3,8 +3,8 @@
  * Created by UserCenter System
  * User: Jim
  * UID: 83
- * Date: 2021/10/22
- * Time: 07:09
+ * Date: 2022/03/17
+ * Time: 18:38
  */
 return [
     'access_required_permission' => '访问所需权限',
@@ -271,7 +271,7 @@ return [
     'edit_role' => '编辑角色',
     'email' => '邮箱',
     'email_error' => '您填写的邮箱格式不正确',
-    'email_verify_code_body' => '这是您的验证码: <strong style="color: #d00000;">{$code}</strong>, 您可以把它复制到输入框.',
+    'email_verify_code_body' => '这是您的验证码: <strong style=\"color: #d00000;\">{$code}</strong>, 您可以把它复制到输入框.',
     'email_verify_code_subject' => '这是您的验证码',
     'enable_account' => '启用账户',
     'enable_account_confirm' => '你确定要启用用户\"{$nickname}\"的账号吗?',
@@ -299,8 +299,8 @@ return [
     'gender_male' => '男',
     'geo_position' => '地理位置',
     'got_it' => '确定',
-    'grant_for_grant_permission_name' => '分配[分配"{$name}"]的权限',
-    'grant_permission_name' => '分配"{$name}"',
+    'grant_for_grant_permission_name' => '分配[分配\"{$name}\"]的权限',
+    'grant_permission_name' => '分配\"{$name}\"',
     'have_agree_agreement' => '我已阅读并同意《<a href=\"{$website_index}/sign/user_agreement\" target=\"_blank\" style=\"color: #aaaaaa; border-bottom: #aaaaaa dotted 1px;\">服务协议</a>》与《<a href=\"{$website_index}/sign/privacy_policy\" target=\"_blank\" style=\"color: #aaaaaa; border-bottom: #aaaaaa dotted 1px;\">隐私声明</a>》。',
     'head_menu' => '头部菜单',
     'home_page' => '主页',
@@ -315,7 +315,7 @@ return [
     'lang_add_permission' => '添加权限',
     'lang_delete_permission' => '删除权限',
     'lang_edit_permission' => '编辑权限',
-    'lang_pack_for_project' => '"{$project_name}"的语言翻译',
+    'lang_pack_for_project' => '\"{$project_name}\"的语言翻译',
     'lang_pack_storage_dir' => '语言包({$type})存储目录',
     'lang_view_permission' => '查看权限',
     'last_active_time' => '最后活跃时间',
@@ -363,7 +363,7 @@ return [
     'new_password' => '新密码',
     'next_page' => '下一页',
     'nickname' => '昵称',
-    'nickname_have_bound_to_other_account' => '"{$nickname}"已经绑定到其它账户，不能再绑定',
+    'nickname_have_bound_to_other_account' => '\"{$nickname}\"已经绑定到其它账户，不能再绑定',
     'notice' => '提示',
     'not_authorized' => '没有权限',
     'not_logged_in' => '没有登录',
@@ -384,9 +384,9 @@ return [
     'permission_key_rule_notice' => '长度在3-25个字符，只能包含字母、数字、下划线组成，不能以grant_开头，且同一个应用内权限键名不可重复',
     'permission_name' => '权限名称',
     'permission_not_found' => '无此权限',
-    'permission_of_application' => '应用"{$app_name}"的权限',
-    'permission_of_role' => '角色"{$role_name}"的权限',
-    'permission_of_user' => '用户"{$nickname}"的权限',
+    'permission_of_application' => '应用\"{$app_name}\"的权限',
+    'permission_of_role' => '角色\"{$role_name}\"的权限',
+    'permission_of_user' => '用户\"{$nickname}\"的权限',
     'please_enter_verify_code_on_email' => '请输入您的邮件中收到的验证码',
     'please_enter_verify_code_on_mobile' => '请输入您的手机上收到的验证码',
     'please_ente_sort_number' => '请输入排序号',
@@ -427,7 +427,7 @@ return [
     'return_to_login' => '返回登录',
     're_input_password_error' => '重填的密码需要与设置的密码一致',
     'role_name' => '角色名',
-    'role_of_user' => '用户"{$nickname}"的角色',
+    'role_of_user' => '用户\"{$nickname}\"的角色',
     'save' => '保存',
     'save_failed' => '保存失败',
     'save_successfully' => '保存成功',
@@ -497,6 +497,7 @@ return [
     'view_app_secret' => '查看应用密匙',
     'view_people_with_this_permission' => '查看拥有此权限的人',
     'view_people_with_this_role' => '查看拥有此角色的人',
+    'website_home' => '首页',
     'website_logo_img' => 'https://yiluphp.oss-cn-shenzhen.aliyuncs.com/yiluphp/logo-cn.png',
     'welcome_back' => '欢迎您回来！',
     'wrong_area_code_of_mobile' => '手机归属地有误',

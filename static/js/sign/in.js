@@ -17,9 +17,7 @@ function submitLoginForm(_this){
         dtype:"json"
     };
     var inputs = $(_this).serializeArray();
-    for(var index in inputs){
-        item = inputs[index];
-//            console.log(index, item);
+    $.each(inputs, function (index, item){
         params[item.name] = item.value;
         switch (item.name){
             case "identity":
@@ -84,7 +82,8 @@ function submitLoginForm(_this){
             default:
                 break;
         }
-    }
+    });
+
     password = {
         time: Math.round(Date.parse(new Date())/1000)-diffTime,
         data: params.password

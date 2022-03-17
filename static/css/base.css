@@ -195,6 +195,12 @@
   line-height: 1.7em;
   padding: 32px 8px 2px 8px;
 }
+@media screen and(-ms-high-contrast:active),(-ms-high-contrast:none) {
+  /*IE10和IE11的兼容样式*/
+  .language_handle {
+    width: 100px;
+  }
+}
 .language_handle a{
   display: table-caption;
   white-space:nowrap;

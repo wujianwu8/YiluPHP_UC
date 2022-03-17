@@ -22,6 +22,56 @@ body {
   padding-bottom: 40px;
   background-color: #f5f5f5;
 }
+
+input:-ms-input-placeholder, textarea:-ms-input-placeholder{ //ie10+ input和textarea
+color: #999 !important;
+}
+
+input::-webkit-input-placeholder {
+  color: #999 !important;
+}
+
+input:-moz-placeholder {
+  color: #999 !important;
+}
+input::-moz-placeholder {
+  color: #999 !important;
+}
+
+input:-ms-input-placeholder {
+  color: #999 !important;
+}
+
+.website_index{
+  position: absolute;
+  top: 10px;
+  left: 15px;
+  overflow: hidden;
+}
+.website_index a{
+  white-space:nowrap;
+  color: #212529;
+  line-height: 1;
+}
+.website_index a.selected{
+  position: absolute;
+  top: 2px;
+  left: 8px;
+}
+.website_index:active,
+.website_index:hover{
+  overflow: visible;
+  height: auto;
+  background: #FFFFFF;
+  color: #007bff;
+  padding-bottom: 12px;
+}
+.website_index a:hover{
+  overflow: visible;
+  height: auto;
+  background: #FFFFFF;
+  color: #007bff;
+}
 @media(max-height:350px){
   html,
   body {
@@ -83,6 +133,13 @@ body {
   padding: 15px;
   margin: 0 auto;
 }
+@media screen and(-ms-high-contrast:active),(-ms-high-contrast:none) {
+  /*IE10和IE11的兼容样式*/
+  .form-signin {
+    margin: 0;
+  }
+}
+
 .form-signin .user-info{
   font-size: 22px;
   line-height: 25px;
@@ -418,6 +475,12 @@ body {
   border: 1px solid transparent;
   border-radius: .25rem;
   transition: all .1s ease-in-out;
+}
+@media screen and(-ms-high-contrast:active),(-ms-high-contrast:none) {
+  /*IE10和IE11的兼容样式*/
+  .form-label-group > label{
+    display: none;
+  }
 }
 
 .form-label-group input::-webkit-input-placeholder {

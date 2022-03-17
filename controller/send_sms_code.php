@@ -26,6 +26,8 @@
  *  8 该账号已经被锁住,无法找回密码
  *  9 该手机号已经注册过账号，请直接登录，或者使用找回密码功能
  *  10 use_for参数错误
+ *  11 您发送验证码太频繁了【同一个ip5秒内只能发送3次验证码】
+ *  12 您今天发送验证码太多了【同一个ip24小时内只能发送100次验证码】
  */
 
 $params = input::I()->validate(
@@ -54,28 +56,32 @@ $complete_phone = $params['area_code'] . $params['mobile'];
 $vk = isset($_COOKIE['vk'])?$_COOKIE['vk']:'';
 //准备写发送日志
 $time = time();
+$client_ip = client_ip();
 $record = [
     'area_code' => $params['area_code'],
     'mobile' => $params['mobile'],
-    'client_ip' => client_ip(),
+    'client_ip' => $client_ip,
     'vk' => $vk,
     'ctime' => $time,
     'mtime' => $time,
 ];
+if ($vk){
+    $vk = md5($vk);
+}
 
 $mobile_cache_key = REDIS_KEY_SEND_VERIFY_CODE_ON_MOBILE.$phone;
 //30秒内同一个手机号只能发一次验证码
 if(redis_y::I()->exists($mobile_cache_key)){
     $record['refuse_reason'] = '30秒内同一个手机号只能发一次验证码';
     model_sms_record::I()->insert_table($record);
-    unset($params, $vk, $time, $record, $mobile_cache_key);
+    unset($params, $vk, $time, $record, $mobile_cache_key, $client_ip);
     return code(3, '您发送验证码太频繁了');
 }
 //同一个客户端用户30秒内同一个手机号只能发一次验证码
 if($vk && redis_y::I()->exists(REDIS_KEY_SEND_VERIFY_CODE_ON_CLIENT.$vk)){
     $record['refuse_reason'] = '同一个客户端用户30秒内只能发一次验证码';
     model_sms_record::I()->insert_table($record);
-    unset($params, $vk, $time, $record, $mobile_cache_key);
+    unset($params, $vk, $time, $record, $mobile_cache_key, $client_ip);
     return code(4, '您发送验证码太频繁了');
 }
 
@@ -83,8 +89,33 @@ if($vk && redis_y::I()->exists(REDIS_KEY_SEND_VERIFY_CODE_ON_CLIENT.$vk)){
 if (model_sms_record::I()->count( ['area_code'=>$params['area_code'], 'mobile'=>$params['mobile'], 'ctime'=>['symbol'=>'>=', 'value'=>$time-TIME_DAY]]) > 20){
     $record['refuse_reason'] = '24小时内同一个手机号只能发20次验证码';
     model_sms_record::I()->insert_table($record);
-    unset($params, $vk, $time, $record, $mobile_cache_key);
+    unset($params, $vk, $time, $record, $mobile_cache_key, $client_ip);
     return code(5, '您今天发送验证码太多了');
+}
+
+//同一个ip5秒内只能发送3次验证码
+$key = REDIS_KEY_SEND_SMS_CODE_ON_IP_5SEC.md5($client_ip);
+$count = redis_y::I()->incr($key);
+if ($count==1) {
+    redis_y::I()->expire($key, 5);
+}
+if ($count>3){
+    $record['refuse_reason'] = '同一个ip5秒内只能发送3次验证码';
+    model_sms_record::I()->insert_table($record);
+    unset($params, $vk, $time, $record, $mobile_cache_key, $key, $count, $client_ip);
+    return code(11, '您发送验证码太频繁了');
+}
+//同一个ip24小时内只能发送100次验证码
+$key = REDIS_KEY_SEND_SMS_CODE_ON_IP_DAY.md5($client_ip);
+$count = redis_y::I()->incr($key);
+if ($count==1) {
+    redis_y::I()->expire($key, TIME_DAY);
+}
+if ($count>100){
+    $record['refuse_reason'] = '同一个ip24小时内只能发送100次验证码';
+    model_sms_record::I()->insert_table($record);
+    unset($params, $vk, $time, $record, $mobile_cache_key, $key, $count, $client_ip);
+    return code(12, '您今天发送验证码太多了');
 }
 
 //用于注册
