@@ -626,9 +626,10 @@ class model
      * @param array $extend_params 延伸的SQL参数及其值，主要用于给延伸的SQL语句赋值参数值
      * @param string $table_name 指定操作的表名
      * @param string $connection 指定操作的连接名
+     * @param integer $limit 限定更新的记录数
      * @return boolean
      */
-    function update_table(&$where, &$data, string $extend_sql='', array $extend_params=[], $table_name='', $connection='')
+    function update_table($where, $data, string $extend_sql='', array $extend_params=[], $table_name='', $connection='', $limit=1)
     {
         if (!empty($GLOBALS['config']['split_table']) && !empty($this->_split_method) && (!isset($where[$this->_split_by_field]) && !isset($data[$this->_split_by_field]))){
             throw new Exception('缺少分表用的字段值:'.$this->_split_by_field, CODE_ERROR_IN_MODEL);
@@ -677,6 +678,11 @@ class model
         $where = array_merge($where, $extend_params);
         foreach($tables as $item) {
             $sql = 'UPDATE `' . $item['table_name'] . '` SET ' . implode(',', $set) . ($where?' WHERE ':' ') . implode(' AND ', $where_sql) . $extend_sql;
+            $limit = intval($limit);
+            if ($limit>0){
+                $sql .= ' LIMIT '.$limit;
+            }
+
             try {
                 $stmt = mysql::I($item['connection'])->prepare($sql);
                 foreach ($args as $key => $value) {
@@ -695,6 +701,23 @@ class model
         }
         unset($tables, $set, $where_sql, $sql, $args);
         return $count;
+    }
+
+    /**
+     * @name 更新数据表中的多条数据
+     * @desc
+     * @param array $where 更新条件
+     * @param array $data 需要修改的数据
+     * @param integer $limit 限定更新的记录数
+     * @param string $extend_sql 延伸的SQL语句，主要用于补充where条件
+     * @param array $extend_params 延伸的SQL参数及其值，主要用于给延伸的SQL语句赋值参数值
+     * @param string $table_name 指定操作的表名
+     * @param string $connection 指定操作的连接名
+     * @return boolean
+     */
+    function change_table($where, $data, $limit=0, string $extend_sql='', array $extend_params=[], $table_name='', $connection='')
+    {
+        return $this->update_table($where, $data, $extend_sql, $extend_params, $table_name, $connection, $limit);
     }
 
     /**

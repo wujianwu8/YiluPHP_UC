@@ -50,6 +50,8 @@ define('REDIS_KEY_SEARCH_USER_RESULT', 'REDIS_KEY_SEARCH_USER_RESULT_');    //�
 define('REDIS_KEY_QQ_CALLBACK', 'REDIS_KEY_QQ_CALLBACK_');  //QQ授权登录时，记录是否已经关闭小窗口
 define('REDIS_KEY_USER_PERMISSION', 'REDIS_KEY_USER_PERMISSION_');  //缓存用户拥有的所有权限，存储app_id:permission_key格式的
 define('REDIS_KEY_USER_PERMISSION_IDS', 'REDIS_KEY_USER_PERMISSION_IDS_');  //缓存用户拥有的所有权限的ID
+define('REDIS_KEY_UUID_LOCK', 'REDIS_KEY_UUID_LOCK');  //新增UUID时的锁
+define('REDIS_KEY_UUID_LIST', 'REDIS_KEY_UUID_LIST');  //当前可用的所有UUID
 
 define('TIME_10_YEAR', 315360000); //10年的秒数
 define('TIME_5_YEAR', 157680000); //5年的秒数

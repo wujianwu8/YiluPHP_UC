@@ -1,20 +1,21 @@
 <?php
 /*
  * 消息队列的入口文件
- * 用户写的消息队列业务处理类需要继承queue类
- * 执行方式，例如有like_post.php，则执行命令：php [目录路径]queue queue_name=like_post
- * 启动后这个队列将一直监听着是否有新的消息，如果要让队列在系统后台默默运行，则这样执行：php [目录路径]queue queue_name=like_post &
- * 也可以带上action参数(多个参数记得加上双引号)，例如：php [目录路径]queue "queue_name=like_post&action=stop"
+ * 用户写的消息队列业务处理类存放在项目里的cli/queue目录下
+ * 需要在后台一直运行着处理消息队列的守护进程，守护进程会一直监听着是否有新的消息，
+ * 启动守护进程的方式：php /你的项目目录/queue "queue_name=你加入队列时取的队列名称"
+ * 如果要让队列在系统后台默默运行，在命令的最后面加一个与号就行了，这样执行：php /你的项目目录/queue "queue_name=你加入队列时取的队列名称" &
+ * 也可以带上action参数(多个参数记得加上双引号)，例如：php /你的项目目录/queue "queue_name=你加入队列时取的队列名称&action=stop"
  * action可选值有：
  * stop：停止当前队列,正在执行的消息将继续执行完毕
  * pause：暂停当前队列,不会有新的消息加入执行,正在执行的消息将继续执行完毕
  * delete：删除当前队列,不会有新的消息加入执行,正在执行的消息将继续执行完毕
  * start：恢复当前队列,继续处理消息
  * 使用redis列表实现
- * YiluPHP vision 1.0
+ * YiluPHP vision 2.0
  * User: Jim.Wu
- * Date: 19/12/24
- * Time: 18:45
+ * Date: 2021/02/24
+ * Time: 19:41
  */
 if(!isset($_SERVER['REQUEST_URI'])){
     $the_argv = $argv;

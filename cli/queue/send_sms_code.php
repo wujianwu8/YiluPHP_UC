@@ -1,14 +1,15 @@
 <?php
 /*
  * 消息队列:发短信验证码
- * CLI模式下运行的示例文件，需要挂在后台一直运行着
- * 执行命令：php [目录路径]queue queue_name=你加入队列时取的队列名称
+ * 需要挂在后台一直运行着处理消息队列的守护进程
+ * 启动守护进程的方式：php /你的项目目录/queue "queue_name=你加入队列时取的队列名称"
+ * 如果要让队列在系统后台默默运行，在命令的最后面加一个与号就行了，这样执行：php /你的项目目录/queue "queue_name=你加入队列时取的队列名称" &
  * Created by PhpStorm.
  * User: WuJianwu
  * * Date: 2021/01/23
  * Time: 20:45
  */
-class send_sms_code extends queue {
+class send_sms_code {
     /**
      * @name 开始执行队列的函数
      * @desc 开始执行队列的函数

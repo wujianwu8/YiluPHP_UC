@@ -1,24 +1,12 @@
 <?php
 /*
  * 创建必须的REDIS缓存
+ * 运行命令：/usr/local/php7.4.16/bin/php /data/web/passport.yiluphp.com/yilu build_necessary_redis_data
  * YiluPHP vision 2.0
  * User: Jim.Wu
  * * Date: 2021/01/23
  * Time: 21:33
  */
-
-if(!isset($_SERVER['REQUEST_URI'])){
-    $the_argv = $argv;
-    unset($the_argv[0]);
-    $_SERVER['REQUEST_URI'] = 'php '.$argv[0].' "'.implode('" "', $the_argv).'"';
-}
-if (!defined('APP_PATH')){
-    $project_root = explode(DIRECTORY_SEPARATOR.'cli'.DIRECTORY_SEPARATOR, __FILE__);
-    //项目的根目录，最后包含一个斜杠
-    define('APP_PATH', $project_root[0].DIRECTORY_SEPARATOR);
-    unset($project_root);
-}
-include_once(APP_PATH.'public'.DIRECTORY_SEPARATOR.'index.php');
 
 $limit = 1000;
 //生成用户身份主表中的用户身份的缓存
@@ -78,5 +66,24 @@ if (!empty($GLOBALS['config']['split_table'])) {
         while($data);
     }
 }
+
+
+//生成UUID的缓存
+$min_id = 0;
+do{
+    $where = [
+        'status' => 1,
+        'uuid' => [
+            'symbol' => '>',
+            'value' => $min_id,
+        ],
+    ];
+    if($data = model_uuid_stock::I()->paging_select($where, 1, $limit, 'uuid ASC', '`uuid`')){
+        $ids = array_column($data,'uuid');
+        redis_y::I()->sAddArray(REDIS_KEY_UUID_LIST, $ids);
+        $min_id = max($ids);
+    }
+}
+while($data);
 
 exit("\r\n完成\r\n\r\n");

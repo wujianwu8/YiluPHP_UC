@@ -55,7 +55,7 @@ if(!is_safe_password($params['password'])){
     return code(7, YiluPHP::I()->lang('password_too_simple'));
 }
 
-if(!$uid = uuid::I()->newUserId()){
+if(!$uid = logic_uuid::I()->get_uuid('uid',1)){
     unset($params, $complete_phone);
     return code(1, YiluPHP::I()->lang('failed_to_create_uid'));
 }

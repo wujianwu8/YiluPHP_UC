@@ -1,23 +1,12 @@
 <?php
 /*
  * 清除所有REDIS缓存
+ * 运行命令：/usr/local/php7.4.16/bin/php /data/web/passport.yiluphp.com/yilu clear_db_data
  * YiluPHP vision 2.0
  * User: Jim.Wu
  * * Date: 2021/01/23
  * Time: 21:45
  */
-if(!isset($_SERVER['REQUEST_URI'])){
-    $the_argv = $argv;
-    unset($the_argv[0]);
-    $_SERVER['REQUEST_URI'] = 'php '.$argv[0].' "'.implode('" "', $the_argv).'"';
-}
-if (!defined('APP_PATH')){
-    $project_root = explode(DIRECTORY_SEPARATOR.'cli'.DIRECTORY_SEPARATOR, __FILE__);
-    //项目的根目录，最后包含一个斜杠
-    define('APP_PATH', $project_root[0].DIRECTORY_SEPARATOR);
-    unset($project_root);
-}
-include_once(APP_PATH.'public'.DIRECTORY_SEPARATOR.'index.php');
 
 //循环所有的库
 foreach($config['mysql'] as $connection => $mysql){

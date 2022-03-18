@@ -32,10 +32,10 @@ class queue{
 
         $this->redis_key = 'yiluphp_queue'.$this->queue_name;
         if(!redis_y::I()->hexists('yiluphp_queue_list_for_manage', $this->queue_name)){
-			$msg = "消息队列的管理列表中不存在此队列：".$this->queue_name;
+            redis_y::I()->hset('yiluphp_queue_list_for_manage', $this->queue_name, json_encode(['status'=>'running']));
+            $msg = '消息队列的管理列表中不存在此队列：'.$this->queue_name.'，现在已创建';
             echo $msg."\r\n";
             write_applog('ERROR', $msg);
-            return;
         }
         //如果有参数,则执行参数的命令:stop pause delete
         if($action){
@@ -93,29 +93,38 @@ class queue{
 //            $first_msg = redis_y::I()->blpop($this->redis_key, 60); //60秒超时
                 //Blpop命令移出并获取列表的第一个元素， 如果列表没有元素会阻塞列表直到等待超时或发现可弹出元素为止。超时返回false
                 $first_msg = redis_y::I()->brpoplpush($this->redis_key, 'doing' . $this->redis_key, 10); //10秒超时
+                echo $first_msg."\r\n";
                 if ($first_msg) {
                     $msg = json_decode($first_msg, true);
                     //$msg中包含创建消息的时间ctime,消息内容data(由用户添加消息时加入)
                     if ($msg) {
-                        if (!isset($msg['delay']) || (isset($msg['delay']) && intval($msg['delay'])+$msg['ctime']<time()) ) {
+                        if (!isset($msg['delay']) || (isset($msg['delay']) && intval($msg['delay'])+$msg['ctime']<=time()) ) {
                             if(empty($msg['class_name'])){
+                                $msg = '队列消息数据不完整,缺少class_name值:' . $first_msg;
+                                echo $msg."\r\n";
                                 //写错误日志
-                                write_applog('ERROR', '队列消息数据不完整,缺少class_name值:' . $first_msg);
+                                write_applog('ERROR', $msg);
                                 if (!redis_y::I()->lrem('doing' . $this->redis_key, $first_msg, 1)) {
+                                    $msg = '从处理中的列表中删除元素失败:' . $first_msg;
+                                    echo $msg."\r\n";
                                     //如果删除失败,则写错误日志
-                                    write_applog('ERROR', '从处理中的列表中删除元素失败:' . $first_msg);
+                                    write_applog('ERROR', $msg);
                                 }
                                 continue;
                             }
                             $file = APP_PATH.'cli/queue/'.$msg['class_name'].'.php';
                             $res = false;
                             if(!file_exists($file)){
-                                write_applog('ERROR', '未找到消息列表的实现文件:'.$file."\r\n");
+                                $msg = '未找到消息列表的实现文件:'.$file."\r\n";
+                                echo $msg;
+                                write_applog('ERROR', $msg);
                             }
                             else {
                                 include_once $file;
                                 if (!class_exists($msg['class_name'])) {
-                                    write_applog('ERROR', '在文件' . $file . '中，未找到消息列表的实现类:class ' . $msg['class_name'] . "{}\r\n");
+                                    $msg = '在文件' . $file . '中，未找到消息列表的实现类:class ' . $msg['class_name'] . "{}\r\n";
+                                    echo $msg;
+                                    write_applog('ERROR', $msg);
                                 }
                                 else{
                                     $queue = $msg['class_name'];
@@ -135,29 +144,33 @@ class queue{
                                 if ($count > $this->backups_num) {
                                     redis_y::I()->ltrim('bak' . $this->redis_key, 0, $this->backups_num - 1);
                                 }
-                            } else {
+                            }
+                            else {
                                 //如果处理失败,则把这个消息移回到列表的最后面
                                 //加入已经重试过处理的次数
-                                $msg['retry'] = isset($msg['retry']) ? $msg['retry'] + 1 : 1;
+                                $msg['retry'] = isset($msg['retry']) ? intval($msg['retry'])+1 : 1;
                                 //为节省存储空间最多记到1千万
                                 $msg['retry'] > 9999999 && $msg['retry'] = 10000000;
                                 //加入第一次重试的时间
                                 !isset($msg['retrytime']) && $msg['retrytime'] = time();
+                                $msg['delay'] = isset($msg['delay']) ? intval($msg['delay']) : 0;
                                 //前10次失败每6秒重试一次
-                                if($msg['retry']<10){
-                                    $msg['delay'] = time()+6;
+                                if($msg['retry']<=10){
+                                    $msg['delay'] += 6;
                                 }
                                 else{
                                     //重试10次失败后,每1分钟重试一次
-                                    $msg['delay'] = time()+60;
+                                    $msg['delay'] += 60;
                                 }
                                 $count = redis_y::I()->rpush($this->redis_key, json_encode($msg));
                             }
                             if ($count) {
                                 //从处理中的列表中删除该元素
                                 if (!redis_y::I()->lrem('doing' . $this->redis_key, $first_msg, 1)) {
+                                    $msg = '从处理中的列表中删除元素失败:' . $first_msg;
+                                    echo $msg."\r\n";
                                     //如果删除失败,则写错误日志
-                                    write_applog('ERROR', '从处理中的列表中删除元素失败:' . $first_msg);
+                                    write_applog('ERROR', $msg);
                                 }
                             }
                             unset($count);
@@ -167,20 +180,28 @@ class queue{
                             redis_y::I()->rpush($this->redis_key, $first_msg);
                         }
                         else{
+                            $msg = '队列消息异常:' . $first_msg;
+                            echo $msg."\r\n";
                             //写错误日志
-                            write_applog('ERROR', '队列消息异常:' . $first_msg);
+                            write_applog('ERROR', $msg);
                             if (!redis_y::I()->lrem('doing' . $this->redis_key, $first_msg, 1)) {
+                                $msg = '从处理中的列表中删除元素失败:' . $first_msg;
+                                echo $msg."\r\n";
                                 //如果删除失败,则写错误日志
-                                write_applog('ERROR', '从处理中的列表中删除元素失败:' . $first_msg);
+                                write_applog('ERROR', $msg);
                             }
                         }
                     }
                     else{
+                        $msg = '解析队列消息失败:' . $first_msg;
+                        echo $msg."\r\n";
                         //写错误日志
-                        write_applog('ERROR', '解析队列消息失败:' . $first_msg);
+                        write_applog('ERROR', $msg);
                         if (!redis_y::I()->lrem('doing' . $this->redis_key, $first_msg, 1)) {
+                            $msg = '从处理中的列表中删除元素失败:' . $first_msg;
+                            echo $msg."\r\n";
                             //如果删除失败,则写错误日志
-                            write_applog('ERROR', '从处理中的列表中删除元素失败:' . $first_msg);
+                            write_applog('ERROR', $msg);
                         }
                     }
                 }
@@ -193,8 +214,10 @@ class queue{
                 unset($msg, $first_msg);
             }
             catch (RedisException $e) {
+                $msg = '队列出错了（可能是redis原因）';
+                echo $msg."\r\n";
                 //写文件日志
-                write_applog('ERROR', '队列出错了（可能是redis原因）');
+                write_applog('ERROR', $msg);
             }
             usleep($this->interval);
         }

@@ -73,7 +73,7 @@ class logic_user
 		}
 
 		if(empty($data['uid'])) {
-			if (!$data['uid'] = uuid::I()->newUserId()) {
+			if (!$data['uid'] = logic_uuid::I()->get_uuid('uid',1)) {
 				throw new Exception('生成用户ID失败', CODE_FAIL_TO_GENERATE_UID);
 			}
 		}

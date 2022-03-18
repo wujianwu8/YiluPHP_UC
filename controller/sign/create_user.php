@@ -76,7 +76,7 @@ if($uid = model_user_identity::I()->find_uid_by_identity('INNER', $complete_phon
     unset($code_cache_key, $params, $complete_phone, $cache_code, $uid);
     return code(4, YiluPHP::I()->lang('mobile_is_signed_up'));
 }
-if(!$uid = uuid::I()->newUserId()){
+if(!$uid = logic_uuid::I()->get_uuid('uid',1)){
     unset($code_cache_key, $params, $complete_phone, $cache_code, $uid);
     return code(1, YiluPHP::I()->lang('failed_to_create_uid'));
 }

@@ -125,7 +125,7 @@ function write_applog(string $level, string $data='')
     }
     $file = $path.date('Y-m-d').'.log';
     file_put_contents($file, $txt."\n\n", FILE_APPEND);
-    chmod($file,0755);
+//    chmod($file,0755);
 }
 
 /**
