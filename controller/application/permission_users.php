@@ -60,6 +60,4 @@ else{
     $user_list = [];
 }
 
-return result('application/user_nickname_list', [
-    'user_list' => $user_list,
-]);
+return result('application/user_nickname_list');

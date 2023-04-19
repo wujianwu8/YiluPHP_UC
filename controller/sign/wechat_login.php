@@ -11,19 +11,31 @@
  */
 
 $open = input::I()->get_int('open', 0);
-if ($open){
+$for_base = input::I()->get_int('for_base', 0);
+if ($open==1){
     $scope = 'snsapi_login';
 }
 else{
-    $scope = 'snsapi_userinfo';
+    if ($for_base==1){ //仅获取 openid和UnionID
+        $scope = 'snsapi_base';
+    }
+    else{
+        $scope = 'snsapi_userinfo';
+    }
 }
 $callback = null;
 if (input::I()->get_trim('for_bind', null)){
-    if ($open){
+    if ($open==1){
         $callback = $config['oauth_plat']['wechat_open']['callback'].'/for_bind/1';
     }
     else{
         $callback = $config['oauth_plat']['wechat']['callback'].'/for_bind/1';
+    }
+}
+elseif ($for_base==1){ //仅获取 openid和UnionID
+    $callback = $config['oauth_plat']['wechat']['callback'].'/for_base/1';
+    if ($callback2 = input::I()->get_trim('callback','/')) {
+        $_SESSION['callback_for_wx_base'] = urldecode($callback2);
     }
 }
 oauth_wechat::I()->login($scope, null, $callback);

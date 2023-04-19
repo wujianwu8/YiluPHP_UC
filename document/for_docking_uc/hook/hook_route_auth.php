@@ -108,7 +108,7 @@ class hook_route_auth
             $_COOKIE['vk'] = create_unique_key();
             setcookie('vk', $_COOKIE['vk'], time()+TIME_10_YEAR, '/', $domain);
         }
-        $this->vk = $_COOKIE['vk'];
+        $this->vk = md5($_COOKIE['vk']);
         return;
     }
 

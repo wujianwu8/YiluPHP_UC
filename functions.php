@@ -181,3 +181,24 @@ function is_webview(){
     }
     return true;
 }
+
+/**
+ * 是否在微信端
+ * @param bool $only_personal 是否只判断个人微信，true时只判断是否为个人微信，false时同时判断个人微信和企业微信
+ * @return bool true是 false否
+ */
+function is_weixin($only_personal = false){
+    $user_agent = $_SERVER['HTTP_USER_AGENT'];
+    if ($only_personal) {
+        if (strpos($user_agent, 'MicroMessenger') != false && strpos($user_agent, 'WindowsWechat') != true
+            && strpos($user_agent, 'wxwork') != true) { //wxwork为企业微信特有字符
+            return true;
+        }
+        return false;
+    }
+
+    if (strpos($user_agent, 'MicroMessenger') != false && strpos($user_agent, 'WindowsWechat') != true) {
+        return true;
+    }
+    return false;
+}

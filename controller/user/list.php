@@ -88,8 +88,5 @@ if($status!==null){
 $user_list = logic_user::I()->paging_select_search_user($where, $page, $page_size);
 
 return result('user/list', [
-    'user_list' => $user_list,
     'data_count' => model_user_identity::I()->get_user_count(),
-    'page' => $page,
-    'page_size' => $page_size,
 ]);

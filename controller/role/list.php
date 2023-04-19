@@ -31,8 +31,5 @@ if($role_name){
 
 $data_list = model_role::I()->paging_select($where, $page, $page_size, 'id DESC');
 return result('role/list', [
-    'data_list' => $data_list,
     'data_count' => model_role::I()->count($where),
-    'page' => $page,
-    'page_size' => $page_size,
 ]);

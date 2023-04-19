@@ -47,8 +47,6 @@ if (isset($params['user']) && $params['user']!=='' && $params['user']!==null){
         return result('feedback/list', [
             'data_list' => [],
             'data_count' => 0,
-            'page' => $page,
-            'page_size' => $page_size,
         ]);
     }
     unset($users);
@@ -75,6 +73,4 @@ unset($user_info, $params);
 return result('feedback/list', [
     'data_list' => $res['data'],
     'data_count' => $res['count'],
-    'page' => $page,
-    'page_size' => $page_size,
 ]);

@@ -26,7 +26,7 @@ class redis_y
      * @param string $db_key 在配置文件中，数据库配置使用的键名
      * @return Redis 返回已经建立连接好的对象
      */
-    public static function I($redis_config_key='default', $db=0){
+    public static function I($redis_config_key='default', $db=null){
 
         $redis_config_key = empty($redis_config_key)?'default':$redis_config_key;
         if (!isset($GLOBALS['config']['redis'][$redis_config_key]) ) {
@@ -38,6 +38,15 @@ class redis_y
                 unset(static::$_redis_list[$redis_config_key]);
             }
         }
+        if ($db===null) {
+            if (isset($GLOBALS['config']['redis'][$redis_config_key]['default_db'])) {
+                $db = $GLOBALS['config']['redis'][$redis_config_key]['default_db'];
+            }
+            else {
+                $db = 0;
+            }
+        }
+
         if ( !isset(static::$_redis_list[$redis_config_key]) ) {
             $redis = static::connect_redis($GLOBALS['config']['redis'][$redis_config_key]);
             $redis->select($db);

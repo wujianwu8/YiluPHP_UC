@@ -168,9 +168,8 @@ if($repair_info) {
     unset($where);
 }
 
-$remember_me = input::I()->post_int('remember_me',false);
 //登录用户
-logic_user::I()->create_login_session($user_info, !empty($remember_me));
+logic_user::I()->create_login_session($user_info, !empty($params['remember_me']));
 $tlt = $user_info['tlt'];
 $vk = $user_info['vk'];
 

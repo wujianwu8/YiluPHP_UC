@@ -38,7 +38,4 @@ if (!$application_info=model_application::I()->find_table(['app_id' => $permissi
     return code(5,'应用ID不存在：'.$permission_info['app_id']);
 }
 $permission_info['permission_name_lang'] = logic_application::I()->translate_permission_name($permission_info['permission_name'],$permission_info['permission_key']);
-return result('application/edit_permission', [
-    'application_info' => $application_info,
-    'permission_info' => $permission_info,
-]);
+return result('application/edit_permission');

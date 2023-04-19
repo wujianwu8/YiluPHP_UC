@@ -140,7 +140,7 @@ class oauth_wechat extends oauth
             $keysArr = array(
                 "response_type" => "code",
                 "appid" => $this->app_key,
-                "redirect_uri" => urlencode($this->callback),
+                "redirect_uri" => urlencode($callback),
                 "state" => $state,
                 "scope" => $scope
             );

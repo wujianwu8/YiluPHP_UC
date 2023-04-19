@@ -1,4 +1,4 @@
-<!--{use_layout layout/main}-->
+<!--{use_layout layout/admin_main}-->
 
 <?php
     $head_info = [

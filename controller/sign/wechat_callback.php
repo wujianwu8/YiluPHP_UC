@@ -12,8 +12,9 @@
  */
 
 $open = input::I()->get_int('open', 0);
+$for_base = input::I()->get_int('for_base', 0);
 oauth_wechat::I()->check_callback();
-if ($open){
+if ($open==1){
     oauth_wechat::I()->load_config('wechat_open');
 }
 $token = oauth_wechat::I()->get_access_token();
@@ -30,6 +31,18 @@ if(!empty($_SESSION['weixin_qr_login_code']) && strpos($state, 'weixin_qr_')===0
 }
 
 $openid = empty($token['unionid'])?$token['openid']:$token['unionid'];
+//如果仅仅是为了获取openid，此时可以返回到回调地址了
+if ($for_base==1){
+    //将openid存入REDIS缓存
+    $cache_key = REDIS_KEY_TEMP_WX_OPENID.md5($_COOKIE['vk']);
+    redis_y::I()->setex($cache_key, TIME_DAY, $openid);
+    //读取回调地址
+    $callback = !empty($_SESSION['callback_for_wx_base'])?$_SESSION['callback_for_wx_base']:'/';
+    //跳转到回调地址
+    header('Location: '.$callback);
+    exit;
+}
+
 //如果是登录用户绑定第三方账号，走此流程
 if (input::I()->get_int('for_bind', null)){
     logic_user::I()->bind_outer_account('WX', $openid);

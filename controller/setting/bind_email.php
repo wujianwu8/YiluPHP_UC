@@ -19,8 +19,4 @@ foreach ($identity as $item){
 }
 unset($identity, $item);
 
-return result('setting/bind_email',
-    [
-        'email' => $email,
-    ]
-);
+return result('setting/bind_email');

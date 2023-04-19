@@ -11,6 +11,18 @@ class model_language_value extends model
 {
     protected $_table = 'language_value';
 
+    protected static $instance = null;
+
+    /**
+     * 获取单例
+     */
+    public static function I(){
+        if (empty(self::$instance)){
+            return self::$instance = new static();
+        }
+        return self::$instance;
+    }
+
     /**
      * @name 插入或更新一条语言内容
      * @desc

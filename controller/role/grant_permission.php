@@ -77,9 +77,4 @@ unset($params, $in_arr, $not_in_arr, $self_app_ids);
 
 return result('role/grant_permission', [
     'page_name' => 'role_permission',
-    'app_list' => $app_list,
-    'app_permission_list' => $app_permission_list,
-    'role_info' => $role_info,
-    'current_app_id' => $current_app_id,
-    'having_permission_ids' => $having_permission_ids,
 ]);

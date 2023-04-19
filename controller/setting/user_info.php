@@ -21,7 +21,6 @@ foreach ($identity as $item){
 unset($identity, $item, $user_info['password'], $user_info['salt']);
 return result('setting/user_info',
     [
-        'user_info' => $user_info,
         'country_lang_keys' => lib_address::I()->selectCountryLangKeys(),
     ]
 );

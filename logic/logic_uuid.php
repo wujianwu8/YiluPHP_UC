@@ -43,6 +43,7 @@ class logic_uuid
         if (!redis_y::I()->set(REDIS_KEY_UUID_LOCK,1, ['nx', 'ex'=>600])){
             return false;
         }
+        redis_y::I()->expire(REDIS_KEY_UUID_LOCK,300);
         //获取当前最大的UUID
         $max_uuid = model_uuid_stock::I()->find_table([],'MAX(uuid) AS id');
         $max_uuid = intval($max_uuid['id']);
@@ -67,6 +68,7 @@ class logic_uuid
             $max_uuid = model_uuid_stock::I()->find_table([],'MIN(uuid) AS id');
             $max_uuid = intval($max_uuid['id']);
             if ($max_uuid==0){
+                redis_y::I()->del(REDIS_KEY_UUID_LOCK);
                 return false;
             }
             $max_uuid = $max_uuid-1;
@@ -135,7 +137,7 @@ class logic_uuid
         if ($count<1){
             return 0;
         }
-        if(!$uuid = redis_y::I()->sPop(REDIS_KEY_UUID_LIST, $count)){
+        if(!$uuid = redis_y::I()->sRandMember(REDIS_KEY_UUID_LIST, $count)){
             //没有UUID就先添加1万条先用着
             if(!$this->batch_insert_uuid(10000)){
                 throw new Exception('获取UUID失败，添加UUID失败了',CODE_SYSTEM_ERR);
@@ -143,7 +145,7 @@ class logic_uuid
             //调用异步任务添加10万个UUID
             add_to_queue('batch_insert_uuid',['count'=>100000, 'disuse_old'=>false]);
             //再次获取UUID
-            if(!$uuid = redis_y::I()->sPop(REDIS_KEY_UUID_LIST, $count)){
+            if(!$uuid = redis_y::I()->sRandMember(REDIS_KEY_UUID_LIST, $count)){
                 throw new Exception('获取UUID失败，再次获取UUID失败了',CODE_SYSTEM_ERR);
             }
         }
@@ -157,6 +159,12 @@ class logic_uuid
         ];
         if(!model_uuid_stock::I()->change_table($where, ['status'=>2,'module'=>$module])){
             throw new Exception('获取UUID失败，更新数据库uuid状态失败了，$uuid='.json_encode($uuid),CODE_SYSTEM_ERR);
+        }
+
+        $params = [REDIS_KEY_UUID_LIST];
+        $params = array_merge($params, $uuid);
+        if(!$res=call_user_func_array([redis_y::I(), 'sRem'], $params)){
+            throw new Exception('获取UUID后，从redis中删除ID失败了，$uuid='.json_encode($uuid),CODE_SYSTEM_ERR);
         }
 
         if ($count==1){

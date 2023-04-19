@@ -11,6 +11,18 @@ class model_role_permission extends model
 {
     protected $_table = 'role_permission';
 
+    protected static $instance = null;
+
+    /**
+     * 获取单例
+     */
+    public static function I(){
+        if (empty(self::$instance)){
+            return self::$instance = new static();
+        }
+        return self::$instance;
+    }
+
     /**
      * @name 获取角色拥有的权限
      * @desc

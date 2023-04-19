@@ -11,8 +11,22 @@ use AlibabaCloud\Client\AlibabaCloud;
 use AlibabaCloud\Client\Exception\ClientException;
 use AlibabaCloud\Client\Exception\ServerException;
 
-class tool_sms extends base_class
+class tool_sms
 {
+    //存储单例
+    private static $_instance = null;
+
+    /**
+     * 获取单例
+     * @return model|null 返回单例
+     */
+    public static function I(){
+        if (!static::$_instance){
+            return static::$_instance = new self();
+        }
+        return static::$_instance;
+    }
+
 	public function __construct()
 	{
 	    if (empty($GLOBALS['config']['sms'])){
@@ -70,6 +84,22 @@ class tool_sms extends base_class
     public function send_verify_code($area_code, $mobile, $message, $template_code=null, $sign_name=null, $template_param=[])
     {
         $area_code = intval($area_code);
+
+        //判断是否含有连续6位一样的数字，如果有则是测试用户，将短信内容发送到企业微信里
+        $is_tester = false;
+        for ($i = 0; $i < 10; $i++) {
+            $str = str_pad('', 6, $i);
+            if (strpos($mobile, $str) > 0) {
+                $is_tester = true;
+                break;
+            }
+        }
+        if ($is_tester && !empty($GLOBALS['config']['weixin_robot']['xiaomei'])){
+            $message .= "\r\n手机号：{$area_code}-{$mobile}";
+            tool_operate::I()->send_work_notice($message, $GLOBALS['config']['weixin_robot']['xiaomei']);
+            return true;
+        }
+
         $plat_name = $this->_recommendOnePlat($area_code, $mobile);
         $fun = 'send_sms_code_by_'.$plat_name;
         $res = $this->$fun($area_code, $mobile, $message, $template_code, $sign_name, $template_param);

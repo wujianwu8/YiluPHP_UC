@@ -37,6 +37,4 @@ if (!$application_info=model_application::I()->find_table(['app_id' => $params['
     return code(5,'应用不存在');
 }
 
-return result('application/add_permission', [
-    'application_info' => $application_info,
-]);
+return result('application/add_permission');

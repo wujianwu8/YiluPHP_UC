@@ -29,6 +29,4 @@ if(!$role_info = model_role::I()->find_table(['id' => $params['role_id']])){
     return code(1, '角色不存在');
 }
 
-return result('role/edit', [
-    'role_info' => $role_info,
-]);
+return result('role/edit');

@@ -21,6 +21,7 @@ class hook_internal extends hook
                 'sign' => 'required|trim|string|min:32|max:32|return',
                 'time' => 'required|integer|min:1000000000|return',
                 'app_id' => 'required|trim|string|max:20|return',
+                'lang' => 'trim|string|min:2|max:20|return',
             ],
             [
                 'sign.*' => 'sign参数错误',
@@ -32,6 +33,10 @@ class hook_internal extends hook
                 'time.*' => 1001,
                 'app_id.*' => 1002,
             ]);
+        if (!empty($params['lang'])){
+            $GLOBALS['config']['lang'] = $params['lang'];
+        }
+
         //接口时效性验证，30秒内有效
         $diff_time = time()-$params['time'];
         if ($diff_time <= -30 ){

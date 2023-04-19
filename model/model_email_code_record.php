@@ -11,6 +11,18 @@ class model_email_code_record extends model
 {
     protected $_table = 'email_code_record';
 
+    protected static $instance = null;
+
+    /**
+     * 获取单例
+     */
+    public static function I(){
+        if (empty(self::$instance)){
+            return self::$instance = new static();
+        }
+        return self::$instance;
+    }
+
 	public function __construct()
 	{
 	}

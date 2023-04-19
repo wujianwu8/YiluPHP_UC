@@ -85,8 +85,5 @@ foreach ($data_list as $key=>$item){
     }
 }
 return result('application/list', [
-    'data_list' => $data_list,
     'data_count' => model_application::I()->count($where),
-    'page' => $page,
-    'page_size' => $page_size,
 ]);

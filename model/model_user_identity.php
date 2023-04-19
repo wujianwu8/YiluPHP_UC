@@ -15,6 +15,18 @@ class model_user_identity extends model
 	//用于分表的字段名
 	protected $_split_by_field = 'uid';
 
+    protected static $instance = null;
+
+    /**
+     * 获取单例
+     */
+    public static function I(){
+        if (empty(self::$instance)){
+            return self::$instance = new static();
+        }
+        return self::$instance;
+    }
+
 	public function __construct()
 	{
 	}

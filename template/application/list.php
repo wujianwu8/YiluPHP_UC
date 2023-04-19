@@ -52,7 +52,7 @@ $head_info = [
     </div>
 </form>
 
-<div class="table-responsive">
+<div class="table-responsive" <?php echo count($data_list)<2?'style="padding-bottom:30px;"':''; ?> >
     <table class="table table-striped table-sm table_list" id="all_application_list">
         <thead>
         <tr>

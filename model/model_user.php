@@ -15,6 +15,18 @@ class model_user extends model
 	//用于分表的字段名
 	protected $_split_by_field = 'uid';
 
+    protected static $instance = null;
+
+    /**
+     * 获取单例
+     */
+    public static function I(){
+        if (empty(self::$instance)){
+            return self::$instance = new static();
+        }
+        return self::$instance;
+    }
+
 	/**
 	 * @name 把一个手机号码转成昵称
 	 * @desc 将中间数字转成字母

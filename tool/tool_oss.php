@@ -12,12 +12,9 @@ use OSS\Core\OssException;
 
 class tool_oss extends base_class
 {
-	public function __construct()
-	{
-	    if (empty($GLOBALS['config']['oss'])){
-            throw new validate_exception('未配置OSS文件上传的平台', CODE_NOT_CONFIG_SMS_PLAT);
-        }
-	}
+    public function __construct()
+    {
+    }
 
     /**
      * 上传文件
@@ -115,6 +112,12 @@ class tool_oss extends base_class
      */
     public function aliyun_thumb_image($image_url, $width=null, $height=null, $quality = null, $format = null)
     {
+        try{
+            $this->check_aliyun_config();
+        }
+        catch (validate_exception $e){
+            return $image_url;
+        }
         $image_url = explode('?',$image_url);
         $params = [];
         if ($width || $height){

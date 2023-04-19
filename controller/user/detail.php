@@ -29,11 +29,6 @@ if(!$user_info = model_user::I()->find_table(['uid'=>$params['uid']], '*', $para
 }
 $user_identity = model_user_identity::I()->select_all(['uid'=>$params['uid']], '', '*', $params['uid']);
 $complaint_count = model_user_complaint::I()->count(['complaint_uid'=>$params['uid']]);
-$complaint_count = model_user_complaint::I()->count(['complaint_uid'=>$params['uid']]);
+$respondent_count = model_user_complaint::I()->count(['respondent_uid'=>$params['uid']]);
 
-return result('user/detail', [
-    'user_info' => $user_info,
-    'user_identity' => $user_identity,
-    'complaint_count' => model_user_complaint::I()->count(['complaint_uid'=>$params['uid']]),
-    'respondent_count' => model_user_complaint::I()->count(['respondent_uid'=>$params['uid']]),
-]);
+return result('user/detail');

@@ -51,7 +51,4 @@ if($role_list = model_role::I()->select_all([])) {
 }
 unset($params, $having_role_ids);
 
-return result('role/grant_role', [
-    'role_list' => $role_list,
-    'user_info' => $user_info,
-]);
+return result('role/grant_role');

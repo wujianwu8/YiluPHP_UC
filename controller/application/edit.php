@@ -26,6 +26,4 @@ $params = input::I()->validate(
 if (!$app_info=model_application::I()->find_table(['app_id'=>$params['app_id']])){
     return code(2, '应用不存在');
 }
-return result('application/edit', [
-    'app_info' => $app_info
-]);
+return result('application/edit');

@@ -21,7 +21,6 @@ if(!$menu_info = model_menus::I()->find_table(['id'=>$id])){
 
 return result('menus/edit',
     [
-        'menu_info' => $menu_info,
         'parent_menus' => model_menus::I()->select_all(
             ['parent_menu'=>0],
             ' position DESC, weight ASC, ctime DESC ',

@@ -116,7 +116,9 @@
 <script src="<?php echo url_pre_lang(); ?>/config_js" type="text/javascript"></script>
 <?php echo load_static('/include/js_jsencrypt.shtml'); ?>
 <?php echo load_static('/include/js_dialog_diy.shtml'); ?>
+<?php if(is_weixin()): ?>
 <?php echo load_static('/include/js_jweixin.shtml'); ?>
+<?php endif; ?>
 <?php echo load_static('/include/js_base.shtml'); ?>
 <script type="text/javascript">
     //是否可以使用微信开放平台授权登录

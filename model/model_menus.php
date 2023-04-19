@@ -11,5 +11,17 @@ class model_menus extends model
 {
     protected $_table = 'menus';
 
+    protected static $instance = null;
+
+    /**
+     * 获取单例
+     */
+    public static function I(){
+        if (empty(self::$instance)){
+            return self::$instance = new static();
+        }
+        return self::$instance;
+    }
+
 
 }

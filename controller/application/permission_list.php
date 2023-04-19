@@ -48,7 +48,4 @@ $data_list = model_permission::I()->select_all($where, 'permission_id DESC');
 foreach ($data_list as $key => $item){
     $data_list[$key]['permission_name_lang'] = logic_application::I()->translate_permission_name($item['permission_name'],$item['permission_key']);
 }
-return result('application/permission_list', [
-    'application_info' => $application_info,
-    'data_list' => $data_list,
-]);
+return result('application/permission_list');

@@ -25,6 +25,18 @@ class model_permission extends model
         'grant_grant_delete_permission' => 'lang_delete_permission',
     ];
 
+    protected static $instance = null;
+
+    /**
+     * 获取单例
+     */
+    public static function I(){
+        if (empty(self::$instance)){
+            return self::$instance = new static();
+        }
+        return self::$instance;
+    }
+
     public function permission_control_keys(){
         return $this->_permission_control_keys;
     }

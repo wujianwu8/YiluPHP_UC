@@ -11,6 +11,18 @@ class model_user_permission extends model
 {
     protected $_table = 'user_permission';
 
+    protected static $instance = null;
+
+    /**
+     * 获取单例
+     */
+    public static function I(){
+        if (empty(self::$instance)){
+            return self::$instance = new static();
+        }
+        return self::$instance;
+    }
+
     /**
      * @name 获取用户已有的所有权限
      * @desc

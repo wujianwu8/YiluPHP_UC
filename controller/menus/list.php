@@ -25,11 +25,6 @@ foreach($data_list as $item){
         $parent_menus[] = $item;
     }
 }
-$params = [
-    'parent_menus' => $parent_menus,
-    'top_menus' => $top_menus,
-    'left_menus' => $left_menus,
-];
 
-unset($data_list, $top_menus, $left_menus, $parent_menus);
-return result('menus/list', $params);
+unset($data_list);
+return result('menus/list');

@@ -28,6 +28,4 @@ if (!$project_info=model_language_project::I()->find_table(['id'=>$params['proje
     return code(2, '项目不存在');
 }
 
-return result('language/edit_project',[
-    'project_info' => $project_info
-]);
+return result('language/edit_project');

@@ -49,8 +49,6 @@ if (isset($params['complaint_user']) && $params['complaint_user']!=='' && $param
         return result('complaint/list', [
             'data_list' => [],
             'data_count' => 0,
-            'page' => $page,
-            'page_size' => $page_size,
         ]);
     }
     unset($users);
@@ -65,8 +63,6 @@ if (isset($params['respondent_user']) && $params['respondent_user']!=='' && $par
         return result('complaint/list', [
             'data_list' => [],
             'data_count' => 0,
-            'page' => $page,
-            'page_size' => $page_size,
         ]);
     }
     unset($users);
@@ -101,6 +97,4 @@ unset($user_info, $params);
 return result('complaint/list', [
     'data_list' => $res['data'],
     'data_count' => $res['count'],
-    'page' => $page,
-    'page_size' => $page_size,
 ]);

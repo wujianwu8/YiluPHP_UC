@@ -11,6 +11,18 @@ class model_user_complaint extends model
 {
     protected $_table = 'user_complaint';
 
+    protected static $instance = null;
+
+    /**
+     * 获取单例
+     */
+    public static function I(){
+        if (empty(self::$instance)){
+            return self::$instance = new static();
+        }
+        return self::$instance;
+    }
+
     /**
      * @name 读取投诉信息
      * @desc 分页读取
