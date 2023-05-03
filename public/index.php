@@ -1203,6 +1203,9 @@ else{
     }
     catch (Exception $exception){
         write_applog('ERROR', $exception->getMessage().'['.$exception->getCode().']');
+        if (is_debug_mode()){
+            throw new Exception($exception->getMessage(), $exception->getCode(), $exception->getPrevious());
+        }
         $msg = YiluPHP::I()->lang('inner_error');
         echo code(CODE_SYSTEM_ERR, $msg);
         unset($msg);
