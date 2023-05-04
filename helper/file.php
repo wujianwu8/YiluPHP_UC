@@ -3,19 +3,19 @@
  * 文件处理类
  * YiluPHP vision 2.0
  * User: Jim.Wu
- * * Date: 2021/01/23
+ * Date: 2021/01/21
  * Time: 19:22
  */
 
 class file extends base_class
 {
-	public function __construct()
-	{
-	}
+    public function __construct()
+    {
+    }
 
-	public function __destruct()
-	{
-	}
+    public function __destruct()
+    {
+    }
 
     /**
      * @name 下载一张远程图片到本地
@@ -59,38 +59,51 @@ class file extends base_class
 
 
     function check_file_type($file_name){
-        $file = fopen($file_name, "rb");
-        $bin = fread($file, 2); //只读2字节
-        fclose($file);
-        // C为无符号整数，网上搜到的都是c，为有符号整数，这样会产生负数判断不正常
-        $str_info = @unpack("C2chars", $bin);
-        $type_code = intval($str_info['chars1'].$str_info['chars2']);
-        switch( $type_code )
-        {
-            case '255216':
-                return 'jpg';
-                break;
-            case '7173':
-                return 'gif';
-                break;
-            case '13780':
-                return 'png';
-                break;
-            case '6677':
-                return 'bmp';
-                break;
-            case '7790':
-                return 'exe';
-                break;
-            case '7784':
-                return 'midi';
-                break;
-            case '8297':
-                return 'rar';
-                break;
-            default:
+        try {
+            if(!$file = @fopen($file_name, "rb")) {
                 return 'Unknown';
-                break;
+            }
+            $bin = fread($file, 2); //只读2字节
+            fclose($file);
+            // C为无符号整数，网上搜到的都是c，为有符号整数，这样会产生负数判断不正常
+            $str_info = @unpack("C2chars", $bin);
+            $type_code = intval($str_info['chars1'] . $str_info['chars2']);
+            switch ($type_code) {
+                case '255216':
+                    return 'jpg';
+                    break;
+                case '7173':
+                    return 'gif';
+                    break;
+                case '13780':
+                    return 'png';
+                    break;
+                case '6677':
+                    return 'bmp';
+                    break;
+                case '7790':
+                    return 'exe';
+                    break;
+                case '7784':
+                    return 'midi';
+                    break;
+                case '8297':
+                    return 'rar';
+                    break;
+                default:
+                    return 'Unknown';
+                    break;
+            }
         }
+        catch (Exception $e) {
+            return 'Unknown';
+        }
+    }
+
+    function is_image($file_name){
+        if (in_array($this->check_file_type($file_name), ['jpg', 'gif', 'png', 'bmp'])){
+            return true;
+        }
+        return false;
     }
 }
