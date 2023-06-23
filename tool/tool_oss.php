@@ -20,9 +20,10 @@ class tool_oss extends base_class
      * 上传文件
      * @param string $local_file 由本地文件路径加文件名包括后缀组成，例如/users/local/myfile.txt
      * @param string $object 上传到阿里云后的文件名称，如果不传此参数，则与本地文件路径一致，本地文件路径加文件名包括后缀组成
+     * @param array $options 上传到阿里云的options参数
      * @return string 保存后的文件外网访问地址
      */
-    public function upload_file($local_file, $object=null)
+    public function upload_file($local_file, $object=null, $options=['Content-Type' => 'image/jpg'])
     {
         $this->check_aliyun_config();
         if (empty($object)){
@@ -38,9 +39,6 @@ class tool_oss extends base_class
         try{
             $ossClient = new OssClient($GLOBALS['config']['oss']['aliyun']['accessKeyId'],
                 $GLOBALS['config']['oss']['aliyun']['accessKeySecret'], $GLOBALS['config']['oss']['aliyun']['endpoint']);
-            $options = [
-//                'Content-Disposition' => 'inline',
-            ];
             $ossClient->uploadFile($GLOBALS['config']['oss']['aliyun']['bucketName'], $object, $local_file, $options);
             unlink($local_file);
             return $GLOBALS['config']['oss']['aliyun']['visit_host'].$object;
