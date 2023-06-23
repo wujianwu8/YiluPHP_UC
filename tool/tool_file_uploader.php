@@ -196,7 +196,12 @@ class tool_file_uploader extends base_class
      */
     public static function getRandomImageName($file){
         //取出源文件后缀
-        $ext = strrchr($file['name'], '.');
+        if(!$ext = strrchr($file['name'], '.')) {
+            if (isset($file['type']) && $file['type']=='image/jpeg') {
+                $ext = '.png';
+            }
+        }
+
         //获取图片尺寸
         $temp = getimagesize($file['tmp_name']);
         //构建新名字
