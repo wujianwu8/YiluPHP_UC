@@ -73,6 +73,14 @@ class redis_y
     {
         $redis = new Redis();
         $redis->pconnect($options['host'], $options['port']);
+        $password = $options['password'] ?? '';
+        if ($password != '') {
+            $redis->auth($password);
+        }
+        $db = $options['db'] ?? '';
+        if ($db != '') {
+            $redis->select($db);
+        }
         return $redis;
     }
 
