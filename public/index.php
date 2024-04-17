@@ -518,7 +518,7 @@ class YiluPHP
      */
     public static function I(){
         if (!static::$_instance){
-            return static::$_instance = new self();
+            return static::$_instance = new YiluPHP();
         }
         return static::$_instance;
     }
