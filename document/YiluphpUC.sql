@@ -557,4 +557,21 @@ CREATE TABLE `uuid_stock` (
 
 
 
+-- 设置新的结束符为 `$$`
+DELIMITER $$
+
+CREATE PROCEDURE `batchInsertUUID`(IN num INT)
+BEGIN
+    DECLARE i INT DEFAULT 1;
+    START TRANSACTION;
+    WHILE i <= num DO
+        INSERT INTO uuid_stock(create_time) VALUES (UNIX_TIMESTAMP());
+        SET i = i + 1;
+    END WHILE;
+    COMMIT;
+END$$
+
+-- 重置结束符为默认的 `;`
+DELIMITER ;
+
 

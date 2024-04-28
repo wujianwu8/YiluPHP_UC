@@ -27,7 +27,7 @@ class input
     public static function I(){
         $class_name = get_called_class();
         if (empty($class_name) && empty(self::$instances[$class_name])){
-            return static::$instances[$class_name] = new self();
+            return static::$instances[$class_name] = new input();
         }
         if (empty(static::$instances[$class_name])){
             return static::$instances[$class_name] = new $class_name();
