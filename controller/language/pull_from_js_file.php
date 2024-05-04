@@ -66,8 +66,7 @@ foreach ($file_list as $file){
     $file_info = pathinfo($file);
     if (in_array($file_info['filename'], $project_info['language_types'])){
         $lang_arr = file_get_contents($project_info['js_file_dir'].$file);
-        $lang_arr = preg_replace("/[\r\n]+\s*(\w)/", '"$1', $lang_arr);
-        $lang_arr = preg_replace("/(\w):/", '$1":', $lang_arr);
+        $lang_arr = preg_replace("/[\r\n]+\s*(\w+):/", '"$1":', $lang_arr);
         $lang_arr = preg_replace("/[\r\n]+\s/", '', $lang_arr);
         $lang_arr = str_replace('\\\\', '\\\\\\\\', $lang_arr);
         $lang_arr = str_replace('\\\'', '\'', $lang_arr);
