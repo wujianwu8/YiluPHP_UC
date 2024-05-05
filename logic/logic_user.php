@@ -203,18 +203,19 @@ class logic_user
 	 * @throws
 	 */
 	public function create_login_session(&$user_info, $remember_me=false){
-		$arr = [
-			'uid' => $user_info['uid'],
-			'nickname' => $user_info['nickname'],
-			'avatar' => empty($user_info['avatar']) ? $GLOBALS['config']['default_avatar'] : $user_info['avatar'],
-			'gender' => isset($user_info['gender']) ? $user_info['gender'] : 'male',
-            'last_active' => time(),
-            'remember' => $remember_me?1:0,
-		];
         if(empty($_COOKIE['vk'])){
             write_applog('ERROR', '缺少标识访问用户的cookie: vk, $user_info='.json_encode($user_info));
             throw new Exception('登录失败', CODE_ERROR_IN_SERVICE);
         }
+
+        $arr = [
+            'uid' => $user_info['uid'],
+            'nickname' => $user_info['nickname'],
+            'avatar' => empty($user_info['avatar']) ? $GLOBALS['config']['default_avatar'] : $user_info['avatar'],
+            'gender' => isset($user_info['gender']) ? $user_info['gender'] : 'male',
+            'last_active' => time(),
+            'remember' => $remember_me?1:0,
+        ];
         $vk = $_COOKIE['vk'];
         $cache_key_vk = REDIS_KEY_LOGIN_USER_INFO_BY_VK.md5($vk);
         $cache_key_uid = REDIS_KEY_LOGIN_USER_INFO_BY_UID.$user_info['uid'];
@@ -313,22 +314,42 @@ class logic_user
      * @return boolean true
      * @throws
      */
-    public function keep_login_user_alive($uid, $vk, $expire)
+    public function keep_login_user_alive($uid, $vk)
     {
+        if (empty($uid)) {
+            return false;
+        }
+
         $time = time();
-        if ($uid){
-            redis_y::I()->hset(REDIS_KEY_LOGIN_USER_INFO_BY_UID.$uid, 'last_active', $time);
-            redis_y::I()->expire(REDIS_KEY_LOGIN_USER_INFO_BY_UID.$uid, $expire);
-            $where = ['uid'=>$uid];
-            $data = ['last_active'=>$time];
-            model_user::I()->update_table($where, $data);
-            unset($where, $data);
+        if ($user_info = $this->get_login_user_info_by_uid($uid)) {
+            //延长登录状态的有效期，5分钟内只更新一次
+            if (isset($user_info['last_active']) && $time - $user_info['last_active'] > 300) {
+                if (empty($user_info['remember'])) {
+                    global $config;
+                    $expire = intval($config['login_expire']);
+                    if ($expire <= 0) {
+                        $expire = TIME_30_MIN;
+                    }
+                }
+                else {
+                    $expire = TIME_60_DAY;
+                }
+
+                redis_y::I()->hset(REDIS_KEY_LOGIN_USER_INFO_BY_UID . $uid, 'last_active', $time);
+                redis_y::I()->expire(REDIS_KEY_LOGIN_USER_INFO_BY_UID . $uid, $expire);
+                $where = ['uid' => $uid];
+                $data = ['last_active' => $time];
+                model_user::I()->update_table($where, $data);
+                unset($where, $data);
+
+                if ($vk) {
+                    redis_y::I()->hset(REDIS_KEY_LOGIN_USER_INFO_BY_VK . md5($vk), 'last_active', $time);
+                    redis_y::I()->expire(REDIS_KEY_LOGIN_USER_INFO_BY_VK . md5($vk), $expire);
+                }
+            }
         }
-        if ($vk){
-            redis_y::I()->hset(REDIS_KEY_LOGIN_USER_INFO_BY_VK.md5($vk), 'last_active', $time);
-            redis_y::I()->expire(REDIS_KEY_LOGIN_USER_INFO_BY_VK.md5($vk), $expire);
-        }
-        unset($uid, $vk, $expire, $time);
+
+        unset($uid, $vk, $time);
         return true;
     }
 

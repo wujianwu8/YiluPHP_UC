@@ -170,7 +170,7 @@ class hook_route_auth extends hook
                         if ($user_info) {
                             //把用户信息保存在全局变量中
                             $GLOBALS['self_info'] = $user_info;
-                            logic_user::I()->keep_login_user_alive($user_info['uid'], $this->vk, TIME_30_MIN);
+                            logic_user::I()->keep_login_user_alive($user_info['uid'], $this->vk);
                             unset($user_info);
                         }
                     }

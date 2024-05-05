@@ -117,6 +117,8 @@ $head_info = [
             <?php } ?>
         </div>
     </div>
+
+    <?php if(!empty($config['oauth_plat']['wechat']['usable']) || !empty($config['oauth_plat']['wechat_open']['usable'])){ ?>
     <div class="row mb-2">
         <div class="col-sm-3 title">
             <label><?php echo YiluPHP::I()->lang('bind_wechat'); ?></label>
@@ -139,6 +141,9 @@ $head_info = [
             <?php } ?>
         </div>
     </div>
+    <?php } ?>
+
+    <?php if(!empty($config['oauth_plat']['qq']['usable'])){ ?>
     <div class="row mb-2">
         <div class="col-sm-3 title">
             <label><?php echo YiluPHP::I()->lang('bind_qq'); ?></label>
@@ -161,6 +166,9 @@ $head_info = [
             <?php } ?>
         </div>
     </div>
+    <?php } ?>
+
+    <?php if(!empty($config['oauth_plat']['alipay']['usable'])){ ?>
     <div class="row mb-2">
         <div class="col-sm-3 title">
             <label><?php echo YiluPHP::I()->lang('bind_alipay'); ?></label>
@@ -183,7 +191,7 @@ $head_info = [
             <?php } ?>
         </div>
     </div>
-
+    <?php } ?>
 
     <button class="btn btn-primary btn-lg btn-block" type="submit"><?php echo YiluPHP::I()->lang('save'); ?></button>
 </form>

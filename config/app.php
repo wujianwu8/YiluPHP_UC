@@ -43,8 +43,8 @@ define('REDIS_KEY_ALL_MENUS', 'REDIS_KEY_ALL_MENUS'); //缓存所有的菜单
 define('REDIS_KEY_ALL_IDENTITY', 'REDIS_KEY_ALL_IDENTITY');
 define('REDIS_KEY_MOBILE_UID', 'REDIS_KEY_MOBILE_UID');
 
-define('REDIS_KEY_LOGIN_USER_INFO_BY_VK', 'REDIS_KEY_LOGIN_USER_INFO_BY_VK_');   //登录用户的信息,后面接cookie vk 的值
-define('REDIS_KEY_LOGIN_USER_INFO_BY_UID', 'REDIS_KEY_LOGIN_USER_INFO_BY_UID_');   //登录用户的信息,后面接UID
+define('REDIS_KEY_LOGIN_USER_INFO_BY_VK', 'REDIS_KEY_LOGIN_USER_INFO:BY_VK:');   //登录用户的信息,后面接cookie vk 的值
+define('REDIS_KEY_LOGIN_USER_INFO_BY_UID', 'REDIS_KEY_LOGIN_USER_INFO:BY_UID:');   //登录用户的信息,后面接UID
 define('REDIS_KEY_USER_LOGIN_TLT', 'REDIS_KEY_USER_LOGIN_TLT_');   //临时登录令牌的信息,后面接TLT
 define('REDIS_KEY_SEARCH_USER_RESULT', 'REDIS_KEY_SEARCH_USER_RESULT_');    //缓存搜索到的全部用户ID
 define('REDIS_KEY_QQ_CALLBACK', 'REDIS_KEY_QQ_CALLBACK_');  //QQ授权登录时，记录是否已经关闭小窗口
@@ -120,4 +120,4 @@ $config = [
 /*
  * 针对不同环境设置不一样的配置配置信息,建议单独一个文件存放
  */
-return array_merge($config, require('/data/config/www.yiluuc.com/config.php'));
+return array_merge($config, require('/data/config/passport.yiluphp.com/config.php'));
