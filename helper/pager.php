@@ -7,8 +7,22 @@
  * Time: 09:22
  */
 
-class pager extends base_class
+class pager
 {
+    //存储单例
+    private static $_instance = null;
+
+    /**
+     * 获取单例
+     * @return model|null 返回单例
+     */
+    public static function I(){
+        if (!static::$_instance){
+            return static::$_instance = new pager();
+        }
+        return static::$_instance;
+    }
+
 	/**
 	 * @name 组装分页码
 	 * @desc 返回组装好的页码数组
@@ -131,6 +145,7 @@ class pager extends base_class
 					//替换之
 					$url = str_replace('{page_size}', $param['page_size'], $url);
 				}
+
 				if($query){
 					$query = explode('&', $query);
 				}
@@ -153,7 +168,7 @@ class pager extends base_class
 				}
 
 				//在参数中设置每页数量
-				if(!$page_size_in_path && !empty($param[$param['page_size_key']])){
+				if(!$page_size_in_path && !empty($_REQUEST[$param['page_size_key']]) && !empty($param[$param['page_size_key']])){
 					$tmp[] = $param['page_size_key'].'='.$param[$param['page_size_key']];
 				}
 				return $url.($tmp?'?'.implode('&',$tmp):'');

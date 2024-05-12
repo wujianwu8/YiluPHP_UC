@@ -572,9 +572,10 @@ class model
      * @param array $data 需要插入的数据,对应所有的字段
      * @param string $table_name 指定操作的表名
      * @param string $connection 指定操作的连接名
+     * @param array $update_fields 如果有唯一键已经存在，则更新这些字段。默认为空数组，不更新，唯一键已经存在时会报错
      * @return integer 如果表中有id字段,则返回之，没有就返回0，发生错误抛出异常
      */
-    function insert_table($data, $table_name='', $connection='')
+    function insert_table($data, $table_name='', $connection='', $update_fields=[])
     {
         if (!empty($GLOBALS['config']['split_table']) && !empty($this->_split_method) && !isset($data[$this->_split_by_field])){
             throw new Exception('缺少分表用的字段值:'.$this->_split_by_field, CODE_ERROR_IN_MODEL);
@@ -590,10 +591,19 @@ class model
             'connection' => $connection==='' ? $this->sub_connection($field_value) : $connection,
         ];
 
+        $update_sql = '';
+        if ($update_fields) {
+            $update_sql = [];
+            foreach ($update_fields as $field) {
+                $update_sql[] = '`'.$field.'` = VALUES(`' . $field . '`)';
+            }
+            $update_sql = ' ON DUPLICATE KEY UPDATE ' . implode(', ', $update_sql);
+        }
+
         unset($table_name, $connection, $field_value);
         $keys = array_keys($data);
         foreach($tables as $item) {
-            $sql = 'INSERT INTO `' . $item['table_name'] . '` (`' . implode('`, `', $keys) . '`) VALUES (:' . implode(', :', $keys) . ')';
+            $sql = 'INSERT INTO `' . $item['table_name'] . '` (`' . implode('`, `', $keys) . '`) VALUES (:' . implode(', :', $keys) . ')' . $update_sql;
             try {
                 $stmt = mysql::I($item['connection'])->prepare($sql);
                 foreach ($data as $key => $value) {
