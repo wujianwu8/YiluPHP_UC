@@ -1,9 +1,9 @@
 <?php
-/*
+/**
  * 数据模型的基类
  * YiluPHP vision 2.0
  * User: Jim.Wu
- * * Date: 2021/01/23
+ * Date: 2021/01/23
  * Time: 21:23
  * 新增一条记录的方法名使用insert_开头
  * 新增多条记录的方法名使用add_开头
@@ -36,58 +36,79 @@ class model
     //用于分表的字段名
     protected $_split_by_field = null;
     public $_max_quantity_per_table = 500;
+    //存储所有类的单例
+    protected static $instances = [];
+
+    /**
+     * 获取单例
+     */
+    public static function I()
+    {
+        $class_name = get_called_class();
+        if (empty($class_name) && empty(self::$instances[$class_name])) {
+            return self::$instances[$class_name] = new static();
+        }
+        if (empty(self::$instances[$class_name])) {
+            return self::$instances[$class_name] = new $class_name();
+        }
+        return self::$instances[$class_name];
+    }
 
     public function __construct()
     {
-        if (!empty($GLOBALS['config']['split_table']) && !empty($this->_split_method)){
-            if (empty($this->_table)){
+        if (!empty($GLOBALS['config']['split_table']) && !empty($this->_split_method)) {
+            if (empty($this->_table)) {
                 throw new Exception('分表必须设置类变量 $_table ,且不为空', CODE_ERROR_IN_MODEL);
             }
-            if (empty($this->_connection)){
+            if (empty($this->_connection)) {
                 throw new Exception('分表必须设置类变量 $_connection ,且不为空', CODE_ERROR_IN_MODEL);
             }
-            if (empty($this->_split_method)){
+            if (empty($this->_split_method)) {
                 throw new Exception('分表必须设置类变量 $_split_method ,且不为空', CODE_ERROR_IN_MODEL);
             }
-            if (empty($this->_split_by_field)){
+            if (empty($this->_split_by_field)) {
                 throw new Exception('分表必须设置类变量 $_split_by_field ,且不为空', CODE_ERROR_IN_MODEL);
             }
         }
     }
 
-    public function create_sub_table(){
-        if (empty($this->_table)){
+    public function create_sub_table()
+    {
+        if (empty($this->_table)) {
             throw new Exception('分表必须设置类变量 $_table ,且不为空', CODE_ERROR_IN_MODEL);
         }
-        if (empty($this->_connection)){
+        if (empty($this->_connection)) {
             throw new Exception('分表必须设置类变量 $_connection ,且不为空', CODE_ERROR_IN_MODEL);
         }
-        if (empty($this->_split_method)){
+        if (empty($this->_split_method)) {
             throw new Exception('分表必须设置类变量 $_split_method ,且不为空', CODE_ERROR_IN_MODEL);
         }
-        if (empty($this->_split_by_field)){
+        if (empty($this->_split_by_field)) {
             throw new Exception('分表必须设置类变量 $_split_by_field ,且不为空', CODE_ERROR_IN_MODEL);
         }
-        if ($this->_split_method == 'last_two_digits'){
+        if ($this->_split_method == 'last_two_digits') {
 
         }
-        elseif ($this->_split_method == 'time_and_quantity'){
-            if (empty($this->_max_quantity_per_table) || $this->_max_quantity_per_table<1){
+        elseif ($this->_split_method == 'time_and_quantity') {
+            if (empty($this->_max_quantity_per_table) || $this->_max_quantity_per_table < 1) {
                 throw new Exception('请设置类变量 $_max_quantity_per_table，达到此值后会自动分表', CODE_ERROR_IN_MODEL);
             }
 
         }
     }
 
-    public function get_table(){
+    public function get_table()
+    {
         return $this->_table;
     }
 
-    public function get_connection(){
+    public function get_connection()
+    {
         return $this->_connection;
     }
 
-    public function get_split_by_field(){
+    public function get_split_by_field()
+    {
         return $this->_split_by_field;
     }
 
@@ -97,12 +118,12 @@ class model
      * @param string $field_value 用于分表的字段的值
      * @return string 分表名
      */
-	public function sub_table($field_value=null)
-	{
-        if (empty($GLOBALS['config']['split_table']) || empty($this->_split_method)){
+    public function sub_table($field_value = null)
+    {
+        if (empty($GLOBALS['config']['split_table']) || empty($this->_split_method)) {
             return $this->_table;
         }
-        if ($this->_split_method=='last_two_digits') {
+        if ($this->_split_method == 'last_two_digits') {
             if ($field_value === null) {
                 return $this->_table;
             }
@@ -113,40 +134,40 @@ class model
             }
             unset($suffix, $field_value);
         }
-        else if ($this->_split_method=='time_and_quantity') {
-            if (empty($this->_max_quantity_per_table)){
+        else if ($this->_split_method == 'time_and_quantity') {
+            if (empty($this->_max_quantity_per_table)) {
                 return $this->_table;
             }
-            $redis_key = REDIS_SUB_TABLE.$this->_table;
-            if ($sub_table = redis_y::I()->get($redis_key)){
+            $redis_key = REDIS_SUB_TABLE . $this->_table;
+            if ($sub_table = redis_y::I()->get($redis_key)) {
                 return $sub_table;
             }
             //从"主表和分表的管理"的表中读取表名
             $where = [
                 'main_table' => $this->_table,
                 'start_time' => [
-                    'value' => $field_value,
+                    'value'  => $field_value,
                     'symbol' => '<=',
                 ],
             ];
-            if($sub_table = model_sub_table_manage::I()->find_table($where,'sub_table',null,'ORDER BY start_time DESC')){
-                redis_y::I()->set($redis_key,$sub_table['sub_table']);
-                redis_y::I()->expireAt( strtotime('tomorrow') );
+            if ($sub_table = model_sub_table_manage::I()->find_table($where, 'sub_table', null, 'ORDER BY start_time DESC')) {
+                redis_y::I()->set($redis_key, $sub_table['sub_table']);
+                redis_y::I()->expireAt(strtotime('tomorrow'));
                 return $sub_table['sub_table'];
             }
             //若上面没读取分表，则读结束时间为0的表，即未结束的表
             $where = [
                 'main_table' => $this->_table,
-                'end_time' => 0,
+                'end_time'   => 0,
             ];
-            if($sub_table = model_sub_table_manage::I()->find_table($where,'sub_table',null,'ORDER BY start_time DESC')){
-                redis_y::I()->set($redis_key,$sub_table['sub_table']);
-                redis_y::I()->expireAt( strtotime('tomorrow') );
+            if ($sub_table = model_sub_table_manage::I()->find_table($where, 'sub_table', null, 'ORDER BY start_time DESC')) {
+                redis_y::I()->set($redis_key, $sub_table['sub_table']);
+                redis_y::I()->expireAt(strtotime('tomorrow'));
                 return $sub_table['sub_table'];
             }
         }
         return $this->_table;
-	}
+    }
 
     /**
      * @name 获取分表的库连接名
@@ -154,18 +175,18 @@ class model
      * @param string $field_value 用于分表的字段的值
      * @return string 分表所在的数据库连接名
      */
-    public function sub_connection($field_value=null)
+    public function sub_connection($field_value = null)
     {
-        if (empty($GLOBALS['config']['split_table']) || empty($this->_split_method)){
+        if (empty($GLOBALS['config']['split_table']) || empty($this->_split_method)) {
             return $this->_connection;
         }
-        if ($field_value===null){
+        if ($field_value === null) {
             return $this->_connection;
         }
         $suffix = $this->split_suffix($field_value);
-        if($suffix!==''){
-            $tmp = $this->_connection . '_'.$suffix;
-            if(isset($GLOBALS['config']['mysql'][$tmp])){
+        if ($suffix !== '') {
+            $tmp = $this->_connection . '_' . $suffix;
+            if (isset($GLOBALS['config']['mysql'][$tmp])) {
                 return $tmp;
             }
         }
@@ -179,16 +200,16 @@ class model
      * @param string $field_value 用于分表的字段的值
      * @return string 用于分表的后缀
      */
-    public function split_suffix($field_value=null)
+    public function split_suffix($field_value = null)
     {
-        if (empty($GLOBALS['config']['split_table']) || empty($this->_split_method)){
+        if (empty($GLOBALS['config']['split_table']) || empty($this->_split_method)) {
             return '';
         }
-        if ($field_value===null){
+        if ($field_value === null) {
             return '';
         }
         //根据（如ID）末尾2位数拆分成100个表
-        if (strlen($field_value)>0 && $this->_split_method=='last_two_digits'){
+        if (strlen($field_value) > 0 && $this->_split_method == 'last_two_digits') {
             return intval(substr($field_value, -2, 2));
         }
         return '';
@@ -205,29 +226,29 @@ class model
      * @param string $connection 指定操作的连接名
      * @return array 数据列表
      */
-    function count($where, $field_value=null, string $extend_sql='', array $extend_params=[], $table_name='', $connection='')
+    function count($where, $field_value = null, string $extend_sql = '', array $extend_params = [], $table_name = '', $connection = '')
     {
-        if ($table_name==='' || $table_name===null || $table_name===false) {
+        if ($table_name === '' || $table_name === null || $table_name === false) {
             $table_name = $this->sub_table($field_value);
         }
-        if ($connection==='' || $connection===null || $connection===false) {
+        if ($connection === '' || $connection === null || $connection === false) {
             $connection = $this->sub_connection($field_value);
         }
 
-        $sql = 'SELECT COUNT(1) AS c FROM `'.$table_name.'`';
+        $sql = 'SELECT COUNT(1) AS c FROM `' . $table_name . '`';
         $arr = [];
         foreach ($where as $key => $value) {
-            if(is_array($value)){
-                if(is_array($value['value'])){
-                    $plist = ':'.$key.'_'.implode(',:'.$key.'_', array_keys($value['value']));
-                    $arr[] = ' `'.$key.'` '.$value['symbol'].' ('.$plist.') ';
+            if (is_array($value)) {
+                if (is_array($value['value'])) {
+                    $plist = ':' . $key . '_' . implode(',:' . $key . '_', array_keys($value['value']));
+                    $arr[] = ' `' . $key . '` ' . $value['symbol'] . ' (' . $plist . ') ';
                 }
-                else{
-                    $arr[] = ' `'.$key.'` '.$value['symbol'].' :'.$key;
+                else {
+                    $arr[] = ' `' . $key . '` ' . $value['symbol'] . ' :' . $key;
                 }
             }
-            else{
-                $arr[] = ' `'.$key.'`=:'.$key;
+            else {
+                $arr[] = ' `' . $key . '`=:' . $key;
             }
         }
         $where && $sql .= ' WHERE ';
@@ -237,28 +258,28 @@ class model
             $where = array_merge($where, $extend_params);
             foreach ($where as $key => &$value) {
                 $direct_assign = true;
-                if(is_array($value)){
-                    if(is_array($value['value'])){
+                if (is_array($value)) {
+                    if (is_array($value['value'])) {
                         $direct_assign = false;
-                        $plist = ':'.$key.'_'.implode(',:'.$key.'_', array_keys($value['value']));
+                        $plist = ':' . $key . '_' . implode(',:' . $key . '_', array_keys($value['value']));
                         $params = array_combine(explode(",", $plist), $value['value']);
-                        foreach($params as $key2 => $param){
-                            $stmt->bindValue($key2, $param, is_numeric($param)?PDO::PARAM_INT:(is_string($param)?PDO::PARAM_STR:
-                                (is_bool($param)?PDO::PARAM_BOOL:(is_null($param)?PDO::PARAM_NULL:PDO::PARAM_STR))));
+                        foreach ($params as $key2 => $param) {
+                            $stmt->bindValue($key2, $param, is_numeric($param) ? PDO::PARAM_INT : (is_string($param) ? PDO::PARAM_STR :
+                                (is_bool($param) ? PDO::PARAM_BOOL : (is_null($param) ? PDO::PARAM_NULL : PDO::PARAM_STR))));
                         }
                     }
-                    else{
+                    else {
                         $val = $value['value'];
                     }
                 }
-                else{
+                else {
                     $val = $value;
                 }
-                if($direct_assign) {
+                if ($direct_assign) {
                     //第三个参数data_type，使用 PDO::PARAM_* 常量明确地指定参数的类型，如：
                     //PDO::PARAM_INT、PDO::PARAM_STR、PDO::PARAM_BOOL、PDO::PARAM_NULL
-                    $stmt->bindValue(':'.$key, $val, is_numeric($val)?PDO::PARAM_INT:(is_string($val)?PDO::PARAM_STR:
-                        (is_bool($val)?PDO::PARAM_BOOL:(is_null($val)?PDO::PARAM_NULL:PDO::PARAM_STR))));
+                    $stmt->bindValue(':' . $key, $val, is_numeric($val) ? PDO::PARAM_INT : (is_string($val) ? PDO::PARAM_STR :
+                        (is_bool($val) ? PDO::PARAM_BOOL : (is_null($val) ? PDO::PARAM_NULL : PDO::PARAM_STR))));
                 }
             }
             $stmt->execute();
@@ -271,7 +292,8 @@ class model
             $res = $stmt->fetch(PDO::FETCH_ASSOC);
             unset($table_name, $connection, $field_value, $sql, $arr, $where, $stmt);
             return $res['c'];
-        } catch (PDOException $e) {
+        }
+        catch (PDOException $e) {
             unset($table_name, $connection, $field_value, $sql, $arr, $where);
             //这里要写文件日志
             write_applog('ERROR', $e->getMessage());
@@ -294,70 +316,70 @@ class model
      * @param string $connection 指定操作的连接名
      * @return array 数据列表
      */
-    function paging_select(array $where, int $page, int $page_size, string $order_by='', string $fields='*',
-                           string $field_value=null, string $extend_sql='', array $extend_params=[], $table_name='', $connection='')
+    function paging_select(array  $where, int $page, int $page_size, string $order_by = '', string $fields = '*',
+                           string $field_value = null, string $extend_sql = '', array $extend_params = [], $table_name = '', $connection = '')
     {
-        if ($table_name==='' || $table_name===null || $table_name===false) {
+        if ($table_name === '' || $table_name === null || $table_name === false) {
             $table_name = $this->sub_table($field_value);
         }
-        if ($connection==='' || $connection===null || $connection===false) {
+        if ($connection === '' || $connection === null || $connection === false) {
             $connection = $this->sub_connection($field_value);
         }
 
-        if(!preg_match("/^[\(\)\d\s\w\-_,`]*$/",$order_by)){
-            write_applog('ERROR', 'arguments $order_by is illegal: '.$order_by);
-            throw new Exception('arguments $order_by is illegal: '.$order_by, CODE_ERROR_IN_MODEL);
+        if (!preg_match("/^[\(\)\d\s\w\-_,`]*$/", $order_by)) {
+            write_applog('ERROR', 'arguments $order_by is illegal: ' . $order_by);
+            throw new Exception('arguments $order_by is illegal: ' . $order_by, CODE_ERROR_IN_MODEL);
         }
-        if(!preg_match("/^[\(\)\d\s\w\-_\`,\(\)\*]*$/",$fields)){
-            write_applog('ERROR', 'arguments $fields is illegal: '.$fields);
-            throw new Exception('arguments $fields is illegal: '.$fields, CODE_ERROR_IN_MODEL);
+        if (!preg_match("/^[\(\)\d\s\w\-_\`,\(\)\*]*$/", $fields)) {
+            write_applog('ERROR', 'arguments $fields is illegal: ' . $fields);
+            throw new Exception('arguments $fields is illegal: ' . $fields, CODE_ERROR_IN_MODEL);
         }
 
-        $sql = 'SELECT '.$fields.' FROM `'.$table_name.'`';
+        $sql = 'SELECT ' . $fields . ' FROM `' . $table_name . '`';
         $arr = [];
         foreach ($where as $key => $value) {
-            if(is_array($value)){
-                if(is_array($value['value'])){
-                    $plist = ':'.$key.'_'.implode(',:'.$key.'_', array_keys($value['value']));
-                    $arr[] = ' `'.$key.'` '.$value['symbol'].' ('.$plist.') ';
+            if (is_array($value)) {
+                if (is_array($value['value'])) {
+                    $plist = ':' . $key . '_' . implode(',:' . $key . '_', array_keys($value['value']));
+                    $arr[] = ' `' . $key . '` ' . $value['symbol'] . ' (' . $plist . ') ';
                 }
-                else{
-                    $arr[] = ' `'.$key.'` '.$value['symbol'].' :'.$key;
+                else {
+                    $arr[] = ' `' . $key . '` ' . $value['symbol'] . ' :' . $key;
                 }
             }
-            else{
-                $arr[] = ' `'.$key.'`=:'.$key;
+            else {
+                $arr[] = ' `' . $key . '`=:' . $key;
             }
         }
         $where && $sql .= ' WHERE ';
-        $sql .= implode(' AND ', $arr) . $extend_sql . (trim($order_by)!==''?' ORDER BY '.$order_by : '') .' LIMIT :start, :page_size ';
+        $sql .= implode(' AND ', $arr) . $extend_sql . (trim($order_by) !== '' ? ' ORDER BY ' . $order_by : '') . ' LIMIT :start, :page_size ';
         $page = intval($page);
         $page_size = intval($page_size);
-        $start = ($page-1)*$page_size;
-        $start<0 && $start = 0;
+        $start = ($page - 1) * $page_size;
+        $start < 0 && $start = 0;
         try {
             $stmt = mysql::I($connection)->prepare($sql);
             $where = array_merge($where, $extend_params);
             foreach ($where as $key => &$value) {
                 $direct_assign = true;
-                if(is_array($value)){
-                    if(is_array($value['value'])){
+                if (is_array($value)) {
+                    if (is_array($value['value'])) {
                         $direct_assign = false;
-                        $plist = ':'.$key.'_'.implode(',:'.$key.'_', array_keys($value['value']));
+                        $plist = ':' . $key . '_' . implode(',:' . $key . '_', array_keys($value['value']));
                         $params = array_combine(explode(",", $plist), $value['value']);
-                        foreach($params as $key2 => $param){
-                            $stmt->bindValue($key2, $param, is_numeric($param)?PDO::PARAM_INT:(is_string($param)?PDO::PARAM_STR:
-                                (is_bool($param)?PDO::PARAM_BOOL:(is_null($param)?PDO::PARAM_NULL:PDO::PARAM_STR))));
+                        foreach ($params as $key2 => $param) {
+                            $stmt->bindValue($key2, $param, is_numeric($param) ? PDO::PARAM_INT : (is_string($param) ? PDO::PARAM_STR :
+                                (is_bool($param) ? PDO::PARAM_BOOL : (is_null($param) ? PDO::PARAM_NULL : PDO::PARAM_STR))));
                         }
                     }
-                    else{
+                    else {
                         $val = $value['value'];
                     }
                 }
-                else{
+                else {
                     $val = $value;
                 }
-                if($direct_assign) {
+                if ($direct_assign) {
                     //第三个参数data_type，使用 PDO::PARAM_* 常量明确地指定参数的类型，如：
                     //PDO::PARAM_INT、PDO::PARAM_STR、PDO::PARAM_BOOL、PDO::PARAM_NULL
                     $stmt->bindValue(':' . $key, $val, is_numeric($val) ? PDO::PARAM_INT : (is_string($val) ? PDO::PARAM_STR :
@@ -376,7 +398,8 @@ class model
             $res = $stmt->fetchAll(PDO::FETCH_ASSOC);
             unset($where, $page, $page_size, $order_by, $fields, $field_value, $table_name, $connection, $sql, $arr, $start, $stmt);
             return $res;
-        } catch (PDOException $e) {
+        }
+        catch (PDOException $e) {
             unset($where, $page, $page_size, $order_by, $fields, $field_value, $table_name, $connection, $sql, $arr, $start);
             //这里要写文件日志
             write_applog('ERROR', $e->getMessage());
@@ -397,77 +420,78 @@ class model
      * @param string $connection 指定操作的连接名
      * @return array 数据列表
      */
-    function select_all($where, $order_by='', $fields='*', $field_value=null, string $extend_sql='', array $extend_params=[],
-                        $table_name='', $connection='')
+    function select_all($where, $order_by = '', $fields = '*', $field_value = null, string $extend_sql = '', array $extend_params = [],
+                        $table_name = '', $connection = '')
     {
-        if ($table_name==='' || $table_name===null || $table_name===false) {
+        if ($table_name === '' || $table_name === null || $table_name === false) {
             $table_name = $this->sub_table($field_value);
         }
-        if ($connection==='' || $connection===null || $connection===false) {
+        if ($connection === '' || $connection === null || $connection === false) {
             $connection = $this->sub_connection($field_value);
         }
 
-        if(!preg_match("/^[\(\)\d\s\w\-_,`]*$/i",$order_by)){
-            write_applog('ERROR', 'arguments $order_by is illegal: '.$order_by);
-            throw new Exception('arguments $order_by is illegal: '.$order_by, CODE_ERROR_IN_MODEL);
+        if (!preg_match("/^[\(\)\d\s\w\-_,`]*$/i", $order_by)) {
+            write_applog('ERROR', 'arguments $order_by is illegal: ' . $order_by);
+            throw new Exception('arguments $order_by is illegal: ' . $order_by, CODE_ERROR_IN_MODEL);
         }
-        if(!preg_match("/^[\(\)\d\s\w\-_,`\(\)\*]*$/",$fields)){
-            write_applog('ERROR', 'arguments $fields is illegal: '.$fields);
-            throw new Exception('arguments $fields is illegal: '.$fields, CODE_ERROR_IN_MODEL);
+        if (!preg_match("/^[\(\)\d\s\w\-_,`\(\)\*]*$/", $fields)) {
+            write_applog('ERROR', 'arguments $fields is illegal: ' . $fields);
+            throw new Exception('arguments $fields is illegal: ' . $fields, CODE_ERROR_IN_MODEL);
         }
 
-        $sql = 'SELECT '.$fields.' FROM `'.$table_name.'`';
+        $sql = 'SELECT ' . $fields . ' FROM `' . $table_name . '`';
         $arr = [];
         foreach ($where as $key => $value) {
-            if(is_array($value)){
-                if(is_array($value['value'])){
-                    $plist = ':'.$key.'_'.implode(',:'.$key.'_', array_keys($value['value']));
-                    $arr[] = ' `'.$key.'` '.$value['symbol'].' ('.$plist.') ';
+            if (is_array($value)) {
+                if (is_array($value['value'])) {
+                    $plist = ':' . $key . '_' . implode(',:' . $key . '_', array_keys($value['value']));
+                    $arr[] = ' `' . $key . '` ' . $value['symbol'] . ' (' . $plist . ') ';
                 }
-                else{
-                    $arr[] = ' `'.$key.'` '.$value['symbol'].' :'.$key;
+                else {
+                    $arr[] = ' `' . $key . '` ' . $value['symbol'] . ' :' . $key;
                 }
             }
-            else{
-                $arr[] = ' `'.$key.'`=:'.$key;
+            else {
+                $arr[] = ' `' . $key . '`=:' . $key;
             }
         }
         $where && $sql .= ' WHERE ';
-        $sql .= implode(' AND ', $arr) . $extend_sql . (trim($order_by)!==''?' ORDER BY '.$order_by : '');
+        $sql .= implode(' AND ', $arr) . $extend_sql . (trim($order_by) !== '' ? ' ORDER BY ' . $order_by : '');
         try {
             $stmt = mysql::I($connection)->prepare($sql);
             $where = array_merge($where, $extend_params);
             foreach ($where as $key => &$value) {
                 $direct_assign = true;
-                if(is_array($value)){
-                    if(is_array($value['value'])){
+                if (is_array($value)) {
+                    if (is_array($value['value'])) {
                         $direct_assign = false;
-                        $plist = ':'.$key.'_'.implode(',:'.$key.'_', array_keys($value['value']));
+                        $plist = ':' . $key . '_' . implode(',:' . $key . '_', array_keys($value['value']));
                         $params = array_combine(explode(",", $plist), $value['value']);
-                        foreach($params as $key2 => $param){
-                            $stmt->bindValue($key2, $param, is_numeric($param)?PDO::PARAM_INT:(is_string($param)?PDO::PARAM_STR:
-                                (is_bool($param)?PDO::PARAM_BOOL:(is_null($param)?PDO::PARAM_NULL:PDO::PARAM_STR))));
+                        foreach ($params as $key2 => $param) {
+                            $stmt->bindValue($key2, $param, is_numeric($param) ? PDO::PARAM_INT : (is_string($param) ? PDO::PARAM_STR :
+                                (is_bool($param) ? PDO::PARAM_BOOL : (is_null($param) ? PDO::PARAM_NULL : PDO::PARAM_STR))));
                         }
                     }
-                    else{
+                    else {
                         $val = $value['value'];
                     }
                 }
-                else{
+                else {
                     $val = $value;
                 }
-                if($direct_assign) {
+                if ($direct_assign) {
                     //第三个参数data_type，使用 PDO::PARAM_* 常量明确地指定参数的类型，如：
                     //PDO::PARAM_INT、PDO::PARAM_STR、PDO::PARAM_BOOL、PDO::PARAM_NULL
-                    $stmt->bindValue(':'.$key, $val, is_numeric($val)?PDO::PARAM_INT:(is_string($val)?PDO::PARAM_STR:
-                        (is_bool($val)?PDO::PARAM_BOOL:(is_null($val)?PDO::PARAM_NULL:PDO::PARAM_STR))));
+                    $stmt->bindValue(':' . $key, $val, is_numeric($val) ? PDO::PARAM_INT : (is_string($val) ? PDO::PARAM_STR :
+                        (is_bool($val) ? PDO::PARAM_BOOL : (is_null($val) ? PDO::PARAM_NULL : PDO::PARAM_STR))));
                 }
             }
             $stmt->execute();
             $res = $stmt->fetchAll(PDO::FETCH_ASSOC);
             unset($where, $order_by, $fields, $field_value, $table_name, $connection, $sql, $arr, $stmt);
             return $res;
-        } catch (PDOException $e) {
+        }
+        catch (PDOException $e) {
             unset($where, $order_by, $fields, $field_value, $table_name, $connection, $sql, $arr);
             //这里要写文件日志
             write_applog('ERROR', $e->getMessage());
@@ -487,78 +511,79 @@ class model
      * @param string $connection 指定操作的连接名
      * @return array/boolean 有数据返回数组，没有返回false
      */
-    function find_table($where, $fields='*', $field_value=null, string $extend_sql='', array $extend_params=[], $table_name='', $connection='')
+    function find_table($where, $fields = '*', $field_value = null, string $extend_sql = '', array $extend_params = [], $table_name = '', $connection = '')
     {
-        if ($table_name==='' || $table_name===null || $table_name===false) {
+        if ($table_name === '' || $table_name === null || $table_name === false) {
             $table_name = $this->sub_table($field_value);
         }
-        if ($connection==='' || $connection===null || $connection===false) {
+        if ($connection === '' || $connection === null || $connection === false) {
             $connection = $this->sub_connection($field_value);
         }
 
-        if($fields!=="*" && !preg_match("/^[\(\)\d\s\w\-_,`]*$/",$fields)){
-            write_applog('ERROR', 'arguments $fields is illegal: '.$fields);
-            throw new Exception('arguments $fields is illegal: '.$fields, CODE_ERROR_IN_MODEL);
+        if ($fields !== "*" && !preg_match("/^[\(\)\d\s\w\-_,`]*$/", $fields)) {
+            write_applog('ERROR', 'arguments $fields is illegal: ' . $fields);
+            throw new Exception('arguments $fields is illegal: ' . $fields, CODE_ERROR_IN_MODEL);
         }
         if (!$table_name) {
             write_applog('ERROR', 'arguments $table_name is empty');
             throw new Exception('arguments $table_name is empty', CODE_ERROR_IN_MODEL);
         }
 
-        $sql = 'SELECT '.$fields.' FROM `'.$table_name.'` ';
+        $sql = 'SELECT ' . $fields . ' FROM `' . $table_name . '` ';
         $arr = [];
         foreach ($where as $key => $value) {
-            if(is_array($value)){
-                if(is_array($value['value'])){
-                    $plist = ':'.$key.'_'.implode(',:'.$key.'_', array_keys($value['value']));
-                    $arr[] = ' `'.$key.'` '.$value['symbol'].' ('.$plist.') ';
+            if (is_array($value)) {
+                if (is_array($value['value'])) {
+                    $plist = ':' . $key . '_' . implode(',:' . $key . '_', array_keys($value['value']));
+                    $arr[] = ' `' . $key . '` ' . $value['symbol'] . ' (' . $plist . ') ';
                 }
-                else{
-                    $arr[] = ' `'.$key.'` '.$value['symbol'].' :'.$key;
+                else {
+                    $arr[] = ' `' . $key . '` ' . $value['symbol'] . ' :' . $key;
                 }
             }
-            else{
-                $arr[] = ' `'.$key.'`=:'.$key;
+            else {
+                $arr[] = ' `' . $key . '`=:' . $key;
             }
         }
         if ($where || $extend_sql) {
             $sql .= ' WHERE ';
         }
-        $sql .= implode(' AND ', $arr) . ' ' .$extend_sql . ' LIMIT 1 ';
+        $sql .= implode(' AND ', $arr) . ' ' . $extend_sql . ' LIMIT 1 ';
         try {
             $stmt = mysql::I($connection)->prepare($sql);
             $where = array_merge($where, $extend_params);
             foreach ($where as $key => &$value) {
                 $direct_assign = true;
-                if(is_array($value)){
-                    if(is_array($value['value'])){
+                if (is_array($value)) {
+                    if (is_array($value['value'])) {
                         $direct_assign = false;
-                        $plist = ':'.$key.'_'.implode(',:'.$key.'_', array_keys($value['value']));
+                        $plist = ':' . $key . '_' . implode(',:' . $key . '_', array_keys($value['value']));
                         $params = array_combine(explode(",", $plist), $value['value']);
-                        foreach($params as $key2 => $param){
-                            $stmt->bindValue($key2, $param, is_numeric($param)?PDO::PARAM_INT:(is_string($param)?PDO::PARAM_STR:
-                                (is_bool($param)?PDO::PARAM_BOOL:(is_null($param)?PDO::PARAM_NULL:PDO::PARAM_STR))));
+                        foreach ($params as $key2 => $param) {
+                            $stmt->bindValue($key2, $param, is_numeric($param) ? PDO::PARAM_INT : (is_string($param) ? PDO::PARAM_STR :
+                                (is_bool($param) ? PDO::PARAM_BOOL : (is_null($param) ? PDO::PARAM_NULL : PDO::PARAM_STR))));
                         }
                     }
-                    else{
+                    else {
                         $val = $value['value'];
                     }
                 }
-                else{
+                else {
                     $val = $value;
                 }
-                if($direct_assign) {
+                if ($direct_assign) {
                     //第三个参数data_type，使用 PDO::PARAM_* 常量明确地指定参数的类型，如：
                     //PDO::PARAM_INT、PDO::PARAM_STR、PDO::PARAM_BOOL、PDO::PARAM_NULL
-                    $stmt->bindValue(':'.$key, $val, is_numeric($val)?PDO::PARAM_INT:(is_string($val)?PDO::PARAM_STR:
-                        (is_bool($val)?PDO::PARAM_BOOL:(is_null($val)?PDO::PARAM_NULL:PDO::PARAM_STR))));
+                    $stmt->bindValue(':' . $key, $val, is_numeric($val) ? PDO::PARAM_INT : (is_string($val) ? PDO::PARAM_STR :
+                        (is_bool($val) ? PDO::PARAM_BOOL : (is_null($val) ? PDO::PARAM_NULL : PDO::PARAM_STR))));
                 }
             }
             $stmt->execute();
             $res = $stmt->fetch(PDO::FETCH_ASSOC);
             unset($where, $fields, $field_value, $table_name, $connection, $sql, $arr, $stmt);
             return $res;
-        } catch (PDOException $e) {
+        }
+        catch (PDOException $e) {
             unset($where, $fields, $field_value, $table_name, $connection, $sql, $arr);
             //写文件日志
             write_applog('ERROR', $e->getMessage());
@@ -575,34 +600,34 @@ class model
      * @param array $update_fields 如果有唯一键已经存在，则更新这些字段。默认为空数组，不更新，唯一键已经存在时会报错
      * @return integer 如果表中有id字段,则返回之，没有就返回0，发生错误抛出异常
      */
-    function insert_table($data, $table_name='', $connection='', $update_fields=[])
+    function insert_table($data, $table_name = '', $connection = '', $update_fields = [])
     {
-        if (!empty($GLOBALS['config']['split_table']) && !empty($this->_split_method) && !isset($data[$this->_split_by_field])){
-            throw new Exception('缺少分表用的字段值:'.$this->_split_by_field, CODE_ERROR_IN_MODEL);
+        if (!empty($GLOBALS['config']['split_table']) && !empty($this->_split_method) && !isset($data[$this->_split_by_field])) {
+            throw new Exception('缺少分表用的字段值:' . $this->_split_by_field, CODE_ERROR_IN_MODEL);
         }
         $field_value = null;
-        if ( !empty($GLOBALS['config']['split_table']) && !empty($this->_split_method)){
+        if (!empty($GLOBALS['config']['split_table']) && !empty($this->_split_method)) {
             $field_value = $data[$this->_split_by_field];
         }
 
         $tables = [];
         $tables[] = [
-            'table_name' => $table_name==='' ? $this->sub_table($field_value) : $table_name,
-            'connection' => $connection==='' ? $this->sub_connection($field_value) : $connection,
+            'table_name' => $table_name === '' ? $this->sub_table($field_value) : $table_name,
+            'connection' => $connection === '' ? $this->sub_connection($field_value) : $connection,
         ];
 
         $update_sql = '';
         if ($update_fields) {
             $update_sql = [];
             foreach ($update_fields as $field) {
-                $update_sql[] = '`'.$field.'` = VALUES(`' . $field . '`)';
+                $update_sql[] = '`' . $field . '` = VALUES(`' . $field . '`)';
             }
             $update_sql = ' ON DUPLICATE KEY UPDATE ' . implode(', ', $update_sql);
         }
 
         unset($table_name, $connection, $field_value);
         $keys = array_keys($data);
-        foreach($tables as $item) {
+        foreach ($tables as $item) {
             $sql = 'INSERT INTO `' . $item['table_name'] . '` (`' . implode('`, `', $keys) . '`) VALUES (:' . implode(', :', $keys) . ')' . $update_sql;
             try {
                 $stmt = mysql::I($item['connection'])->prepare($sql);
@@ -614,7 +639,8 @@ class model
                     throw new Exception('DATABASE ERROR', CODE_DB_ERR);
                 }
                 unset($stmt);
-            } catch (PDOException $e) {
+            }
+            catch (PDOException $e) {
                 unset($data, $tables, $keys, $sql);
                 //写文件日志
                 write_applog('ERROR', $e->getMessage());
@@ -639,70 +665,71 @@ class model
      * @param integer $limit 限定更新的记录数
      * @return boolean
      */
-    function update_table($where, $data, string $extend_sql='', array $extend_params=[], $table_name='', $connection='', $limit=1)
+    function update_table($where, $data, string $extend_sql = '', array $extend_params = [], $table_name = '', $connection = '', $limit = 1)
     {
-        if (!empty($GLOBALS['config']['split_table']) && !empty($this->_split_method) && (!isset($where[$this->_split_by_field]) && !isset($data[$this->_split_by_field]))){
-            throw new Exception('缺少分表用的字段值:'.$this->_split_by_field, CODE_ERROR_IN_MODEL);
+        if (!empty($GLOBALS['config']['split_table']) && !empty($this->_split_method) && (!isset($where[$this->_split_by_field]) && !isset($data[$this->_split_by_field]))) {
+            throw new Exception('缺少分表用的字段值:' . $this->_split_by_field, CODE_ERROR_IN_MODEL);
         }
         $field_value = null;
-        if ( !empty($GLOBALS['config']['split_table']) && !empty($this->_split_method) ){
+        if (!empty($GLOBALS['config']['split_table']) && !empty($this->_split_method)) {
             $field_value = isset($where[$this->_split_by_field]) ? $where[$this->_split_by_field] : $data[$this->_split_by_field];
         }
 
         $tables = [];
         $tables[] = [
-            'table_name' => $table_name==='' ? $this->sub_table($field_value) : $table_name,
-            'connection' => $connection==='' ? $this->sub_connection($field_value) : $connection,
+            'table_name' => $table_name === '' ? $this->sub_table($field_value) : $table_name,
+            'connection' => $connection === '' ? $this->sub_connection($field_value) : $connection,
         ];
         unset($table_name, $connection, $field_value);
 
         $set = [];
         $args = [];
-        foreach($data as $key => $value){
-            $set[] = '`'.$key.'`=:'.$key;
+        foreach ($data as $key => $value) {
+            $set[] = '`' . $key . '`=:' . $key;
             $args[$key] = $value;
         }
         $where_sql = [];
         foreach ($where as $key => $value) {
-            $key2 = isset($args[$key]) ? $key.'_'.rand(1,999999) : $key;
-            if(is_array($value)){
-                if(is_array($value['value'])){
+            $key2 = isset($args[$key]) ? $key . '_' . rand(1, 999999) : $key;
+            if (is_array($value)) {
+                if (is_array($value['value'])) {
                     $plist = [];
-                    foreach($value['value'] as $key3 => $param){
-                        $plist[] = ':'.$key2.'_'.$key3;
-                        $args[$key2.'_'.$key3] = $param;
+                    foreach ($value['value'] as $key3 => $param) {
+                        $plist[] = ':' . $key2 . '_' . $key3;
+                        $args[$key2 . '_' . $key3] = $param;
                     }
                     $plist = implode(',', $plist);
-                    $where_sql[] = ' `'.$key.'` '.$value['symbol'].' ('.$plist.') ';
+                    $where_sql[] = ' `' . $key . '` ' . $value['symbol'] . ' (' . $plist . ') ';
                 }
-                else{
-                    $where_sql[] = ' `'.$key.'` '.$value['symbol'].' :'.$key2;
+                else {
+                    $where_sql[] = ' `' . $key . '` ' . $value['symbol'] . ' :' . $key2;
                     $args[$key2] = $value;
                 }
             }
-            else{
-                $where_sql[] = ' `'.$key.'`=:'.$key2;
+            else {
+                $where_sql[] = ' `' . $key . '`=:' . $key2;
                 $args[$key2] = $value;
             }
         }
         $where = array_merge($where, $extend_params);
-        foreach($tables as $item) {
-            $sql = 'UPDATE `' . $item['table_name'] . '` SET ' . implode(',', $set) . ($where?' WHERE ':' ') . implode(' AND ', $where_sql) . $extend_sql;
+        foreach ($tables as $item) {
+            $sql = 'UPDATE `' . $item['table_name'] . '` SET ' . implode(',', $set) . ($where ? ' WHERE ' : ' ') . implode(' AND ', $where_sql) . $extend_sql;
             $limit = intval($limit);
-            if ($limit>0){
-                $sql .= ' LIMIT '.$limit;
+            if ($limit > 0) {
+                $sql .= ' LIMIT ' . $limit;
             }
 
             try {
                 $stmt = mysql::I($item['connection'])->prepare($sql);
                 foreach ($args as $key => $value) {
-                    $stmt->bindValue(':'.$key, $value, is_numeric($value)?PDO::PARAM_INT:(is_string($value)?PDO::PARAM_STR:
-                        (is_bool($value)?PDO::PARAM_BOOL:(is_null($value)?PDO::PARAM_NULL:PDO::PARAM_STR))));
+                    $stmt->bindValue(':' . $key, $value, is_numeric($value) ? PDO::PARAM_INT : (is_string($value) ? PDO::PARAM_STR :
+                        (is_bool($value) ? PDO::PARAM_BOOL : (is_null($value) ? PDO::PARAM_NULL : PDO::PARAM_STR))));
                 }
                 $stmt->execute();
                 $count = $stmt->rowCount();
                 unset($stmt);
-            } catch (PDOException $e) {
+            }
+            catch (PDOException $e) {
                 unset($tables, $set, $where_sql, $sql, $args);
                 //写文件日志
                 write_applog('ERROR', $e->getMessage());
@@ -725,7 +752,7 @@ class model
      * @param string $connection 指定操作的连接名
      * @return boolean
      */
-    function change_table($where, $data, $limit=0, string $extend_sql='', array $extend_params=[], $table_name='', $connection='')
+    function change_table($where, $data, $limit = 0, string $extend_sql = '', array $extend_params = [], $table_name = '', $connection = '')
     {
         return $this->update_table($where, $data, $extend_sql, $extend_params, $table_name, $connection, $limit);
     }
@@ -741,81 +768,82 @@ class model
      * @param string $connection 指定操作的连接名
      * @return integer 返回删除的数量
      */
-    function delete($where, $data=[], string $extend_sql='', array $extend_params=[], $table_name='', $connection='')
+    function delete($where, $data = [], string $extend_sql = '', array $extend_params = [], $table_name = '', $connection = '')
     {
-        if (!empty($GLOBALS['config']['split_table']) && !empty($this->_split_method) && (!isset($where[$this->_split_by_field]) && !isset($data[$this->_split_by_field]))){
-            throw new Exception('缺少分表用的字段值:'.$this->_split_by_field, CODE_ERROR_IN_MODEL);
+        if (!empty($GLOBALS['config']['split_table']) && !empty($this->_split_method) && (!isset($where[$this->_split_by_field]) && !isset($data[$this->_split_by_field]))) {
+            throw new Exception('缺少分表用的字段值:' . $this->_split_by_field, CODE_ERROR_IN_MODEL);
         }
         $field_value = null;
-        if ( !empty($GLOBALS['config']['split_table']) && !empty($this->_split_method) ){
+        if (!empty($GLOBALS['config']['split_table']) && !empty($this->_split_method)) {
             $field_value = isset($where[$this->_split_by_field]) ? $where[$this->_split_by_field] : $data[$this->_split_by_field];
         }
 
         $tables = [];
-        if ($table_name==='' || $table_name===null || $table_name===false) {
+        if ($table_name === '' || $table_name === null || $table_name === false) {
             $table_name = $this->sub_table($field_value);
         }
-        if ($connection==='' || $connection===null || $connection===false) {
+        if ($connection === '' || $connection === null || $connection === false) {
             $connection = $this->sub_connection($field_value);
         }
         $tables[] = [
-            'table_name' => $table_name==='' ? $this->sub_table($field_value) : $table_name,
-            'connection' => $connection==='' ? $this->sub_connection($field_value) : $connection,
+            'table_name' => $table_name === '' ? $this->sub_table($field_value) : $table_name,
+            'connection' => $connection === '' ? $this->sub_connection($field_value) : $connection,
         ];
         unset($table_name, $connection, $field_value);
 
         $where_sql = [];
         foreach ($where as $key => $value) {
-            if(is_array($value)){
-                if(is_array($value['value'])){
-                    $plist = ':'.$key.'_'.implode(',:'.$key.'_', array_keys($value['value']));
-                    $where_sql[] = ' `'.$key.'` '.$value['symbol'].' ('.$plist.') ';
+            if (is_array($value)) {
+                if (is_array($value['value'])) {
+                    $plist = ':' . $key . '_' . implode(',:' . $key . '_', array_keys($value['value']));
+                    $where_sql[] = ' `' . $key . '` ' . $value['symbol'] . ' (' . $plist . ') ';
                 }
-                else{
-                    $where_sql[] = ' `'.$key.'` '.$value['symbol'].' :'.$key;
+                else {
+                    $where_sql[] = ' `' . $key . '` ' . $value['symbol'] . ' :' . $key;
                 }
             }
-            else{
-                $where_sql[] = ' `'.$key.'`=:'.$key;
+            else {
+                $where_sql[] = ' `' . $key . '`=:' . $key;
             }
         }
         $sql = '';
-        if (!empty($where)){
+        if (!empty($where)) {
             $sql .= ' WHERE ' . implode(' AND ', $where_sql);
         }
-        $sql .= $extend_sql. ' LIMIT 1';
+        $sql .= $extend_sql . ' LIMIT 1';
         $where = array_merge($where, $extend_params);
         $count = 0;
-        foreach($tables as $item) {
+        foreach ($tables as $item) {
             try {
-                $stmt = mysql::I($item['connection'])->prepare('DELETE FROM `' . $item['table_name'].'` '.$sql);
+                $stmt = mysql::I($item['connection'])->prepare('DELETE FROM `' . $item['table_name'] . '` ' . $sql);
                 foreach ($where as $key => $value) {
                     $direct_assign = true;
-                    if(is_array($value)){
-                        if(is_array($value['value'])){
+                    if (is_array($value)) {
+                        if (is_array($value['value'])) {
                             $direct_assign = false;
-                            $plist = ':'.$key.'_'.implode(',:'.$key.'_', array_keys($value['value']));
+                            $plist = ':' . $key . '_' . implode(',:' . $key . '_', array_keys($value['value']));
                             $params = array_combine(explode(",", $plist), $value['value']);
-                            foreach($params as $key2 => $param){
-                                $stmt->bindValue($key2, $param, is_numeric($param)?PDO::PARAM_INT:(is_string($param)?PDO::PARAM_STR:
-                                    (is_bool($param)?PDO::PARAM_BOOL:(is_null($param)?PDO::PARAM_NULL:PDO::PARAM_STR))));
+                            foreach ($params as $key2 => $param) {
+                                $stmt->bindValue($key2, $param, is_numeric($param) ? PDO::PARAM_INT : (is_string($param) ? PDO::PARAM_STR :
+                                    (is_bool($param) ? PDO::PARAM_BOOL : (is_null($param) ? PDO::PARAM_NULL : PDO::PARAM_STR))));
                             }
                         }
-                        else{
+                        else {
                             $val = $value['value'];
                         }
                     }
-                    else{
+                    else {
                         $val = $value;
                     }
-                    if($direct_assign) {
+                    if ($direct_assign) {
                         $stmt->bindValue(':' . $key, $val);
                     }
                 }
                 $stmt->execute();
                 $count = $stmt->rowCount();
                 unset($stmt);
-            } catch (PDOException $e) {
+            }
+            catch (PDOException $e) {
                 unset($tables, $set, $where_sql, $sql);
                 //写文件日志
                 write_applog('ERROR', $e->getMessage());
@@ -837,30 +865,30 @@ class model
      * @param string $connection 指定操作的连接名
      * @return integer 返回删除的数量
      */
-    function destroy($where, $data=[], string $extend_sql='', array $extend_params=[], $table_name='', $connection='')
+    function destroy($where, $data = [], string $extend_sql = '', array $extend_params = [], $table_name = '', $connection = '')
     {
-        if (!empty($GLOBALS['config']['split_table']) && !empty($this->_split_method) && (!isset($where[$this->_split_by_field]) && !isset($data[$this->_split_by_field]))){
-            throw new Exception('缺少分表用的字段值:'.$this->_split_by_field, CODE_ERROR_IN_MODEL);
+        if (!empty($GLOBALS['config']['split_table']) && !empty($this->_split_method) && (!isset($where[$this->_split_by_field]) && !isset($data[$this->_split_by_field]))) {
+            throw new Exception('缺少分表用的字段值:' . $this->_split_by_field, CODE_ERROR_IN_MODEL);
         }
         $field_value = null;
-        if ( !empty($GLOBALS['config']['split_table']) && !empty($this->_split_method) ){
+        if (!empty($GLOBALS['config']['split_table']) && !empty($this->_split_method)) {
             $field_value = isset($where[$this->_split_by_field]) ? $where[$this->_split_by_field] : $data[$this->_split_by_field];
         }
 
         $tables = [];
-        if ($table_name==='' || $table_name===null || $table_name===false) {
+        if ($table_name === '' || $table_name === null || $table_name === false) {
             $table_name = $this->sub_table($field_value);
         }
-        if ($connection==='' || $connection===null || $connection===false) {
+        if ($connection === '' || $connection === null || $connection === false) {
             $connection = $this->sub_connection($field_value);
         }
-        if($table_name != $this->_table){
+        if ($table_name != $this->_table) {
             $tables[] = [
                 'table_name' => $table_name,
                 'connection' => $connection,
             ];
         }
-        if (!$tables){
+        if (!$tables) {
             $tables[] = [
                 'table_name' => $this->_table,
                 'connection' => $this->_connection,
@@ -870,56 +898,57 @@ class model
 
         $where_sql = [];
         foreach ($where as $key => $value) {
-            if(is_array($value)){
-                if(is_array($value['value'])){
-                    $plist = ':'.$key.'_'.implode(',:'.$key.'_', array_keys($value['value']));
-                    $where_sql[] = ' `'.$key.'` '.$value['symbol'].' ('.$plist.') ';
+            if (is_array($value)) {
+                if (is_array($value['value'])) {
+                    $plist = ':' . $key . '_' . implode(',:' . $key . '_', array_keys($value['value']));
+                    $where_sql[] = ' `' . $key . '` ' . $value['symbol'] . ' (' . $plist . ') ';
                 }
-                else{
-                    $where_sql[] = ' `'.$key.'` '.$value['symbol'].' :'.$key;
+                else {
+                    $where_sql[] = ' `' . $key . '` ' . $value['symbol'] . ' :' . $key;
                 }
             }
-            else{
-                $where_sql[] = ' `'.$key.'`=:'.$key;
+            else {
+                $where_sql[] = ' `' . $key . '`=:' . $key;
             }
         }
         $sql = '';
-        if (!empty($where)){
+        if (!empty($where)) {
             $sql .= ' WHERE ' . implode(' AND ', $where_sql);
         }
         $sql .= $extend_sql;
         $where = array_merge($where, $extend_params);
         $count = 0;
-        foreach($tables as $item) {
+        foreach ($tables as $item) {
             try {
-                $stmt = mysql::I($item['connection'])->prepare('DELETE FROM `' . $item['table_name'].'` '.$sql);
+                $stmt = mysql::I($item['connection'])->prepare('DELETE FROM `' . $item['table_name'] . '` ' . $sql);
                 foreach ($where as $key => $value) {
                     $direct_assign = true;
-                    if(is_array($value)){
-                        if(is_array($value['value'])){
+                    if (is_array($value)) {
+                        if (is_array($value['value'])) {
                             $direct_assign = false;
-                            $plist = ':'.$key.'_'.implode(',:'.$key.'_', array_keys($value['value']));
+                            $plist = ':' . $key . '_' . implode(',:' . $key . '_', array_keys($value['value']));
                             $params = array_combine(explode(",", $plist), $value['value']);
-                            foreach($params as $key2 => $param){
-                                $stmt->bindValue($key2, $param, is_numeric($param)?PDO::PARAM_INT:(is_string($param)?PDO::PARAM_STR:
-                                    (is_bool($param)?PDO::PARAM_BOOL:(is_null($param)?PDO::PARAM_NULL:PDO::PARAM_STR))));
+                            foreach ($params as $key2 => $param) {
+                                $stmt->bindValue($key2, $param, is_numeric($param) ? PDO::PARAM_INT : (is_string($param) ? PDO::PARAM_STR :
+                                    (is_bool($param) ? PDO::PARAM_BOOL : (is_null($param) ? PDO::PARAM_NULL : PDO::PARAM_STR))));
                             }
                         }
-                        else{
+                        else {
                             $val = $value['value'];
                         }
                     }
-                    else{
+                    else {
                         $val = $value;
                     }
-                    if($direct_assign) {
+                    if ($direct_assign) {
                         $stmt->bindValue(':' . $key, $val);
                     }
                 }
                 $stmt->execute();
                 $count = $stmt->rowCount();
                 unset($stmt);
-            } catch (PDOException $e) {
+            }
+            catch (PDOException $e) {
                 unset($tables, $set, $where_sql, $sql);
                 //写文件日志
                 write_applog('ERROR', $e->getMessage());
@@ -941,68 +970,69 @@ class model
      * @param string $connection 指定操作的连接名
      * @return boolean
      */
-    public function update_count_field(array $where, array $fields, string $extend_sql='', array $extend_params=[], $table_name='', $connection=''){
-        if (!$where || !$fields){
+    public function update_count_field(array $where, array $fields, string $extend_sql = '', array $extend_params = [], $table_name = '', $connection = '')
+    {
+        if (!$where || !$fields) {
             return true;
         }
         $arr = [];
-        foreach ($fields as $key => $value){
+        foreach ($fields as $key => $value) {
             $value = intval($value);
-            if ($value<0){
-                $arr[] = '`'.$key.'`=`'.$key.'`'.$value;
+            if ($value < 0) {
+                $arr[] = '`' . $key . '`=`' . $key . '`' . $value;
             }
-            else if ($value>0){
-                $arr[] = '`'.$key.'`=`'.$key.'`+'.$value;
+            else if ($value > 0) {
+                $arr[] = '`' . $key . '`=`' . $key . '`+' . $value;
             }
         }
-        if (!$arr){
+        if (!$arr) {
             return true;
         }
         $where_sql = [];
         foreach ($where as $key => $value) {
-            if(is_array($value)){
-                if(is_array($value['value'])){
-                    $plist = ':'.$key.'_'.implode(',:'.$key.'_', array_keys($value['value']));
-                    $where_sql[] = ' `'.$key.'` '.$value['symbol'].' ('.$plist.') ';
+            if (is_array($value)) {
+                if (is_array($value['value'])) {
+                    $plist = ':' . $key . '_' . implode(',:' . $key . '_', array_keys($value['value']));
+                    $where_sql[] = ' `' . $key . '` ' . $value['symbol'] . ' (' . $plist . ') ';
                 }
-                else{
-                    $where_sql[] = ' `'.$key.'` '.$value['symbol'].' :'.$key;
+                else {
+                    $where_sql[] = ' `' . $key . '` ' . $value['symbol'] . ' :' . $key;
                 }
             }
-            else{
-                $where_sql[] = ' `'.$key.'`=:'.$key;
+            else {
+                $where_sql[] = ' `' . $key . '`=:' . $key;
             }
         }
-        if ($table_name==='' || $table_name===null || $table_name===false) {
+        if ($table_name === '' || $table_name === null || $table_name === false) {
             $table_name = $this->get_table();
         }
-        if ($connection==='' || $connection===null || $connection===false) {
+        if ($connection === '' || $connection === null || $connection === false) {
             $connection = $this->sub_connection();
         }
 
-        $sql = 'UPDATE `'.$table_name.'` SET '.implode(',', $arr).' WHERE '.implode(' AND ', $where_sql). $extend_sql;
+        $sql = 'UPDATE `' . $table_name . '` SET ' . implode(',', $arr) . ' WHERE ' . implode(' AND ', $where_sql) . $extend_sql;
         $stmt = mysql::I($connection)->prepare($sql);
         $where = array_merge($where, $extend_params);
-        foreach ($where as $key => $value){
+        foreach ($where as $key => $value) {
             $direct_assign = true;
-            if(is_array($value)){
-                if(is_array($value['value'])){
+            if (is_array($value)) {
+                if (is_array($value['value'])) {
                     $direct_assign = false;
-                    $plist = ':'.$key.'_'.implode(',:'.$key.'_', array_keys($value['value']));
+                    $plist = ':' . $key . '_' . implode(',:' . $key . '_', array_keys($value['value']));
                     $params = array_combine(explode(",", $plist), $value['value']);
-                    foreach($params as $key2 => $param){
-                        $stmt->bindValue($key2, $param, is_numeric($param)?PDO::PARAM_INT:(is_string($param)?PDO::PARAM_STR:
-                            (is_bool($param)?PDO::PARAM_BOOL:(is_null($param)?PDO::PARAM_NULL:PDO::PARAM_STR))));
+                    foreach ($params as $key2 => $param) {
+                        $stmt->bindValue($key2, $param, is_numeric($param) ? PDO::PARAM_INT : (is_string($param) ? PDO::PARAM_STR :
+                            (is_bool($param) ? PDO::PARAM_BOOL : (is_null($param) ? PDO::PARAM_NULL : PDO::PARAM_STR))));
                     }
                 }
-                else{
+                else {
                     $val = $value['value'];
                 }
             }
-            else{
+            else {
                 $val = $value;
             }
-            if($direct_assign) {
+            if ($direct_assign) {
                 $stmt->bindValue(':' . $key, $val);
             }
         }
@@ -1029,8 +1059,9 @@ class model
      * @throws
      */
     public function add_limit_field_count($vk_redis_key, $ip_redis_key, $ip_short_count_limit, $ip_hour_count_limit, $where, $data,
-                                          string $extend_sql='', array $extend_params=[], $table_name=null, $connection=null){
-        $max_time = round(microtime(true)*10000);
+                                          string $extend_sql = '', array $extend_params = [], $table_name = null, $connection = null)
+    {
+        $max_time = round(microtime(true) * 10000);
         //增加该ip的浏览记录
         redis_y::I()->rpush($ip_redis_key, $max_time);
         //修剪掉超过3万的老数据
@@ -1040,16 +1071,16 @@ class model
 
         //检查该ip在5秒内的浏览频率是否超过1千
         $value = redis_y::I()->lindex($ip_redis_key, $ip_short_count_limit);
-        if (!empty($value) && $value>=$max_time-50000){
+        if (!empty($value) && $value >= $max_time - 50000) {
             return false;
         }
         //检查该ip在1小时内的浏览频率是否超过3万
         $value = redis_y::I()->lindex($ip_redis_key, 0);
-        if (redis_y::I()->llen($ip_redis_key)>=$ip_hour_count_limit && $value>=$max_time-(TIME_HOUR*10000)){
+        if (redis_y::I()->llen($ip_redis_key) >= $ip_hour_count_limit && $value >= $max_time - (TIME_HOUR * 10000)) {
             return false;
         }
         //检查该vk在10分钟内是否增加过浏览次数
-        if (redis_y::I()->exists($vk_redis_key)){
+        if (redis_y::I()->exists($vk_redis_key)) {
             return false;
         }
         //增加浏览次数
@@ -1069,7 +1100,7 @@ class model
      * @param string $connection 数据库连接的配置名
      * @return array 数据列表
      */
-    function select_sql(string $sql, $args=[], $connection='default')
+    function select_sql(string $sql, $args = [], $connection = 'default')
     {
         try {
             $stmt = mysql::I($connection)->prepare($sql);
@@ -1077,14 +1108,15 @@ class model
                 $val = $value;
                 //第三个参数data_type，使用 PDO::PARAM_* 常量明确地指定参数的类型，如：
                 //PDO::PARAM_INT、PDO::PARAM_STR、PDO::PARAM_BOOL、PDO::PARAM_NULL
-                $stmt->bindValue(':'.$key, $val, is_numeric($val)?PDO::PARAM_INT:(is_string($val)?PDO::PARAM_STR:
-                    (is_bool($val)?PDO::PARAM_BOOL:(is_null($val)?PDO::PARAM_NULL:PDO::PARAM_STR))));
+                $stmt->bindValue(':' . $key, $val, is_numeric($val) ? PDO::PARAM_INT : (is_string($val) ? PDO::PARAM_STR :
+                    (is_bool($val) ? PDO::PARAM_BOOL : (is_null($val) ? PDO::PARAM_NULL : PDO::PARAM_STR))));
             }
             $stmt->execute();
             $res = $stmt->fetchAll(PDO::FETCH_ASSOC);
             unset($args, $field_value, $connection, $sql, $stmt);
             return $res;
-        } catch (PDOException $e) {
+        }
+        catch (PDOException $e) {
             unset($args, $field_value, $connection, $sql);
             //这里要写文件日志
             write_applog('ERROR', $e->getMessage());
@@ -1100,7 +1132,7 @@ class model
      * @param string $connection 数据库连接的配置名
      * @return array 数据列表
      */
-    function execute_sql(string $sql, $args=[], $connection='default')
+    function execute_sql(string $sql, $args = [], $connection = 'default')
     {
         try {
             $stmt = mysql::I($connection)->prepare($sql);
@@ -1108,14 +1140,15 @@ class model
                 $val = $value;
                 //第三个参数data_type，使用 PDO::PARAM_* 常量明确地指定参数的类型，如：
                 //PDO::PARAM_INT、PDO::PARAM_STR、PDO::PARAM_BOOL、PDO::PARAM_NULL
-                $stmt->bindValue(':'.$key, $val, is_numeric($val)?PDO::PARAM_INT:(is_string($val)?PDO::PARAM_STR:
-                    (is_bool($val)?PDO::PARAM_BOOL:(is_null($val)?PDO::PARAM_NULL:PDO::PARAM_STR))));
+                $stmt->bindValue(':' . $key, $val, is_numeric($val) ? PDO::PARAM_INT : (is_string($val) ? PDO::PARAM_STR :
+                    (is_bool($val) ? PDO::PARAM_BOOL : (is_null($val) ? PDO::PARAM_NULL : PDO::PARAM_STR))));
             }
             $stmt->execute();
             $count = $stmt->rowCount();
             unset($args, $field_value, $connection, $sql, $stmt);
             return $count;
-        } catch (PDOException $e) {
+        }
+        catch (PDOException $e) {
             unset($args, $field_value, $connection, $sql);
             //这里要写文件日志
             write_applog('ERROR', $e->getMessage());

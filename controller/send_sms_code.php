@@ -162,7 +162,7 @@ if(!$code = redis_y::I()->get($code_cache_key)){
 $message = YiluPHP::I()->lang('register_sms_verify_code', ['code'=>$code]);
 $lang = YiluPHP::I()->current_lang();
 $lang = strtolower($lang);
-!in_array($lang, ['zh','en']) && $lang='zh';
+!in_array($lang, ['cn','en']) && $lang='cn';
 $template_code = $GLOBALS['config']['sms']['aliyun']['template_code_'.$lang];
 $sign_name = $GLOBALS['config']['sms']['aliyun']['sign_name_'.$lang];
 $template_param = ['code'=>$code];

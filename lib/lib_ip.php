@@ -13,20 +13,6 @@ class lib_ip extends base_class
     private static $fp     = NULL;
     private static $offset = NULL;
     private static $index  = NULL;
-    //存储单例
-    private static $_instance = null;
-
-    /**
-     * 获取单例
-     * @return model|null 返回单例
-     */
-    public static function I(){
-        if (!static::$_instance){
-            return static::$_instance = new self();
-        }
-        return static::$_instance;
-    }
-
 
     /**
      * @name 根据语言获取国家（地区）的编码、区号和名称

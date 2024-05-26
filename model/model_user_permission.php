@@ -3,25 +3,13 @@
  * 用户-权限模型类
  * YiluPHP vision 2.0
  * User: Jim.Wu
- * * Date: 2021/01/23
+ * Date: 2021/01/23
  * Time: 21:56
  */
 
 class model_user_permission extends model
 {
     protected $_table = 'user_permission';
-
-    protected static $instance = null;
-
-    /**
-     * 获取单例
-     */
-    public static function I(){
-        if (empty(self::$instance)){
-            return self::$instance = new static();
-        }
-        return self::$instance;
-    }
 
     /**
      * @name 获取用户已有的所有权限
@@ -31,15 +19,15 @@ class model_user_permission extends model
      * @return array
      * @throws
      */
-    public function select_permissions_user_already_has($uid, $app_id='')
+    public function select_permissions_user_already_has($uid, $app_id = '')
     {
-        if (empty($app_id)){
-            $cache_key = REDIS_KEY_USER_PERMISSION.$uid;
+        if (empty($app_id)) {
+            $cache_key = REDIS_KEY_USER_PERMISSION . $uid;
         }
-        else{
-            $cache_key = REDIS_KEY_USER_PERMISSION.$uid.'_'.$app_id;
+        else {
+            $cache_key = REDIS_KEY_USER_PERMISSION . $uid . '_' . $app_id;
         }
-        if($data = redis_y::I()->get($cache_key)){
+        if ($data = redis_y::I()->get($cache_key)) {
             unset($cache_key, $uid, $app_id);
             return json_decode($data, true);
         }
@@ -49,7 +37,7 @@ class model_user_permission extends model
                 UNION 
                 SELECT rp.permission_id FROM user_role AS ur, role_permission AS rp WHERE ur.uid=:uid2 AND ur.role_id=rp.role_id
             ) ';
-        if (!empty($app_id)){
+        if (!empty($app_id)) {
             $sql .= ' AND app_id=:app_id ';
         }
         $sql .= ' ORDER BY app_id ASC';
@@ -57,7 +45,7 @@ class model_user_permission extends model
         $stmt = mysql::I($connection)->prepare($sql);
         $stmt->bindValue(':uid', $uid, PDO::PARAM_INT);
         $stmt->bindValue(':uid2', $uid, PDO::PARAM_INT);
-        if (!empty($app_id)){
+        if (!empty($app_id)) {
             $stmt->bindValue(':app_id', $app_id, PDO::PARAM_STR);
         }
         $stmt->execute();
@@ -80,7 +68,7 @@ class model_user_permission extends model
      */
     public function if_has_permission($uid, $permission_key, $app_id)
     {
-        return false !== array_search($app_id.':'.$permission_key, $this->select_permissions_user_already_has($uid, $app_id));
+        return false !== array_search($app_id . ':' . $permission_key, $this->select_permissions_user_already_has($uid, $app_id));
     }
 
 }

@@ -15,12 +15,11 @@ class base_class
 
     /**
      * 获取单例
-     * @return model|null 返回单例
      */
     public static function I(){
         $class_name = get_called_class();
         if (empty($class_name) && empty(self::$instances[$class_name])){
-            return self::$instances[$class_name] = new self();
+            return self::$instances[$class_name] = new static();
         }
         if (empty(self::$instances[$class_name])){
             return self::$instances[$class_name] = new $class_name();

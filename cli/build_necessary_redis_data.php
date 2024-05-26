@@ -86,4 +86,40 @@ do{
 }
 while($data);
 
+//如果静态文件存储在其它平台，在配置文件中配置静态文件访问地址前缀，这里会给引入的静态文件加上访问前缀
+if(!empty($GLOBALS['config']['static_file_url_prefix'])){
+    $prefix = $GLOBALS['config']['static_file_url_prefix'];
+    $prefix = rtrim($prefix, '/');
+    $include_path = APP_PATH . 'static/include/';
+    $files = get_dir_and_file($include_path, 'file');
+    foreach ($files as $file) {
+        $file_path = $include_path . $file;
+        $content = file_get_contents($file_path);
+        $content = str_replace("'", '"', $content);
+        if (strpos($file, 'css_') === 0) {
+            $preg = '/href="([^"]+)"/';
+            $split_str = '/css/';
+        }
+        elseif (strpos($file, 'js_') === 0) {
+            $preg = '/src="([^"]+)"/';
+            $split_str = '/js/';
+        }
+        else {
+            continue;
+        }
+
+        if (preg_match($preg, $content, $matches)) {
+            $file_link = $matches[1];
+            $origin_link = explode($split_str, $file_link);
+            if (count($origin_link) != 2) {
+                continue;
+            }
+
+            $new_link = $prefix . $split_str . $origin_link[1];
+            $content = str_replace('="' . $file_link, '="' . $new_link, $content);
+            file_put_contents($file_path, $content);
+        }
+    }
+}
+
 exit("\r\n完成\r\n\r\n");

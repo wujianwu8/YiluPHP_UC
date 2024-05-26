@@ -1,9 +1,9 @@
 <?php
-/*
+/**
  * 权限模型类
  * YiluPHP vision 2.0
  * User: Jim.Wu
- * * Date: 2021/01/23
+ * Date: 2021/01/23
  * Time: 21:56
  */
 
@@ -11,33 +11,22 @@ class model_permission extends model
 {
     protected $_table = 'permission';
     private $_permission_control_keys = [
-        'view_permission' => 'lang_view_permission',
-        'add_permission' => 'lang_add_permission',
-        'edit_permission' => 'lang_edit_permission',
-        'delete_permission' => 'lang_delete_permission',
-        'grant_view_permission' => 'lang_view_permission',
-        'grant_add_permission' => 'lang_add_permission',
-        'grant_edit_permission' => 'lang_edit_permission',
-        'grant_delete_permission' => 'lang_delete_permission',
-        'grant_grant_view_permission' => 'lang_view_permission',
-        'grant_grant_add_permission' => 'lang_add_permission',
-        'grant_grant_edit_permission' => 'lang_edit_permission',
+        'view_permission'               => 'lang_view_permission',
+        'add_permission'                => 'lang_add_permission',
+        'edit_permission'               => 'lang_edit_permission',
+        'delete_permission'             => 'lang_delete_permission',
+        'grant_view_permission'         => 'lang_view_permission',
+        'grant_add_permission'          => 'lang_add_permission',
+        'grant_edit_permission'         => 'lang_edit_permission',
+        'grant_delete_permission'       => 'lang_delete_permission',
+        'grant_grant_view_permission'   => 'lang_view_permission',
+        'grant_grant_add_permission'    => 'lang_add_permission',
+        'grant_grant_edit_permission'   => 'lang_edit_permission',
         'grant_grant_delete_permission' => 'lang_delete_permission',
     ];
 
-    protected static $instance = null;
-
-    /**
-     * 获取单例
-     */
-    public static function I(){
-        if (empty(self::$instance)){
-            return self::$instance = new static();
-        }
-        return self::$instance;
-    }
-
-    public function permission_control_keys(){
+    public function permission_control_keys()
+    {
         return $this->_permission_control_keys;
     }
 
@@ -47,7 +36,8 @@ class model_permission extends model
      * @param integer $uid 用户ID
      * @return array 数据列表
      */
-    public function select_user_have_permission_app_id($uid){
+    public function select_user_have_permission_app_id($uid)
+    {
         $sql = 'SELECT DISTINCT(p.app_id) app_id FROM permission AS p WHERE p.permission_id IN (
                 SELECT permission_id FROM user_permission WHERE uid=:uid1
             ) OR p.permission_id IN (
@@ -67,7 +57,8 @@ class model_permission extends model
      * @param integer $role_id 角色ID
      * @return array 数据列表
      */
-    public function select_role_have_permission_app_id($role_id){
+    public function select_role_have_permission_app_id($role_id)
+    {
         $sql = 'SELECT DISTINCT(p.app_id) app_id FROM permission AS p WHERE p.permission_id IN (
                 SELECT permission_id FROM role_permission WHERE role_id=:role_id
             )';
