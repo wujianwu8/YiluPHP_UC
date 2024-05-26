@@ -36,6 +36,7 @@ class model
     //用于分表的字段名
     protected $_split_by_field = null;
     public $_max_quantity_per_table = 500;
+
     //存储所有类的单例
     protected static $instances = [];
 
