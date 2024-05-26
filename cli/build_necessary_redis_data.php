@@ -110,7 +110,7 @@ if(!empty($GLOBALS['config']['static_file_url_prefix'])){
 
         if (preg_match($preg, $content, $matches)) {
             $file_link = $matches[1];
-            $origin_link = explode($split_str, $file_link);
+            $origin_link = explode($split_str, $file_link, 2);
             if (count($origin_link) != 2) {
                 continue;
             }
