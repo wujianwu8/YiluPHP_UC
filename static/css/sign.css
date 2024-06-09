@@ -369,7 +369,7 @@ input:-ms-input-placeholder {
 
 .btn_loading,
 .btn-primary.btn_loading{
-  background-image: url(/img/loading.gif);
+  background-image: url(../img/loading.gif);
   background-size: 26px;
   background-position: center;
   background-repeat: no-repeat;

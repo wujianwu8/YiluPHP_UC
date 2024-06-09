@@ -225,9 +225,16 @@ nav .dropdown{
   font-size: 20px;
 }
 
+.table-responsive {
+  border-radius: 6px;
+}
 .text-gray,
 .table .title{
   color: #aaaaaa;
+}
+.table thead th {
+  color: #2a3c4b;
+  background: #68727b;
 }
 .title_content .title{
   text-align: right;
@@ -263,7 +270,7 @@ legend {
 
 .btn_loading,
 .btn-primary.btn_loading{
-  background-image: url(/img/loading.gif);
+  background-image: url(../img/loading.gif);
   background-size: 26px;
   background-position: center;
   background-repeat: no-repeat;
