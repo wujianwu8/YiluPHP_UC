@@ -71,60 +71,63 @@ function get_version(){
     return 'YiluPHP-V2.0';
 }
 
-/*
+/**
  * 写项目内日志
  * $level 定义值：ERROR错误、WARNING警告、DEBUG调试、NOTICE通知、VISIT访问、RESPONSE响应(HTML的不写，只写json和jsonp)、TRACE代码追溯
  * 其它可以自定义，先在配置log_level中定义，然后写日志时把它传给level值就行了
+ * @param string $level
+ * @param string $data
+ * @return void
  */
-function write_applog(string $level, string $data='')
+function write_applog(string $level, string $data = '')
 {
-    if (empty($GLOBALS['config']['log_level']) || !is_array($GLOBALS['config']['log_level'])){
+    if (empty($GLOBALS['config']['log_level']) || !is_array($GLOBALS['config']['log_level'])) {
         return;
     }
     $level = strtoupper($level);
-    if (!in_array($level, $GLOBALS['config']['log_level'])){
+    if (!in_array($level, $GLOBALS['config']['log_level'])) {
         return;
     }
 
-    $datatime = '['.date('Y-m-d H:i:s').'] '.$level.': REQUEST_ID='.$GLOBALS['Yilu_request_id'].' ';
+    $datatime = '[' . date('Y-m-d H:i:s') . '] ' . $level . ': REQUEST_ID=' . $GLOBALS['Yilu_request_id'] . ' ';
     if ($level == 'TRACE') {
-        $txt = $datatime.$_SERVER['REQUEST_URI'].' , GET:'.json_encode($_GET,JSON_UNESCAPED_UNICODE).' POST:'.json_encode($_POST).' , RESPONSE: '.$data;
-        $code = mb_detect_encoding($txt);
-        if ($code!='UTF-8'){
-            $txt = iconv($code, 'UTF-8', $txt);
+        $txt = $datatime . $_SERVER['REQUEST_URI'] . ' , GET:' . json_encode($_GET, JSON_UNESCAPED_UNICODE) . ' POST:' . json_encode($_POST) . ' , RESPONSE: ' . $data;
+        $code = mb_detect_encoding($txt, 'ASCII, UTF-8, ISO-8859-1, JIS, EUC-JP, SJIS');
+        if ($code && $code != 'UTF-8') {
+            $txt = mb_convert_encoding($txt, 'UTF-8', $code);
         }
         $a = debug_backtrace();
         array_shift($a);
         foreach ($a as $value) {
-            $txt .= "\n\t\t".'file:'.$value['file'].', line:'.$value['line'];
+            $txt .= "\n\t\t" . 'file:' . $value['file'] . ', line:' . $value['line'];
             unset($value['file'], $value['line']);
-            $txt .= json_encode($value,JSON_UNESCAPED_UNICODE);
+            $txt .= json_encode($value, JSON_UNESCAPED_UNICODE);
         }
     }
     else if ($level == 'VISIT') {
-        $txt = $datatime.$_SERVER['REQUEST_URI'].' , GET: '.json_encode($_GET,JSON_UNESCAPED_UNICODE).' POST: '.json_encode($_POST,JSON_UNESCAPED_UNICODE).' $_SERVER: '.json_encode($_SERVER,JSON_UNESCAPED_UNICODE);
+        $txt = $datatime . $_SERVER['REQUEST_URI'] . ' , GET: ' . json_encode($_GET, JSON_UNESCAPED_UNICODE) . ' POST: ' . json_encode($_POST, JSON_UNESCAPED_UNICODE) . ' $_SERVER: ' . json_encode($_SERVER, JSON_UNESCAPED_UNICODE);
     }
     else if ($level == 'RESPONSE') {
-        $txt = $datatime.$_SERVER['REQUEST_URI'].' , GET: '.json_encode($_GET,JSON_UNESCAPED_UNICODE).' POST: '.json_encode($_POST,JSON_UNESCAPED_UNICODE).' $_SERVER: '.json_encode($_SERVER,JSON_UNESCAPED_UNICODE).' , RESPONSE: '.$data;
+        $txt = $datatime . $_SERVER['REQUEST_URI'] . ' , GET: ' . json_encode($_GET, JSON_UNESCAPED_UNICODE) . ' POST: ' . json_encode($_POST, JSON_UNESCAPED_UNICODE) . ' $_SERVER: ' . json_encode($_SERVER, JSON_UNESCAPED_UNICODE) . ' , RESPONSE: ' . $data;
     }
     else {
-        $txt = $datatime.$_SERVER['REQUEST_URI'].' , GET: '.json_encode($_GET,JSON_UNESCAPED_UNICODE).' POST: '.json_encode($_POST,JSON_UNESCAPED_UNICODE).' $_SERVER: '.json_encode($_SERVER,JSON_UNESCAPED_UNICODE).' , RESPONSE: '.$data;
+        $txt = $datatime . $_SERVER['REQUEST_URI'] . ' , GET: ' . json_encode($_GET, JSON_UNESCAPED_UNICODE) . ' POST: ' . json_encode($_POST, JSON_UNESCAPED_UNICODE) . ' $_SERVER: ' . json_encode($_SERVER, JSON_UNESCAPED_UNICODE) . ' , RESPONSE: ' . $data;
     }
-    $path = APP_PATH.'logs/';
+    $path = APP_PATH . 'logs/';
     if (!is_dir($path)) {
         mkdir($path, 0777, true);
     }
-    $code = mb_detect_encoding($txt);
-    if ($code!='UTF-8'){
-        $txt = iconv($code, 'UTF-8', $txt);
+    $code = mb_detect_encoding($txt, 'ASCII, UTF-8, ISO-8859-1, JIS, EUC-JP, SJIS');
+    if ($code && $code != 'UTF-8') {
+        $txt = mb_convert_encoding($txt, 'UTF-8', $code);
     }
     if (defined('LOG_LOCAL5')) {
         openlog("qcloud_db", LOG_PID, LOG_LOCAL5);
         syslog(LOG_INFO, $txt);
         closelog();
     }
-    $file = $path.date('Y-m-d').'.log';
-    file_put_contents($file, $txt."\n\n", FILE_APPEND);
+    $file = $path . date('Y-m-d') . '.log';
+    file_put_contents($file, $txt . "\n\n", FILE_APPEND);
 //    chmod($file,0755);
 }
 
@@ -518,7 +521,7 @@ class YiluPHP
      */
     public static function I(){
         if (!static::$_instance){
-            return static::$_instance = new YiluPHP();
+            return static::$_instance = new self();
         }
         return static::$_instance;
     }

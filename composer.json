@@ -2,6 +2,16 @@
     "require": {
         "alibabacloud/client": "^1.5",
         "phpmailer/phpmailer": "^6.0",
-        "aliyuncs/oss-sdk-php": "^2.3"
+        "aliyuncs/oss-sdk-php": "^2.3",
+        "guzzlehttp/guzzle": "^7.4.5",
+        "guzzlehttp/psr7": "^2.4.5",
+        "phpmailer/phpmailer": "^6.5.0",
+        "alibabacloud/dm-20151123": "1.0.x"
+    },
+    "repositories": {
+        "packagist": {
+            "type": "composer",
+            "url": "https://packagist.org"
+        }
     }
 }

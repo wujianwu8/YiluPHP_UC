@@ -1,5 +1,5 @@
 <?php
-/*
+/**
  * 邮件发送类
  * YiluPHP vision 2.0
  * User: Jim.Wu
@@ -13,9 +13,18 @@
     tool_mailer::I()->auto_send();
  */
 
+
+use AlibabaCloud\SDK\Dm\V20151123\Dm;
+use AlibabaCloud\Tea\Exception\TeaError;
+use AlibabaCloud\Tea\Utils\Utils;
+
+use Darabonba\OpenApi\Models\Config;
+use AlibabaCloud\SDK\Dm\V20151123\Models\SingleSendMailRequest;
+use AlibabaCloud\Tea\Utils\Utils\RuntimeOptions;
+
 use PHPMailer\PHPMailer\PHPMailer;
-use PHPMailer\PHPMailer\Exception;
-use Dm\Request\V20151123 as Dm;
+//use PHPMailer\PHPMailer\Exception;
+//use Dm\Request\V20151123 as Dm;
 
 class tool_mailer extends base_class
 {
@@ -256,6 +265,88 @@ class tool_mailer extends base_class
             write_applog('ERROR', '发送邮件失败,必填项缺失:'.json_encode($this->all_params()));
             return false;
         }
+
+        // 建议使用更安全的 STS 方式，更多鉴权访问方式请参见：https://help.aliyun.com/document_detail/311677.html。
+        $config = new Config([
+            // 必填，请确保代码运行环境设置了环境变量 ALIBABA_CLOUD_ACCESS_KEY_ID。
+            'accessKeyId' => $GLOBALS['config']['mailer']['aliyun']['access_key_id'],
+            // 必填，请确保代码运行环境设置了环境变量 ALIBABA_CLOUD_ACCESS_KEY_SECRET。
+            'accessKeySecret' => $GLOBALS['config']['mailer']['aliyun']['access_key_secret'],
+        ]);
+        // Endpoint 请参考 https://api.aliyun.com/product/Dm
+        $config->endpoint = "dm.aliyuncs.com";
+        $client = new Dm($config);
+
+        $params = [
+            'accountName'            => $this->from_email,  //管理控制台中配置的发信地址
+            'addressType'            => 0,  //地址类型。取值：0：为随机账号，1：为发信地址
+//            'clickTrace'             => 'ClickTrace',  //1：为打开数据跟踪功能，0（默认）：为关闭数据跟踪功能。
+            'fromAlias'              => $this->from_alias,  //发信人昵称，长度小于 15 个字符。例如：发信人昵称设置为”小红”，发信地址为 test***@example.net，收信人看到的发信地址为“小红”test***@example.net。
+            'htmlBody'               => $this->html_body,  //邮件 html 正文，限制 28K。注意：HtmlBody 和 TextBody 是针对不同类型的邮件内容，两者必须传其一。
+//            'ownerId'                => 'OwnerId',
+//            'replyAddress'           => 'ReplyAddress',  //回信地址
+//            'replyAddressAlias'      => 'ReplyAddressAlias',  //回信地址昵称
+            'replyToAddress'         => false,  //是否启用管理控制台中配置好回信地址（状态须验证通过），取值范围是字符串 true 或者 false（不是 bool 值）。
+//            'resourceOwnerAccount'   => 'ResourceOwnerAccount',
+//            'resourceOwnerId'        => 'ResourceOwnerId',
+            'subject'                => $this->subject,  //邮件主题
+            'tagName'                => $this->tag_name,  //在邮件推送控制台创建的标签，用于分类所发送的邮件批次，可以通过标签来查询每批邮件的发送情况，另外如果开启邮件跟踪功能，发信必须使用邮件标签。
+            'textBody'               => $this->html_body,  //邮件 text 正文，限制 28K。注意：HtmlBody 和 TextBody 是针对不同类型的邮件内容，两者必须传其一。
+            'toAddress'              => $this->to_email,  //目标地址，多个 email 地址可以用逗号分隔，最多 100 个地址（支持邮件组）。
+//            'unSubscribeFilterLevel' => 'UnSubscribeFilterLevel', //过滤级别。参照退订功能生成链接和过滤机制文档。disabled: 不过滤，default: 采用默认策略，批量地址采用发信地址级别过滤，mailfrom: 发信地址级别过滤，mailfrom_domain: 发信域名级别过滤，edm_id: 账号级别过滤。https://help.aliyun.com/document_detail/2689048.html?spm=api-workbench.api_explorer.0.0.3c3d4cf62Sfbjt
+//            'unSubscribeLinkType'    => 'UnSubscribeLinkType',  //生成的退订链接类型。参照退订功能生成链接和过滤机制文档。disabled: 不生成，default: 采用默认策略：对批量类型的发信地址发给特定域名时会生成退订链接，如带有关键字"gmail", "yahoo", "google", "aol.com", "hotmail", "outlook", "ymail.com"等，zh-cn: 生成，给将来埋点到内容准备，en-us: 生成，给将来埋点到内容准备。https://help.aliyun.com/document_detail/2689048.html?spm=api-workbench.api_explorer.0.0.3c3d4cf62Sfbjt
+        ];
+        $singleSendMailRequest = new SingleSendMailRequest($params);
+        $runtime = new RuntimeOptions([]);
+        try {
+            // 复制代码运行请自行打印 API 的返回值
+            $client->singleSendMailWithOptions($singleSendMailRequest, $runtime);
+        }
+        catch (Exception $error) {
+            if (!($error instanceof TeaError)) {
+                $error = new TeaError([], $error->getMessage(), $error->getCode(), $error);
+            }
+            // 此处仅做打印展示，请谨慎对待异常处理，在工程项目中切勿直接忽略异常。
+            // 错误 message
+//            var_dump($error->message);
+            // 诊断地址
+//            var_dump($error->data["Recommend"]);
+            if (!empty($GLOBALS['config']['weixin_robot']['xiaomei'])){
+                $message = "使用阿里云发邮件失败了\r\n错误信息：{$error->message}\r\n诊断地址" . $error->data['Recommend'];
+                tool_operate::I()->send_work_notice($message, $GLOBALS['config']['weixin_robot']['xiaomei']);
+            }
+            Utils::assertAsString($error->message);
+        }
+    }
+
+    /**
+     * @name 使用阿里云发邮件，老的，适用于PHP7.4.16
+     * @return bool
+     */
+    public function send_by_aliyun_old()
+    {
+        if(empty($GLOBALS['config']['mailer']['aliyun']['access_key_id'])){
+            write_applog('ERROR', '未设置阿里云邮件推送的access_key_id:'.json_encode($this->all_params()));
+            return false;
+        }
+        if(empty($GLOBALS['config']['mailer']['aliyun']['access_key_secret'])){
+            write_applog('ERROR', '未设置阿里云邮件推送的access_key_secret:'.json_encode($this->all_params()));
+            return false;
+        }
+        if(empty($GLOBALS['config']['mailer']['aliyun']['from_name'])){
+            write_applog('ERROR', '未设置阿里云邮件推送的from_name:'.json_encode($this->all_params()));
+            return false;
+        }
+        if(empty($GLOBALS['config']['mailer']['aliyun']['from_email'])){
+            write_applog('ERROR', '未设置阿里云邮件推送的from_email:'.json_encode($this->all_params()));
+            return false;
+        }
+        $this->from_alias = $GLOBALS['config']['mailer']['aliyun']['from_name'];
+        $this->from_email = $GLOBALS['config']['mailer']['aliyun']['from_email'];
+        if(!$this->check_content()){
+            write_applog('ERROR', '发送邮件失败,必填项缺失:'.json_encode($this->all_params()));
+            return false;
+        }
         include_once APP_PATH.'/vendor/aliyun-php-sdk-core/Config.php';
         //需要设置对应的region名称，如华东1（杭州）设为cn-hangzhou，新加坡Region设为ap-southeast-1，澳洲Region设为ap-southeast-2。
         $iClientProfile = DefaultProfile::getProfile("cn-hangzhou", $GLOBALS['config']['mailer']['aliyun']['access_key_id'],
@@ -271,7 +362,7 @@ class tool_mailer extends base_class
         $request->setFromAlias($this->from_alias);   //发信人昵称
         $request->setAddressType(1);
         $request->setTagName($this->tag_name); //控制台创建的标签
-        $request->setReplyToAddress("true");
+        $request->setReplyToAddress("false");
         $request->setToAddress($this->to_email); //目标地址
         //可以给多个收件人发送邮件，收件人之间用逗号分开,若调用模板批量发信建议使用BatchSendMailRequest方式
         //$request->setToAddress("邮箱1,邮箱2");

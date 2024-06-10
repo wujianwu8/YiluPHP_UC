@@ -1,33 +1,25 @@
 English | [简体中文](/README-zh-CN.md)
 
 
-<p align="center">
-<a href=" https://www.alibabacloud.com"><img src="https://aliyunsdk-pages.alicdn.com/icons/AlibabaCloud.svg"></a>
-</p>
+# Alibaba Cloud Client for PHP
+[![Latest Stable Version](https://poser.pugx.org/alibabacloud/client/v/stable)](https://packagist.org/packages/alibabacloud/client)
+[![composer.lock](https://poser.pugx.org/alibabacloud/client/composerlock)](https://packagist.org/packages/alibabacloud/client)
+[![Total Downloads](https://poser.pugx.org/alibabacloud/client/downloads)](https://packagist.org/packages/alibabacloud/client)
+[![License](https://poser.pugx.org/alibabacloud/client/license)](https://packagist.org/packages/alibabacloud/client)
+[![codecov](https://codecov.io/gh/aliyun/openapi-sdk-php-client/branch/master/graph/badge.svg?token=90Yd5Bne3S)](https://codecov.io/gh/aliyun/openapi-sdk-php-client)
+[![PHP Version Require](http://poser.pugx.org/alibabacloud/client/require/php)](https://packagist.org/packages/alibabacloud/client)
 
-<h1 align="center">Alibaba Cloud Client for PHP</h1>
 
-<p align="center">
-<a href="https://packagist.org/packages/alibabacloud/client"><img src="https://poser.pugx.org/alibabacloud/client/v/stable" alt="Latest Stable Version"></a>
-<a href="https://packagist.org/packages/alibabacloud/client"><img src="https://poser.pugx.org/alibabacloud/client/v/unstable" alt="Latest Unstable Version"></a>
-<a href="https://packagist.org/packages/alibabacloud/client"><img src="https://poser.pugx.org/alibabacloud/client/composerlock" alt="composer.lock"></a>
-<a href="https://packagist.org/packages/alibabacloud/client"><img src="https://poser.pugx.org/alibabacloud/client/downloads" alt="Total Downloads"></a>
-<a href="https://packagist.org/packages/alibabacloud/client"><img src="https://poser.pugx.org/alibabacloud/client/license" alt="License"></a>
-<br/>
-<a href="https://codecov.io/gh/aliyun/openapi-sdk-php-client"><img src="https://codecov.io/gh/aliyun/openapi-sdk-php-client/branch/master/graph/badge.svg" alt="codecov"></a>
-<a href="https://scrutinizer-ci.com/g/aliyun/openapi-sdk-php-client"><img src="https://scrutinizer-ci.com/g/aliyun/openapi-sdk-php-client/badges/quality-score.png" alt="Scrutinizer Code Quality"></a>
-<a href="https://travis-ci.org/aliyun/openapi-sdk-php-client"><img src="https://travis-ci.org/aliyun/openapi-sdk-php-client.svg?branch=master" alt="Travis Build Status"></a>
-<a href="https://ci.appveyor.com/project/aliyun/openapi-sdk-php-client/branch/master"><img src="https://ci.appveyor.com/api/projects/status/699v083woth7mj85/branch/master?svg=true" alt="Appveyor Build Status"></a>
-<a href="https://scrutinizer-ci.com/code-intelligence"><img src="https://scrutinizer-ci.com/g/aliyun/openapi-sdk-php-client/badges/code-intelligence.svg" alt="Code Intelligence Status"></a>
-</p>
+![](https://aliyunsdk-pages.alicdn.com/icons/AlibabaCloud.svg)
 
 
 Alibaba Cloud Client for PHP is a client tool that helps PHP developers manage credentials and send requests, [Alibaba Cloud SDK for PHP][SDK] dependency on this tool.
 
+## Troubleshoot
+[Troubleshoot](https://troubleshoot.api.aliyun.com/?source=github_sdk) Provide OpenAPI diagnosis service to help developers locate quickly and provide solutions for developers through `RequestID` or `error message`.
 
 ## Online Demo
-[API Explorer](https://api.aliyun.com) provides the ability to call the cloud product OpenAPI online, and dynamically generate SDK Example code and quick retrieval interface, which can significantly reduce the difficulty of using the cloud API.
-
+[Alibaba Cloud OpenAPI Developer Portal](https://next.api.aliyun.com/) provides the ability to call the cloud product OpenAPI online, and dynamically generate SDK Example code and quick retrieval interface, which can significantly reduce the difficulty of using the cloud API.
 
 ## Prerequisites
 Your system will need to meet the [Prerequisites](/docs/en-US/0-Prerequisites.md), including having PHP >= 5.5. We highly recommend having it compiled with the cURL extension and cURL 7.16.2+.
@@ -54,6 +46,11 @@ use AlibabaCloud\Client\AlibabaCloud;
 
 AlibabaCloud::accessKeyClient('accessKeyId', 'accessKeySecret')->asDefaultClient();
 ```
+
+
+## Request
+> Request styles are divided into `ROA` and `RPC`. Different product styles are different. Please refer to the product documentation before using. It is recommended to use [Alibaba cloud SDK for PHP][SDK], the details have been encapsulated, and you do not need to care about the style.
+
 
 ### ROA Request
 ```php
@@ -115,7 +112,7 @@ try {
 ## Documentation
 * [Prerequisites](/docs/en-US/0-Prerequisites.md)
 * [Installation](/docs/en-US/1-Installation.md)
-* [Client](/docs/en-US/2-Client.md)
+* [Client & Credentials](/docs/en-US/2-Client.md)
 * [Request](/docs/en-US/3-Request.md)
 * [Result](/docs/en-US/4-Result.md)
 * [Region](/docs/en-US/5-Region.md)
@@ -140,7 +137,7 @@ Please make sure to read the [Contributing Guide](/CONTRIBUTING.md) before makin
 
 ## References
 * [Alibaba Cloud Regions & Endpoints][endpoints]
-* [OpenAPI Explorer][open-api]
+* [Alibaba Cloud OpenAPI Developer Portal][open-api]
 * [Packagist][packagist]
 * [Composer][composer]
 * [Guzzle Documentation][guzzle-docs]
@@ -150,11 +147,11 @@ Please make sure to read the [Contributing Guide](/CONTRIBUTING.md) before makin
 ## License
 [Apache-2.0](/LICENSE.md)
 
-Copyright 1999-2019 Alibaba Group Holding Ltd.
+Copyright (c) 2009-present, Alibaba Cloud All rights reserved.
 
 
 [SDK]: https://github.com/aliyun/openapi-sdk-php
-[open-api]: https://api.alibabacloud.com
+[open-api]: https://next.api.aliyun.com/
 [latest-release]: https://github.com/aliyun/openapi-sdk-php-client
 [guzzle-docs]: http://docs.guzzlephp.org/en/stable/request-options.html
 [composer]: https://getcomposer.org

@@ -183,7 +183,7 @@ $head_info = [
             });
             // console.log(img.toDataURL());
             var toast = loading();
-            $.post("<?php echo url_pre_lang(); ?>/setting/save_avatar", {avatar:img.toDataURL()}, function(data) {
+            $.post("<?php echo url_pre_lang(); ?>/setting/save_avatar", {dtype: "json", avatar:img.toDataURL()}, function(data) {
                 toast.close();
                 if (data.code===0) {
                     toast.dialog({
