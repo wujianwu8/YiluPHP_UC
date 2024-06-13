@@ -252,8 +252,13 @@ class model
                 $arr[] = ' `' . $key . '`=:' . $key;
             }
         }
-        $where && $sql .= ' WHERE ';
-        $sql .= implode(' AND ', $arr) . $extend_sql;
+
+        $extend_sql = trim($extend_sql);
+        if ($where || $extend_sql) {
+            $sql .= ' WHERE ';
+        }
+
+        $sql .= implode(' AND ', $arr) . ' ' . $extend_sql;
         try {
             $stmt = mysql::I($connection)->prepare($sql);
             $where = array_merge($where, $extend_params);
@@ -352,10 +357,16 @@ class model
                 $arr[] = ' `' . $key . '`=:' . $key;
             }
         }
-        $where && $sql .= ' WHERE ';
-        $sql .= implode(' AND ', $arr) . $extend_sql . (trim($order_by) !== '' ? ' ORDER BY ' . $order_by : '') . ' LIMIT :start, :page_size ';
-        $page = intval($page);
-        $page_size = intval($page_size);
+
+        $extend_sql = trim($extend_sql);
+        if ($where || $extend_sql) {
+            $sql .= ' WHERE ';
+        }
+
+        $sql .= implode(' AND ', $arr) . ' ' . $extend_sql . (trim($order_by) !== '' ? ' ORDER BY ' . $order_by : '') . ' LIMIT :start, :page_size ';
+        echo $sql . "\r\n";
+        $page = $page;
+        $page_size = $page_size;
         $start = ($page - 1) * $page_size;
         $start < 0 && $start = 0;
         try {
@@ -456,8 +467,13 @@ class model
                 $arr[] = ' `' . $key . '`=:' . $key;
             }
         }
-        $where && $sql .= ' WHERE ';
-        $sql .= implode(' AND ', $arr) . $extend_sql . (trim($order_by) !== '' ? ' ORDER BY ' . $order_by : '');
+
+        $extend_sql = trim($extend_sql);
+        if ($where || $extend_sql) {
+            $sql .= ' WHERE ';
+        }
+
+        $sql .= implode(' AND ', $arr) . ' ' . $extend_sql . (trim($order_by) !== '' ? ' ORDER BY ' . $order_by : '');
         try {
             $stmt = mysql::I($connection)->prepare($sql);
             $where = array_merge($where, $extend_params);
@@ -546,9 +562,12 @@ class model
                 $arr[] = ' `' . $key . '`=:' . $key;
             }
         }
+
+        $extend_sql = trim($extend_sql);
         if ($where || $extend_sql) {
             $sql .= ' WHERE ';
         }
+
         $sql .= implode(' AND ', $arr) . ' ' . $extend_sql . ' LIMIT 1 ';
         try {
             $stmt = mysql::I($connection)->prepare($sql);
