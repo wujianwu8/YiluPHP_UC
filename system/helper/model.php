@@ -364,9 +364,6 @@ class model
         }
 
         $sql .= implode(' AND ', $arr) . ' ' . $extend_sql . (trim($order_by) !== '' ? ' ORDER BY ' . $order_by : '') . ' LIMIT :start, :page_size ';
-        echo $sql . "\r\n";
-        $page = $page;
-        $page_size = $page_size;
         $start = ($page - 1) * $page_size;
         $start < 0 && $start = 0;
         try {
