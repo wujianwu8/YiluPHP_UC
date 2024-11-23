@@ -37,6 +37,10 @@ if(isset($config['error_level']) && is_integer($config['error_level'])) {
     error_reporting($config['error_level']);
 }
 
+if (!empty($config['error_level']) && !empty($config['debug_mode'])) {
+    ini_set('display_errors', 1);
+}
+
 require_once(APP_PATH . 'functions.php');
 
 //100-1000之内的错误码请留给YiluPHP官方使用
