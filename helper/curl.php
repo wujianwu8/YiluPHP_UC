@@ -54,6 +54,7 @@ class curl extends base_class
 //            $this->setOption(CURLOPT_PROXYPORT, '1080');
 //        }
 
+        $this->setOption(CURLOPT_HTTP_VERSION, CURL_HTTP_VERSION_1_1);
         $this->setOption(CURLOPT_RETURNTRANSFER, true);
         $this->setOption(CURLOPT_HTTPGET, true);
         $response = $this->exec($this->buildUrl($url, $params));
@@ -84,6 +85,22 @@ class curl extends base_class
         }
         $this->setOption(CURLOPT_POST, true);
         $this->setOption(CURLOPT_POSTFIELDS, $data);
+        $this->setHeaders(['Content-Type:application/json']);
+
+        $response = $this->exec($url);
+        $this->close();
+        return $response;
+    }
+
+    public function postBody($url, $data = array())
+    {
+        if (is_null($this->_ch)) {
+            $this->init();
+        }
+
+        $this->setOption(CURLOPT_RETURNTRANSFER, true);
+        $this->setOption(CURLOPT_POST, true);
+        $this->setOption(CURLOPT_POSTFIELDS, json_encode($data));
         $this->setHeaders(['Content-Type:application/json']);
 
         $response = $this->exec($url);

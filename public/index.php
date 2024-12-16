@@ -131,8 +131,11 @@ function write_applog(string $level, string $data = '')
         closelog();
     }
     $file = $path . date('Y-m-d') . '.log';
+    $is_log_exists = file_exists($file);
     file_put_contents($file, $txt . "\n\n", FILE_APPEND);
-//    chmod($file,0755);
+    if (!$is_log_exists) {
+        chmod($file,0777);
+    }
 }
 
 /**
@@ -248,7 +251,8 @@ function result($template, $data=[], $return_html=false)
             }
         }
     }
-    extract($GLOBALS);
+    $global_data = $GLOBALS;
+    extract($global_data);
 
     ob_start(); //打开缓冲区
     include($YiluPHP['file']);
@@ -1197,7 +1201,7 @@ else{
     catch (validate_exception $exception){
         $data = $exception->getData();
         if (is_array($data) && isset($data['dtype']) && in_array($data['dtype'], ['json','jsonp'])){
-            if($data['dtype']==json){
+            if($data['dtype']=='json'){
                 echo json($exception->getCode(), $exception->getMessage(), $data);
             }
             else{
