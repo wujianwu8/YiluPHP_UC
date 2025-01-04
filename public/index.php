@@ -639,6 +639,10 @@ class YiluPHP
      */
     public function lang($lang_key, $data=[])
     {
+        if ($lang_key == null) {
+            return '';
+        }
+
         $this->current_lang();
         $res = $lang_key;
         if(!$this->lang){
