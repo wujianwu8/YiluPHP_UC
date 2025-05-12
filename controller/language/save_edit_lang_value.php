@@ -67,18 +67,24 @@ if (!in_array($params['language_type'], $project_info['language_types'])){
     return code(7,'语言种类不支持，请检查项目中的设置');
 }
 
+$time = time();
 $data = [
     'project_key' => $project_info['project_key'],
     'language_type' => $params['language_type'],
     'language_key' => $params['language_key'],
     'language_value' => addslashes($params['language_value']),
-    'ctime' => time(),
+    'ctime' => $time,
 ];
 //保存入库
 if(false === model_language_value::I()->insert_language_value($data)){
     unset($params, $data, $project_info);
     return code(1, '保存失败');
 }
+
+//记录最后一次修改时间
+redis_y::I()->hSet(REDIS_KEY_HASH_LAST_WRITE_LANG_FILE, 'php:' . $project_info['project_key'], $time);
+redis_y::I()->hSet(REDIS_KEY_HASH_LAST_WRITE_LANG_FILE, 'js:' . $project_info['project_key'], $time);
+redis_y::I()->expire(REDIS_KEY_HASH_LAST_WRITE_LANG_FILE, TIME_30_DAY);
 
 unset($params, $data, $project_info);
 //返回结果

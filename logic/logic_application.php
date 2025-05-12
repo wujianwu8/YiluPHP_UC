@@ -1,11 +1,11 @@
 <?php
-/*
+/**
  * 应用逻辑处理类
  * YiluPHP vision 2.0
  * User: Jim.Wu
  * * Date: 2021/01/23
  * Time: 21:39
- */
+ **/
 
 class logic_application extends base_class
 {

@@ -1,12 +1,12 @@
 <?php
-/*
+/**
  * 创建必须的REDIS缓存
  * 运行命令：/usr/local/php7.4.16/bin/php /data/web/passport.yiluphp.com/yilu build_necessary_redis_data
  * YiluPHP vision 2.0
  * User: Jim.Wu
  * * Date: 2021/01/23
  * Time: 21:33
- */
+ **/
 
 $limit = 1000;
 //生成用户身份主表中的用户身份的缓存

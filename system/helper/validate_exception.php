@@ -1,11 +1,11 @@
 <?php
-/*
+/**
  * 验证类异常，可以返回给用户看的
  * YiluPHP vision 2.0
  * User: Jim.Wu
  * Date: 2021/01/29
  * Time: 23:38
- */
+ **/
 
 class validate_exception extends Exception
 {
