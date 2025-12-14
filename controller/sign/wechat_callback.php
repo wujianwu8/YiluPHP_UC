@@ -30,11 +30,12 @@ if(!empty($_SESSION['weixin_qr_login_code']) && strpos($state, 'weixin_qr_')===0
     $is_qrcode = true;
 }
 
+$vk = $_COOKIE['vk'];
 $openid = empty($token['unionid'])?$token['openid']:$token['unionid'];
 //如果仅仅是为了获取openid，此时可以返回到回调地址了
 if ($for_base==1){
     //将openid存入REDIS缓存
-    $cache_key = REDIS_KEY_TEMP_WX_OPENID.md5($_COOKIE['vk']);
+    $cache_key = REDIS_KEY_TEMP_WX_OPENID.md5($vk);
     redis_y::I()->setex($cache_key, TIME_DAY, $openid);
     //读取回调地址
     $callback = !empty($_SESSION['callback_for_wx_base'])?$_SESSION['callback_for_wx_base']:'/';
@@ -143,6 +144,57 @@ $data = [
 
 //存入临时表
 $data['id'] = model_try_to_sign_in::I()->insert_table($data);
+
+//允许微信直接注册和登录
+if (!empty($config['wechat_allow_direct_sign_in'])) {
+    if(!$uid = logic_uuid::I()->get_uuid('uid',1)){
+        return code(1, YiluPHP::I()->lang('failed_to_create_uid'));
+    }
+
+    $time = time();
+    $user_info = [
+        'uid' => $uid,
+        'mtime' => $time,
+        'ctime' => $time,
+
+        'type' => $data['identity_type'],
+        'identity' => $data['openid'],
+    ];
+    //去掉前后的空格
+    $nickname = trim($data['nickname']);
+    //连续多个空格只留一个
+    $nickname = preg_replace('/[ \f\n\r\t]+/',' ', $nickname);
+
+    isset($data['access_token']) && $user_info['access_token']=$data['access_token'];
+    isset($data['expires_at']) && $user_info['expires_at']=$data['expires_at'];
+    isset($data['refresh_token']) && $user_info['refresh_token']=$data['refresh_token'];
+    isset($data['gender']) && $user_info['gender'] = $data['gender'];
+    isset($data['birthday']) && $user_info['birthday'] = $data['birthday'];
+    isset($data['avatar']) && $user_info['avatar'] = $data['avatar'];
+    isset($data['country']) && $user_info['country'] = $data['country'];
+    isset($data['province']) && $user_info['province'] = $data['province'];
+    isset($data['city']) && $user_info['city'] = $data['city'];
+    if (isset($user_info['country'])){
+        $user_info['country'] = lib_address::I()->getCountryLangKey($user_info['country']);
+    }
+
+    //保证昵称的唯一性
+    $user_info['nickname'] = model_user::I()->get_an_available_nickname($nickname);
+
+    //保存入库
+    logic_user::I()->create_user($user_info);
+    //登录用户
+    logic_user::I()->create_login_session($user_info);
+    logic_user::I()->auto_jump(false, $user_info['tlt']);
+
+//    $cache_key_vk = 'login_redirect_uri:'.md5($vk);
+//    if (!$redirect_uri = redis_y::I()->get($cache_key_vk)) {
+//        $redirect_uri = '/dashboard';
+//    }
+//    header('Location: ' . $redirect_uri);
+//    exit;
+}
+
 if ($is_qrcode){
     $code = $_SESSION['weixin_qr_login_code'];
     $_SESSION['weixin_qr_login_code']=null;

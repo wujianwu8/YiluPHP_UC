@@ -16,6 +16,18 @@ if (!empty($self_info['uid'])){
     }
 }
 
+//把URL中的redirect_uri参数存入cookie中
+if (!empty($_REQUEST['redirect_uri'])){
+    $redirect_uri = trim($_REQUEST['redirect_uri']);
+    if ($redirect_uri!=''){
+        setcookie('redirect_uri', $redirect_uri, time()+TIME_DAY, '/');
+//        $vk = $_COOKIE['vk'];
+//        $cache_key_vk = 'login_redirect_uri:'.md5($vk);
+//        redis_y::I()->set($cache_key_vk, $redirect_uri);
+//        redis_y::I()->expire($cache_key_vk, TIME_DAY);
+    }
+}
+
 $params = [
     'area_list' => lib_ip::getAutoAreaList(),
 ];
