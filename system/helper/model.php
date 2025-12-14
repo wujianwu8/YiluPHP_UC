@@ -665,6 +665,7 @@ class model
             }
             //若表中无自增的主键字段，则返回0
             $res = mysql::I($item['connection'])->lastInsertId();
+            $res = ($res === 0 || $res === '0') ? ($data['id'] ?? $res) : $res;
         }
         unset($data, $tables, $keys, $sql);
         return $res;
@@ -1078,7 +1079,7 @@ class model
     public function add_limit_field_count($vk_redis_key, $ip_redis_key, $ip_short_count_limit, $ip_hour_count_limit, $where, $data,
                                           string $extend_sql = '', array $extend_params = [], $table_name = null, $connection = null)
     {
-        $max_time = round(microtime(true) * 10000);
+        $max_time = round(microtime(true) * 1000);
         //增加该ip的浏览记录
         redis_y::I()->rpush($ip_redis_key, $max_time);
         //修剪掉超过3万的老数据
@@ -1088,12 +1089,12 @@ class model
 
         //检查该ip在5秒内的浏览频率是否超过1千
         $value = redis_y::I()->lindex($ip_redis_key, $ip_short_count_limit);
-        if (!empty($value) && $value >= $max_time - 50000) {
+        if (!empty($value) && $value >= $max_time - 5000) {
             return false;
         }
         //检查该ip在1小时内的浏览频率是否超过3万
         $value = redis_y::I()->lindex($ip_redis_key, 0);
-        if (redis_y::I()->llen($ip_redis_key) >= $ip_hour_count_limit && $value >= $max_time - (TIME_HOUR * 10000)) {
+        if (redis_y::I()->llen($ip_redis_key) >= $ip_hour_count_limit && $value >= $max_time - (TIME_HOUR * 1000)) {
             return false;
         }
         //检查该vk在10分钟内是否增加过浏览次数
@@ -1171,5 +1172,44 @@ class model
             write_applog('ERROR', $e->getMessage());
             throw new Exception($e->getMessage(), CODE_DB_ERR);
         }
+    }
+
+    /**
+     * @name 开始数据库事务
+     * @desc 开始数据库事务
+     */
+    function begin_transaction($connection = ''): void
+    {
+        if ($connection === '' || $connection === null || $connection === false) {
+            $connection = $this->sub_connection();
+        }
+        mysql::I($connection)->beginTransaction();
+        unset($connection);
+    }
+
+    /**
+     * @name 提交事务
+     * @desc 提交事务
+     */
+    function commit($connection = ''): void
+    {
+        if ($connection === '' || $connection === null || $connection === false) {
+            $connection = $this->sub_connection();
+        }
+        mysql::I($connection)->commit();
+        unset($connection);
+    }
+
+    /**
+     * @name 回滚事务
+     * @desc 回滚事务
+     */
+    function rollback($connection = ''): void
+    {
+        if ($connection === '' || $connection === null || $connection === false) {
+            $connection = $this->sub_connection();
+        }
+        mysql::I($connection)->rollback();
+        unset($connection);
     }
 }

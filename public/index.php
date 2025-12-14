@@ -441,6 +441,8 @@ function json($code, $msg='', $data=[])
     $res = json_encode($res, JSON_UNESCAPED_UNICODE);
     write_applog('RESPONSE', $res);
     after_controller();
+    //在头信息中设置内容为JSON
+    header('Content-Type: application/json; charset=utf-8');
     return $res;
 }
 
@@ -479,6 +481,8 @@ function jsonp($code, $msg='', $data=[])
     $res = $fun.'('.$code.', "'.htmlspecialchars($msg).'", '.$data.', '.$backtrace.');';
     write_applog('RESPONSE', $res);
     after_controller();
+    //在头信息中设置内容为Javascript
+    header('Content-Type: application/javascript; charset=utf-8');
     return $res;
 }
 
