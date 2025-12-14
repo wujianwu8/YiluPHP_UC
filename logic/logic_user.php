@@ -522,6 +522,7 @@ class logic_user
         if (!empty($_COOKIE['redirect_uri'])){
             $redirect_uri = trim($_COOKIE['redirect_uri']);
             if ($redirect_uri!=''){
+                setcookie('redirect_uri', '', time()-3600, '/');
                 $redirect_uri = $tlt ? $url_add_params($redirect_uri, ['tlt'=>$tlt]) : $redirect_uri;
                 if ($return){
                     return $redirect_uri;
