@@ -22,7 +22,14 @@ class model_user_identity extends model
      */
     public function get_user_count()
     {
-        return redis_y::I()->hlen(REDIS_KEY_MOBILE_UID);
+        if (empty($GLOBALS['config']['split_table'])) {
+            return model_user::I()->count([]);
+        }
+        $total = 0;
+        for ($i = 0; $i < 100; $i++) {
+            $total += model_user::I()->count([], $i);
+        }
+        return $total;
     }
 
     /**
