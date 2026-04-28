@@ -53,6 +53,7 @@ $config = [
         '/role/users/{role_id}' => '/role/users/role_id/{role_id}',
         '/language/edit_project/{project_id}' => '/language/edit_project/project_id/{project_id}',
         '/language/table/{project_id}' => '/language/table/project_id/{project_id}',
+        '/invitation/edit/{id}' => '/invitation/edit/id/{id}',
     ],
 
     /*

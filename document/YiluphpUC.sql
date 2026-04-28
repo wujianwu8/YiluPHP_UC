@@ -138,7 +138,7 @@ CREATE TABLE `menus` (
 --  Records of `menus`
 -- ----------------------------
 BEGIN;
-INSERT INTO `menus` VALUES ('2', '4', 'SYSTEM', '', 'menu_account_setting', 'TOP', '/setting/user_info', '', 'ajax_main_content', '300', '', '\\/setting\\/user_info.*', '1569243258'), ('3', '0', 'SYSTEM', '', 'menu_account_setting', 'TOP', '/setting/user_info', '', 'ajax_main_content', '200', '', '\\/setting\\/user_info.*', '1569243259'), ('4', '0', 'SYSTEM', '', 'nav-user-avatar', 'TOP', '', '', 'ajax_main_content', '500', '', '', '1569243260'), ('5', '4', 'SYSTEM', '', 'menu_modify_avatar', 'TOP', '/setting/modify_avatar', '', 'ajax_main_content', '350', '', '\\/setting\\/modify_avatar.*', '1569243261'), ('8', '0', 'SYSTEM', '', 'menu_change_password', 'TOP', '/setting/modify_password', '', 'ajax_main_content', '300', '', '\\/setting\\/modify_password.*', '1569243264'), ('9', '0', 'SYSTEM', '', 'menu_modify_avatar', 'TOP', '/setting/modify_avatar', '', 'ajax_main_content', '250', '', '\\/setting\\/modify_avatar.*', '1569243265'), ('12', '4', 'SYSTEM', '', 'menu_change_password', 'TOP', '/setting/modify_password', '', 'ajax_main_content', '400', '', '\\/setting\\/modify_password.*', '1569243268'), ('13', '4', 'SYSTEM', '', 'menu_sign_out', 'TOP', '/sign/out', '', '', '500', '', '\\/sign\\/out', '1569243269'), ('14', '0', 'SYSTEM', 'fa-user', 'menu_user_manage', 'LEFT', '', '', 'ajax_main_content', '200', '', 'none', '1569243270'), ('15', '14', 'SYSTEM', 'fa-address-book', 'menu_user_list', 'LEFT', '/user/list', '', 'ajax_main_content', '200', 'user_center:view_user_list', '\\/user\\/list.*', '1569243271'), ('16', '14', 'SYSTEM', 'fa-user-times', 'menu_blocked_user', 'LEFT', '/user/forbidden', '', 'ajax_main_content', '250', 'user_center:view_block_user_list', '\\/user\\/forbidden.*', '1569243272'), ('17', '14', 'SYSTEM', 'fa-user-secret', 'menu_complained_user', 'LEFT', '/complaint/list', '', 'ajax_main_content', '300', 'user_center:view_complaint_user_list', '\\/complaint.*', '1569243273'), ('18', '0', 'SYSTEM', 'fa-th', 'menu_application_manage', 'LEFT', '/application/list', '', 'ajax_main_content', '250', 'user_center:view_application_list', '\\/application\\/.*', '1569243274'), ('19', '0', 'SYSTEM', 'fa-envelope', 'menu_user_feedback', 'LEFT', '/feedback/list', '', 'ajax_main_content', '350', 'user_center:view_feedback', '\\/feedback.*', '1569243275'), ('20', '0', 'SYSTEM', 'fa-bars', 'menu_custom_menu', 'LEFT', '/menus/list', '', 'ajax_main_content', '301', 'user_center:view_customize_menu', '\\/menus\\/.*', '1569243276'), ('21', '14', 'SYSTEM', 'fa-user-o', 'menu_role_manage', 'LEFT', '/role/list', '', 'ajax_main_content', '230', 'user_center:view_role_list', '\\/role\\/.*', '1570778382'), ('22', '0', 'SYSTEM', 'fa-language', 'menu_language_pack', 'LEFT', '/language/project', '', 'ajax_main_content', '270', 'user_center:view_lang_project_list', '\\/language\\/.*', '1570961480');
+INSERT INTO `menus` VALUES ('2', '4', 'SYSTEM', '', 'menu_account_setting', 'TOP', '/setting/user_info', '', 'ajax_main_content', '300', '', '\\/setting\\/user_info.*', '1569243258'), ('3', '0', 'SYSTEM', '', 'menu_account_setting', 'TOP', '/setting/user_info', '', 'ajax_main_content', '200', '', '\\/setting\\/user_info.*', '1569243259'), ('4', '0', 'SYSTEM', '', 'nav-user-avatar', 'TOP', '', '', 'ajax_main_content', '500', '', '', '1569243260'), ('5', '4', 'SYSTEM', '', 'menu_modify_avatar', 'TOP', '/setting/modify_avatar', '', 'ajax_main_content', '350', '', '\\/setting\\/modify_avatar.*', '1569243261'), ('8', '0', 'SYSTEM', '', 'menu_change_password', 'TOP', '/setting/modify_password', '', 'ajax_main_content', '300', '', '\\/setting\\/modify_password.*', '1569243264'), ('9', '0', 'SYSTEM', '', 'menu_modify_avatar', 'TOP', '/setting/modify_avatar', '', 'ajax_main_content', '250', '', '\\/setting\\/modify_avatar.*', '1569243265'), ('12', '4', 'SYSTEM', '', 'menu_change_password', 'TOP', '/setting/modify_password', '', 'ajax_main_content', '400', '', '\\/setting\\/modify_password.*', '1569243268'), ('13', '4', 'SYSTEM', '', 'menu_sign_out', 'TOP', '/sign/out', '', '', '500', '', '\\/sign\\/out', '1569243269'), ('14', '0', 'SYSTEM', 'fa-user', 'menu_user_manage', 'LEFT', '', '', 'ajax_main_content', '200', '', 'none', '1569243270'), ('15', '14', 'SYSTEM', 'fa-address-book', 'menu_user_list', 'LEFT', '/user/list', '', 'ajax_main_content', '200', 'user_center:view_user_list', '\\/user\\/list.*', '1569243271'), ('16', '14', 'SYSTEM', 'fa-user-times', 'menu_blocked_user', 'LEFT', '/user/forbidden', '', 'ajax_main_content', '250', 'user_center:view_block_user_list', '\\/user\\/forbidden.*', '1569243272'), ('17', '14', 'SYSTEM', 'fa-user-secret', 'menu_complained_user', 'LEFT', '/complaint/list', '', 'ajax_main_content', '300', 'user_center:view_complaint_user_list', '\\/complaint.*', '1569243273'), ('18', '0', 'SYSTEM', 'fa-th', 'menu_application_manage', 'LEFT', '/application/list', '', 'ajax_main_content', '250', 'user_center:view_application_list', '\\/application\\/.*', '1569243274'), ('19', '0', 'SYSTEM', 'fa-envelope', 'menu_user_feedback', 'LEFT', '/feedback/list', '', 'ajax_main_content', '350', 'user_center:view_feedback', '\\/feedback.*', '1569243275'), ('20', '0', 'SYSTEM', 'fa-bars', 'menu_custom_menu', 'LEFT', '/menus/list', '', 'ajax_main_content', '301', 'user_center:view_customize_menu', '\\/menus\\/.*', '1569243276'), ('21', '14', 'SYSTEM', 'fa-user-o', 'menu_role_manage', 'LEFT', '/role/list', '', 'ajax_main_content', '230', 'user_center:view_role_list', '\\/role\\/.*', '1570778382'), ('22', '0', 'SYSTEM', 'fa-language', 'menu_language_pack', 'LEFT', '/language/project', '', 'ajax_main_content', '270', 'user_center:view_lang_project_list', '\\/language\\/.*', '1570961480'), ('23', '0', 'SYSTEM', 'fa-link', 'invitation_link', 'LEFT', '/invitation/list', '', '', '450', 'user_center:view_invitation_link', '\\/invitation\\/list', '1777380000'), ('24', '0', 'SYSTEM', 'fa-share-square-o', 'invite_register', 'LEFT', '/invitation/register', '', '', '400', '', '\\/invitation\\/register', '1777380000');
 COMMIT;
 
 -- ----------------------------
@@ -310,6 +310,15 @@ INSERT INTO `permission` (`app_id`, `permission_key`, `permission_name`, `descri
 INSERT INTO `permission` (`app_id`, `permission_key`, `permission_name`, `description`, `is_fixed`) VALUES ('user_center', 'edit_permission', 'lang_edit_permission', '', '1');
 INSERT INTO `permission` (`app_id`, `permission_key`, `permission_name`, `description`, `is_fixed`) VALUES ('user_center', 'add_permission', 'lang_add_permission', '', '1');
 INSERT INTO `permission` (`app_id`, `permission_key`, `permission_name`, `description`, `is_fixed`) VALUES ('user_center', 'view_permission', 'lang_view_permission', '', '1');
+INSERT INTO `permission` (`app_id`, `permission_key`, `permission_name`, `description`, `is_fixed`) VALUES ('user_center', 'grant_grant_view_invitation_link', 'lang_view_invitation_link', '', '1');
+INSERT INTO `permission` (`app_id`, `permission_key`, `permission_name`, `description`, `is_fixed`) VALUES ('user_center', 'grant_view_invitation_link', 'lang_view_invitation_link', '', '1');
+INSERT INTO `permission` (`app_id`, `permission_key`, `permission_name`, `description`, `is_fixed`) VALUES ('user_center', 'view_invitation_link', 'lang_view_invitation_link', '', '1');
+INSERT INTO `permission` (`app_id`, `permission_key`, `permission_name`, `description`, `is_fixed`) VALUES ('user_center', 'grant_grant_add_invitation_link', 'lang_add_invitation_link', '', '1');
+INSERT INTO `permission` (`app_id`, `permission_key`, `permission_name`, `description`, `is_fixed`) VALUES ('user_center', 'grant_add_invitation_link', 'lang_add_invitation_link', '', '1');
+INSERT INTO `permission` (`app_id`, `permission_key`, `permission_name`, `description`, `is_fixed`) VALUES ('user_center', 'add_invitation_link', 'lang_add_invitation_link', '', '1');
+INSERT INTO `permission` (`app_id`, `permission_key`, `permission_name`, `description`, `is_fixed`) VALUES ('user_center', 'grant_grant_edit_invitation_link', 'lang_edit_invitation_link', '', '1');
+INSERT INTO `permission` (`app_id`, `permission_key`, `permission_name`, `description`, `is_fixed`) VALUES ('user_center', 'grant_edit_invitation_link', 'lang_edit_invitation_link', '', '1');
+INSERT INTO `permission` (`app_id`, `permission_key`, `permission_name`, `description`, `is_fixed`) VALUES ('user_center', 'edit_invitation_link', 'lang_edit_invitation_link', '', '1');
 
 -- ----------------------------
 --  Table structure for `role`
@@ -413,6 +422,8 @@ CREATE TABLE `user` (
   `city` varchar(20) CHARACTER SET utf8 DEFAULT NULL,
   `last_active` int(10) NOT NULL DEFAULT '0' COMMENT '最后活跃时间戳',
   `ctime` int(10) NOT NULL DEFAULT '0' COMMENT '创建的时间戳',
+  `register_invitation_link_id` bigint(20) unsigned NOT NULL DEFAULT '0' COMMENT '注册时的邀请链接ID',
+  `register_inviter_uid` bigint(20) unsigned NOT NULL DEFAULT '0' COMMENT '注册时的邀请人UID',
   PRIMARY KEY (`uid`),
   UNIQUE KEY `idx_nickname` (`nickname`)
 ) ENGINE=InnoDB AUTO_INCREMENT=84 DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci ROW_FORMAT=COMPACT COMMENT='用户的基本资料';
@@ -421,7 +432,7 @@ CREATE TABLE `user` (
 --  Records of `user` Admin默认密码是：YiluPHP@2019
 -- ----------------------------
 BEGIN;
-INSERT INTO `user` VALUES ('1', 'Admin', 'male', '28161c63e4b69043b3f3a285a6f17e4f', '5e0075440f8ec', '2001-10-15', '1', 'https://yiluphp.oss-cn-shenzhen.aliyuncs.com/avatar/2019/1208/15/300x300WxHca2d848d018276f4dedbc131a0752af0.png', 'country_china', '广东省', '深圳市', '1576984101', '1568032612');
+INSERT INTO `user` VALUES ('1', 'Admin', 'male', '28161c63e4b69043b3f3a285a6f17e4f', '5e0075440f8ec', '2001-10-15', '1', 'https://yiluphp.oss-cn-shenzhen.aliyuncs.com/avatar/2019/1208/15/300x300WxHca2d848d018276f4dedbc131a0752af0.png', 'country_china', '广东省', '深圳市', '1576984101', '1568032612', '0', '0');
 COMMIT;
 
 -- ----------------------------
@@ -541,6 +552,26 @@ CREATE TABLE `user_role` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 ROW_FORMAT=COMPACT;
 
 SET FOREIGN_KEY_CHECKS = 1;
+
+
+-- ----------------------------
+--  Table structure for `invitation_link`
+-- ----------------------------
+DROP TABLE IF EXISTS `invitation_link`;
+CREATE TABLE `invitation_link` (
+  `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
+  `uid` bigint(20) unsigned NOT NULL COMMENT '所属用户ID',
+  `scene` varchar(32) NOT NULL COMMENT '邀请场景，如register',
+  `invite_code` varchar(64) NOT NULL COMMENT '邀请码',
+  `cookie_ttl` int(10) unsigned NOT NULL DEFAULT '1296000' COMMENT 'cookie有效期，秒，默认15天',
+  `remark` varchar(255) NOT NULL DEFAULT '' COMMENT '备注',
+  `mtime` int(10) unsigned NOT NULL DEFAULT '0' COMMENT '最后修改时间',
+  `ctime` int(10) unsigned NOT NULL DEFAULT '0' COMMENT '创建时间',
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `uniq_invite_code` (`invite_code`),
+  UNIQUE KEY `uniq_uid_scene` (`uid`,`scene`),
+  KEY `idx_scene` (`scene`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='邀请链接';
 
 
 DROP TABLE IF EXISTS `uuid_stock`;

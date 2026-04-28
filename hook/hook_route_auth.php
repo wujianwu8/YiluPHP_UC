@@ -50,6 +50,9 @@ class hook_route_auth extends hook
             '/^\/internal\/check_user_permission/',
             '/^\/internal\/select_permission_users/',
             '/^\/internal\/delete_permission_by_key/',
+            '/^\/internal\/find_invitation_link_by_code/',
+            '/^\/internal\/find_invitation_link_by_uid/',
+            '/^\/internal\/create_invitation_link/',
         ],
         'get_login' => [
             '/^\/user\/list/',
@@ -88,6 +91,10 @@ class hook_route_auth extends hook
             '/^\/language\/add_project/',
             '/^\/language\/edit_project/',
             '/^\/language\/table/',
+            '/^\/invitation\/list/',
+            '/^\/invitation\/add/',
+            '/^\/invitation\/edit/',
+            '/^\/invitation\/register/',
         ],
         'post_login' => [
             '/^\/user\/save_add/',
@@ -136,6 +143,9 @@ class hook_route_auth extends hook
             '/^\/language\/save_lang_output_type/',
             '/^\/uploader\/form_image/',
             '/^\/uploader\/binary_image/',
+            '/^\/invitation\/save_add/',
+            '/^\/invitation\/save_edit/',
+            '/^\/invitation\/change_code/',
         ],
 
 	];

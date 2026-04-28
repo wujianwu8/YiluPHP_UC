@@ -140,6 +140,16 @@ if(!$nickname){
 //保证昵称的唯一性
 $user_info['nickname'] = model_user::I()->get_an_available_nickname($nickname);
 
+$register_cookie_name = logic_invitation::I()->get_cookie_name(logic_invitation::SCENE_REGISTER);
+if (!empty($_COOKIE[$register_cookie_name])) {
+    if ($invitation_link = logic_invitation::I()->find_by_invite_code($_COOKIE[$register_cookie_name])) {
+        if ($invitation_link['scene'] === logic_invitation::SCENE_REGISTER) {
+            $user_info['register_invitation_link_id'] = $invitation_link['id'];
+            $user_info['register_inviter_uid'] = $invitation_link['uid'];
+        }
+    }
+}
+
 //保存入库
 logic_user::I()->create_user($user_info);
 if($is_bind===1){

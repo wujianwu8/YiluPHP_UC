@@ -36,6 +36,7 @@ class logic_menus extends base_class
             foreach ($data as $key => $item) {
                 $data[$key]['children'] = model_menus::I()->select_all(['parent_menu' => $item['id']], 'weight ASC, ctime DESC');
             }
+
             if ($data) {
                 redis_y::I()->set(REDIS_KEY_ALL_MENUS, json_encode($data));
                 redis_y::I()->expire(REDIS_KEY_ALL_MENUS, TIME_DAY);
@@ -76,6 +77,7 @@ class logic_menus extends base_class
                 }
             }
         }
+        unset($app);
 		return $data;
     }
 

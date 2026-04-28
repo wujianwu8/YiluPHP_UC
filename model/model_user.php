@@ -143,6 +143,10 @@ class model_user extends model
             $where_array[] = ' u.`status`=:status ';
             $bind_value[':status'] = $where['status'];
         }
+        if (isset($where['register_inviter_uid'])) {
+            $where_array[] = ' u.`register_inviter_uid`=:register_inviter_uid ';
+            $bind_value[':register_inviter_uid'] = $where['register_inviter_uid'];
+        }
         if (isset($where['identity'])) {
             $where_array[] = ' u.`uid`=i.uid AND i.identity LIKE :identity ';
             $bind_value[':identity'] = '%' . $where['identity'] . '%';
@@ -241,6 +245,44 @@ class model_user extends model
             }
             return $res;
         }
+    }
+
+    /**
+     * @name 根据邀请人读取注册用户数量
+     * @desc
+     * @param integer $register_inviter_uid 邀请人用户ID
+     * @param string $field_value 用于分表的字段值
+     * @return integer
+     */
+    public function count_register_invited_users(int $register_inviter_uid, $field_value = null)
+    {
+        $table_name = $this->sub_table($field_value);
+        $connection = $this->sub_connection($field_value);
+        $sql = 'SELECT COUNT(1) AS total FROM `' . $table_name . '` WHERE register_inviter_uid=:register_inviter_uid';
+        $stmt = mysql::I($connection)->prepare($sql);
+        $stmt->bindValue(':register_inviter_uid', $register_inviter_uid, PDO::PARAM_INT);
+        $stmt->execute();
+        $res = $stmt->fetch(PDO::FETCH_ASSOC);
+        return empty($res['total']) ? 0 : intval($res['total']);
+    }
+
+    /**
+     * @name 根据邀请人读取注册用户
+     * @desc
+     * @param integer $register_inviter_uid 邀请人用户ID
+     * @param string $fields 需要返回的字段
+     * @param string $field_value 用于分表的字段值
+     * @return array
+     */
+    public function select_register_invited_users(int $register_inviter_uid, string $fields = '*', $field_value = null)
+    {
+        $table_name = $this->sub_table($field_value);
+        $connection = $this->sub_connection($field_value);
+        $sql = 'SELECT ' . $fields . ' FROM `' . $table_name . '` WHERE register_inviter_uid=:register_inviter_uid ORDER BY ctime DESC';
+        $stmt = mysql::I($connection)->prepare($sql);
+        $stmt->bindValue(':register_inviter_uid', $register_inviter_uid, PDO::PARAM_INT);
+        $stmt->execute();
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
 
 }

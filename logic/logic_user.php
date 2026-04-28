@@ -90,7 +90,7 @@ class logic_user
 					'last_active' => $time,
 					'ctime' => $time,
 			];
-			$fields = ['nickname', 'gender', 'password', 'birthday', 'status', 'avatar', 'country', 'province', 'city'];
+			$fields = ['nickname', 'gender', 'password', 'birthday', 'status', 'avatar', 'country', 'province', 'city', 'register_invitation_link_id', 'register_inviter_uid'];
 			foreach ($fields as $item) {
 				if (isset($data[$item])) {
 					if ($item == 'password') {
@@ -169,7 +169,7 @@ class logic_user
      */
     public function find_user_safe_info($uid){
         return model_user::I()->find_table(['uid'=>$uid],
-            'uid,nickname,gender,birthday,status,avatar,country,province,city,last_active,ctime', $uid);
+            'uid,nickname,gender,birthday,status,avatar,country,province,city,last_active,ctime,register_invitation_link_id,register_inviter_uid', $uid);
     }
 
     /**
@@ -713,6 +713,67 @@ class logic_user
             }
         }
         return $users;
+    }
+
+    /**
+     * @name 统计邀请注册过来的用户数量
+     * @desc
+     * @param integer $register_inviter_uid 邀请人用户ID
+     * @return integer
+     */
+    public function count_register_invited_users(int $register_inviter_uid)
+    {
+        if ($register_inviter_uid < 1) {
+            return 0;
+        }
+        if (empty($GLOBALS['config']['split_table'])) {
+            return model_user::I()->count_register_invited_users($register_inviter_uid);
+        }
+        $total = 0;
+        for ($i = 0; $i < 100; $i++) {
+            $total += model_user::I()->count_register_invited_users($register_inviter_uid, $i);
+        }
+        return $total;
+    }
+
+    /**
+     * @name 分页读取邀请注册过来的用户
+     * @desc
+     * @param integer $register_inviter_uid 邀请人用户ID
+     * @param integer $page 页码
+     * @param integer $page_size 每页条数
+     * @return array
+     */
+    public function paging_select_register_invited_users(int $register_inviter_uid, int $page = 1, int $page_size = 10)
+    {
+        if ($register_inviter_uid < 1) {
+            return [];
+        }
+        if (empty($GLOBALS['config']['split_table'])) {
+            $users = model_user::I()->select_register_invited_users($register_inviter_uid);
+            $start = ($page - 1) * $page_size;
+            $start < 0 && $start = 0;
+            return array_slice($users, $start, $page_size);
+        }
+        $users = [];
+        for ($i = 0; $i < 100; $i++) {
+            if ($tmp = model_user::I()->select_register_invited_users(
+                $register_inviter_uid,
+                'uid,nickname,gender,birthday,status,avatar,country,province,city,last_active,ctime,register_invitation_link_id,register_inviter_uid',
+                $i
+            )) {
+                $users = array_merge($users, $tmp);
+            }
+        }
+        usort($users, function ($a, $b) {
+            if ($a['ctime'] == $b['ctime']) {
+                return 0;
+            }
+            return $a['ctime'] < $b['ctime'] ? 1 : -1;
+        });
+        $start = ($page - 1) * $page_size;
+        $start < 0 && $start = 0;
+        return array_slice($users, $start, $page_size);
     }
 
     /**

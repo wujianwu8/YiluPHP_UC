@@ -104,6 +104,7 @@ $config = [
         '/role/users/{role_id}' => '/role/users/role_id/{role_id}',
         '/language/edit_project/{project_id}' => '/language/edit_project/project_id/{project_id}',
         '/language/table/{project_id}' => '/language/table/project_id/{project_id}',
+        '/invitation/edit/{id}' => '/invitation/edit/id/{id}',
     ],
 
     /**
@@ -112,7 +113,7 @@ $config = [
     'multi_Lang' => true,
 
     //用户默认头像
-    'default_avatar' => '/img/default_avatar.gif',
+    'default_avatar' => 'https://yiluphp.oss-cn-shenzhen.aliyuncs.com/passport/img/default_avatar.gif',
 
     //是否开放注册
     'open_sign_up' => true,
@@ -122,7 +123,7 @@ $config = [
 
     //如果静态文件存储在其它平台，在此配置静态文件访问地址前缀，然后执行CLI命令给引入的静态文件加上访问前缀
     //运行的命令是：/你的php目录/php /你的项目目录/yilu build_necessary_redis_data
-    'static_file_url_prefix' => '', //如：'https://yiluphp.oss-cn-shenzhen.aliyuncs.com/passport'
+    'static_file_url_prefix' => 'https://yiluphp.oss-cn-shenzhen.aliyuncs.com/passport', //如：'https://yiluphp.oss-cn-shenzhen.aliyuncs.com/passport'
 ];
 
 /*
