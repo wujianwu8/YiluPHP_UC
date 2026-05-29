@@ -82,7 +82,7 @@ $head_info = [
             <label><?php echo YiluPHP::I()->lang('login_mobile'); ?></label>
         </div>
         <div class="col-sm-7">
-            <?php echo $user_info['mobile']; ?>
+            <?php echo $user_info['mobile'] ?: '-'; ?>
         </div>
     </div>
     <div class="row mb-2">
