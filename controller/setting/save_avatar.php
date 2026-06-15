@@ -49,10 +49,14 @@ $fp = fopen(APP_PATH.'static'.$path.$file_name, 'w');
 fwrite($fp, $data);
 fclose($fp);
 
-$avatar = $path.$file_name;
+$avatar = $local_url = $path.$file_name;
 if (!empty($GLOBALS['config']['oss']['aliyun']['enable'])) {
     $avatar = tool_oss::I()->upload_file(APP_PATH . 'static/' . substr($avatar, 1));
 }
+
+//文件上传记录保存入库
+model_file::I()->insert_file($local_url, 'avatar', intval($self_info['uid']), client_ip());
+
 $data = [
     'avatar'=>$avatar,
 ];

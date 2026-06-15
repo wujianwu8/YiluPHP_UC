@@ -52,13 +52,13 @@ CREATE TABLE `email_code_record` (
 DROP TABLE IF EXISTS `file`;
 CREATE TABLE `file` (
   `file_id` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
-  `url` varchar(200) NOT NULL,
-  `type` enum('avatar') NOT NULL,
-  `create_at` int(10) NOT NULL,
-  `ip` varchar(20) DEFAULT NULL,
-  `uid` bigint(20) DEFAULT NULL,
+  `url` varchar(512) NOT NULL COMMENT '文件访问地址',
+  `type` varchar(32) NOT NULL DEFAULT '' COMMENT '文件用途类型，由各子系统自定义，如avatar',
+  `create_at` int(10) NOT NULL COMMENT '上传时间戳',
+  `ip` varchar(20) DEFAULT NULL COMMENT '上传者IP',
+  `uid` bigint(20) DEFAULT NULL COMMENT '上传者用户ID',
   PRIMARY KEY (`file_id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8 ROW_FORMAT=COMPACT;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 ROW_FORMAT=COMPACT COMMENT='上传文件记录表';
 
 -- ----------------------------
 --  Table structure for `group`

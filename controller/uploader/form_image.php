@@ -5,6 +5,7 @@
  * @method POST
  * @uri /uploader/form_image
  * @param binary file 文件参数名 必选 图片文件的参数名
+ * @param string type 文件用途类型 可选 对应file表的type字段，由各子系统自定义，如avatar，默认空字符串，为空意味着以后这个文件很难追
  * @return json
  * {
  *      code: 0
@@ -30,18 +31,21 @@ if (!$file_name = tool_file_uploader::upload_one($_FILES['image'], APP_PATH.'sta
     return code(3, tool_file_uploader::$error);
 }
 
-$file_url = $path.$file_name;
+$file_url = $local_url = $path.$file_name;
 if (!empty($GLOBALS['config']['oss']['aliyun']['enable'])) {
     $file_url = tool_oss::I()->upload_file(APP_PATH . 'static/' . substr($file_url, 1));
 }
 $with = input::I()->request_int('with', 1000);
 $quality = input::I()->request_int('quality', 80);
+$type = (string)input::I()->request('type', '');
 $data = [
     'original_url'=>$file_url,
     'file_url'=>tool_oss::I()->aliyun_thumb_image($file_url, $with, null, $quality, 'webp'),
 ];
 
 //文件上传记录保存入库
+$uid = empty($self_info['uid']) ? 0 : intval($self_info['uid']);
+model_file::I()->insert_file($local_url, $type, $uid, client_ip());
 
 //返回结果
 return json(0,'上传成功', $data);
