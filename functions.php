@@ -202,3 +202,20 @@ function is_weixin($only_personal = false){
     }
     return false;
 }
+
+/**
+ * 是否在QQ内的浏览器里
+ * @return bool true是 false否
+ */
+function is_in_qq(){
+    $user_agent = $_SERVER['HTTP_USER_AGENT'];
+    if(strpos($user_agent, 'QQBrowser') !== false){
+        if(strpos($user_agent, '_SQ_') !== false){
+            return true;  //QQ内置浏览器
+        }
+        else{
+            return false;  //QQ浏览器
+        }
+    }
+    return false;
+}

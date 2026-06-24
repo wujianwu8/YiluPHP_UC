@@ -24,7 +24,7 @@
           var _hmt = _hmt || [];
           (function() {
               var hm = document.createElement("script");
-              hm.src = "https://hm.baidu.com/hm.js?802be9112dbcdf29bc10f0eabed49dca";
+              hm.src = "https://hm.baidu.com/hm.js?2412ab8dbee3840292ec83bf79f94582";
               var s = document.getElementsByTagName("script")[0];
               s.parentNode.insertBefore(hm, s);
           })();
@@ -78,7 +78,7 @@
               </div>
           </div>
           <div style="color: #aaaaaa; font-size: 12px; margin-bottom: 10px;">
-              <input type="checkbox" checked id="agree_agreement" value="1">
+              <input type="checkbox" id="agree_agreement" value="1">
               <?php echo YiluPHP::I()->lang('have_agree_agreement', ['website_index'=>$config['website_index']]); ?>
           </div>
         <button class="btn btn-lg btn-primary btn-block" type="submit" id="registerButton"><?php echo YiluPHP::I()->lang('sign_up'); ?></button>

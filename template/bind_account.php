@@ -22,7 +22,7 @@
         var _hmt = _hmt || [];
         (function() {
             var hm = document.createElement("script");
-            hm.src = "https://hm.baidu.com/hm.js?802be9112dbcdf29bc10f0eabed49dca";
+            hm.src = "https://hm.baidu.com/hm.js?2412ab8dbee3840292ec83bf79f94582";
             var s = document.getElementsByTagName("script")[0];
             s.parentNode.insertBefore(hm, s);
         })();
@@ -49,7 +49,7 @@
             <span class="existing-account"><?php echo YiluPHP::I()->lang('bind_existing_account'); ?></span>
             <span class="new-account"><?php echo YiluPHP::I()->lang('bind_new_account'); ?></span>
         </div>
-        <form class="new-account-form" name="new-account-form" onsubmit="return submitRegisterForm(this)">
+        <form class="new-account-form" name="new-account-form" method="post" onsubmit="return submitRegisterForm(this)">
             <input type="hidden" name="is_bind" value="1">
             <div><?php echo YiluPHP::I()->lang('your_mobile_located_in'); ?></div>
             <div class="mb-3">
@@ -82,9 +82,13 @@
                     </div>
                 </div>
             </div>
+            <div style="color: #aaaaaa; font-size: 12px; margin-bottom: 10px;">
+                <input type="checkbox" id="agree_agreement" value="1">
+                <?php echo YiluPHP::I()->lang('have_agree_agreement', ['website_index'=>$config['website_index']]); ?>
+            </div>
             <button class="btn btn-lg btn-primary btn-block" type="submit" id="registerButton"><?php echo YiluPHP::I()->lang('sign_up_and_bind'); ?></button>
         </form>
-        <form class="existing-account-form" name="existing-account-form" onsubmit="return submitLoginForm(this)">
+        <form class="existing-account-form" name="existing-account-form" method="post" onsubmit="return submitLoginForm(this)">
             <input type="hidden" name="is_bind" value="1">
             <div class="mb-3">
                 <input type="text" id="identity" name="identity" class="form-control" placeholder="<?php echo YiluPHP::I()->lang('login_name_placeholder'); ?>" value="" required autofocus onchange="checkIdentityType()" />
@@ -188,7 +192,14 @@
                     break;
             }
         }
-        // console.log(params);
+
+        var diffTime = Math.round(new Date().getTime()/1000) - serverTime;
+        var password = {
+            time: Math.round(new Date().getTime()/1000) - diffTime,
+            data: params.password
+        };
+        params.password = JSON.stringify(password);
+
         params = rsaEncryptData(params, ["identity","password"]);
 //      console.log(params);
         $("#loginBind").addClass("btn_loading").attr("disabled", true);
@@ -256,6 +267,7 @@
 
 </script>
 <?php echo load_static('/include/js_no_logged_in.shtml'); ?>
+<script src="/js/language/<?php echo YiluPHP::I()->current_lang(); ?>.js"></script>
 <script type="text/javascript">var cnzz_protocol = (("https:" == document.location.protocol) ? "https://" : "http://");document.write(unescape("%3Cspan id='cnzz_stat_icon_1278278388'%3E%3C/span%3E%3Cscript src='" + cnzz_protocol + "s4.cnzz.com/z_stat.php%3Fid%3D1278278388' type='text/javascript'%3E%3C/script%3E"));</script>
 </body>
 </html>

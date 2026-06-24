@@ -37,6 +37,14 @@ if($uid = model_user_identity::I()->find_uid_by_identity('QQ', $token['openid'])
     $user_info = logic_user::I()->login_by_uid($uid);
     $redirect_uri = logic_user::I()->auto_jump(true, $user_info['tlt']);
 
+    if (is_in_qq()) {
+        echo '<script>
+            window.location.href = "'.$redirect_uri.'";
+            window.close();
+        </script>';
+        exit;
+    }
+
     echo '<script>
         window.opener.location.href = "'.$redirect_uri.'";
         window.close();
