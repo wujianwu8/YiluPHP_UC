@@ -117,6 +117,8 @@ function write_applog(string $level, string $data = '')
     else {
         $txt = $datatime . $_SERVER['REQUEST_URI'] . ' , GET: ' . json_encode($_GET, JSON_UNESCAPED_UNICODE) . ' POST: ' . json_encode($_POST, JSON_UNESCAPED_UNICODE) . ' $_SERVER: ' . json_encode($_SERVER, JSON_UNESCAPED_UNICODE) . ' , RESPONSE: ' . $data;
     }
+    // 统一请求/响应日志可能包含POST数据、鉴权头或OSS预签名参数，落盘前必须兜底脱敏。
+    $txt = redact_sensitive_log_data($txt);
     $path = APP_PATH . 'logs/';
     if (!is_dir($path)) {
         mkdir($path, 0777, true);

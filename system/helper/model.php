@@ -73,6 +73,24 @@ class model
         }
     }
 
+    /**
+     * PDO 没有浮点参数类型。只有真正的 PHP 整数才按 PARAM_INT 绑定；
+     * 小数、超大整数和带前导零的数字字符串必须按字符串传递，避免精度丢失。
+     */
+    protected function pdo_param_type($value)
+    {
+        if (is_int($value)) {
+            return PDO::PARAM_INT;
+        }
+        if (is_bool($value)) {
+            return PDO::PARAM_BOOL;
+        }
+        if (is_null($value)) {
+            return PDO::PARAM_NULL;
+        }
+        return PDO::PARAM_STR;
+    }
+
     public function create_sub_table()
     {
         if (empty($this->_table)) {
@@ -270,8 +288,7 @@ class model
                         $plist = ':' . $key . '_' . implode(',:' . $key . '_', array_keys($value['value']));
                         $params = array_combine(explode(",", $plist), $value['value']);
                         foreach ($params as $key2 => $param) {
-                            $stmt->bindValue($key2, $param, is_numeric($param) ? PDO::PARAM_INT : (is_string($param) ? PDO::PARAM_STR :
-                                (is_bool($param) ? PDO::PARAM_BOOL : (is_null($param) ? PDO::PARAM_NULL : PDO::PARAM_STR))));
+                            $stmt->bindValue($key2, $param, $this->pdo_param_type($param));
                         }
                     }
                     else {
@@ -284,8 +301,7 @@ class model
                 if ($direct_assign) {
                     //第三个参数data_type，使用 PDO::PARAM_* 常量明确地指定参数的类型，如：
                     //PDO::PARAM_INT、PDO::PARAM_STR、PDO::PARAM_BOOL、PDO::PARAM_NULL
-                    $stmt->bindValue(':' . $key, $val, is_numeric($val) ? PDO::PARAM_INT : (is_string($val) ? PDO::PARAM_STR :
-                        (is_bool($val) ? PDO::PARAM_BOOL : (is_null($val) ? PDO::PARAM_NULL : PDO::PARAM_STR))));
+                    $stmt->bindValue(':' . $key, $val, $this->pdo_param_type($val));
                 }
             }
             $stmt->execute();
@@ -377,8 +393,7 @@ class model
                         $plist = ':' . $key . '_' . implode(',:' . $key . '_', array_keys($value['value']));
                         $params = array_combine(explode(",", $plist), $value['value']);
                         foreach ($params as $key2 => $param) {
-                            $stmt->bindValue($key2, $param, is_numeric($param) ? PDO::PARAM_INT : (is_string($param) ? PDO::PARAM_STR :
-                                (is_bool($param) ? PDO::PARAM_BOOL : (is_null($param) ? PDO::PARAM_NULL : PDO::PARAM_STR))));
+                            $stmt->bindValue($key2, $param, $this->pdo_param_type($param));
                         }
                     }
                     else {
@@ -391,8 +406,7 @@ class model
                 if ($direct_assign) {
                     //第三个参数data_type，使用 PDO::PARAM_* 常量明确地指定参数的类型，如：
                     //PDO::PARAM_INT、PDO::PARAM_STR、PDO::PARAM_BOOL、PDO::PARAM_NULL
-                    $stmt->bindValue(':' . $key, $val, is_numeric($val) ? PDO::PARAM_INT : (is_string($val) ? PDO::PARAM_STR :
-                        (is_bool($val) ? PDO::PARAM_BOOL : (is_null($val) ? PDO::PARAM_NULL : PDO::PARAM_STR))));
+                    $stmt->bindValue(':' . $key, $val, $this->pdo_param_type($val));
                 }
             }
             $stmt->bindValue(':start', $start, PDO::PARAM_INT);
@@ -482,8 +496,7 @@ class model
                         $plist = ':' . $key . '_' . implode(',:' . $key . '_', array_keys($value['value']));
                         $params = array_combine(explode(",", $plist), $value['value']);
                         foreach ($params as $key2 => $param) {
-                            $stmt->bindValue($key2, $param, is_numeric($param) ? PDO::PARAM_INT : (is_string($param) ? PDO::PARAM_STR :
-                                (is_bool($param) ? PDO::PARAM_BOOL : (is_null($param) ? PDO::PARAM_NULL : PDO::PARAM_STR))));
+                            $stmt->bindValue($key2, $param, $this->pdo_param_type($param));
                         }
                     }
                     else {
@@ -496,8 +509,7 @@ class model
                 if ($direct_assign) {
                     //第三个参数data_type，使用 PDO::PARAM_* 常量明确地指定参数的类型，如：
                     //PDO::PARAM_INT、PDO::PARAM_STR、PDO::PARAM_BOOL、PDO::PARAM_NULL
-                    $stmt->bindValue(':' . $key, $val, is_numeric($val) ? PDO::PARAM_INT : (is_string($val) ? PDO::PARAM_STR :
-                        (is_bool($val) ? PDO::PARAM_BOOL : (is_null($val) ? PDO::PARAM_NULL : PDO::PARAM_STR))));
+                    $stmt->bindValue(':' . $key, $val, $this->pdo_param_type($val));
                 }
             }
             $stmt->execute();
@@ -577,8 +589,7 @@ class model
                         $plist = ':' . $key . '_' . implode(',:' . $key . '_', array_keys($value['value']));
                         $params = array_combine(explode(",", $plist), $value['value']);
                         foreach ($params as $key2 => $param) {
-                            $stmt->bindValue($key2, $param, is_numeric($param) ? PDO::PARAM_INT : (is_string($param) ? PDO::PARAM_STR :
-                                (is_bool($param) ? PDO::PARAM_BOOL : (is_null($param) ? PDO::PARAM_NULL : PDO::PARAM_STR))));
+                            $stmt->bindValue($key2, $param, $this->pdo_param_type($param));
                         }
                     }
                     else {
@@ -591,8 +602,7 @@ class model
                 if ($direct_assign) {
                     //第三个参数data_type，使用 PDO::PARAM_* 常量明确地指定参数的类型，如：
                     //PDO::PARAM_INT、PDO::PARAM_STR、PDO::PARAM_BOOL、PDO::PARAM_NULL
-                    $stmt->bindValue(':' . $key, $val, is_numeric($val) ? PDO::PARAM_INT : (is_string($val) ? PDO::PARAM_STR :
-                        (is_bool($val) ? PDO::PARAM_BOOL : (is_null($val) ? PDO::PARAM_NULL : PDO::PARAM_STR))));
+                    $stmt->bindValue(':' . $key, $val, $this->pdo_param_type($val));
                 }
             }
             $stmt->execute();
@@ -740,8 +750,7 @@ class model
             try {
                 $stmt = mysql::I($item['connection'])->prepare($sql);
                 foreach ($args as $key => $value) {
-                    $stmt->bindValue(':' . $key, $value, is_numeric($value) ? PDO::PARAM_INT : (is_string($value) ? PDO::PARAM_STR :
-                        (is_bool($value) ? PDO::PARAM_BOOL : (is_null($value) ? PDO::PARAM_NULL : PDO::PARAM_STR))));
+                    $stmt->bindValue(':' . $key, $value, $this->pdo_param_type($value));
                 }
                 $stmt->execute();
                 $count = $stmt->rowCount();
@@ -842,8 +851,7 @@ class model
                             $plist = ':' . $key . '_' . implode(',:' . $key . '_', array_keys($value['value']));
                             $params = array_combine(explode(",", $plist), $value['value']);
                             foreach ($params as $key2 => $param) {
-                                $stmt->bindValue($key2, $param, is_numeric($param) ? PDO::PARAM_INT : (is_string($param) ? PDO::PARAM_STR :
-                                    (is_bool($param) ? PDO::PARAM_BOOL : (is_null($param) ? PDO::PARAM_NULL : PDO::PARAM_STR))));
+                                $stmt->bindValue($key2, $param, $this->pdo_param_type($param));
                             }
                         }
                         else {
@@ -947,8 +955,7 @@ class model
                             $plist = ':' . $key . '_' . implode(',:' . $key . '_', array_keys($value['value']));
                             $params = array_combine(explode(",", $plist), $value['value']);
                             foreach ($params as $key2 => $param) {
-                                $stmt->bindValue($key2, $param, is_numeric($param) ? PDO::PARAM_INT : (is_string($param) ? PDO::PARAM_STR :
-                                    (is_bool($param) ? PDO::PARAM_BOOL : (is_null($param) ? PDO::PARAM_NULL : PDO::PARAM_STR))));
+                                $stmt->bindValue($key2, $param, $this->pdo_param_type($param));
                             }
                         }
                         else {
@@ -1039,8 +1046,7 @@ class model
                     $plist = ':' . $key . '_' . implode(',:' . $key . '_', array_keys($value['value']));
                     $params = array_combine(explode(",", $plist), $value['value']);
                     foreach ($params as $key2 => $param) {
-                        $stmt->bindValue($key2, $param, is_numeric($param) ? PDO::PARAM_INT : (is_string($param) ? PDO::PARAM_STR :
-                            (is_bool($param) ? PDO::PARAM_BOOL : (is_null($param) ? PDO::PARAM_NULL : PDO::PARAM_STR))));
+                        $stmt->bindValue($key2, $param, $this->pdo_param_type($param));
                     }
                 }
                 else {
@@ -1126,8 +1132,7 @@ class model
                 $val = $value;
                 //第三个参数data_type，使用 PDO::PARAM_* 常量明确地指定参数的类型，如：
                 //PDO::PARAM_INT、PDO::PARAM_STR、PDO::PARAM_BOOL、PDO::PARAM_NULL
-                $stmt->bindValue(':' . $key, $val, is_numeric($val) ? PDO::PARAM_INT : (is_string($val) ? PDO::PARAM_STR :
-                    (is_bool($val) ? PDO::PARAM_BOOL : (is_null($val) ? PDO::PARAM_NULL : PDO::PARAM_STR))));
+                $stmt->bindValue(':' . $key, $val, $this->pdo_param_type($val));
             }
             $stmt->execute();
             $res = $stmt->fetchAll(PDO::FETCH_ASSOC);
@@ -1158,8 +1163,7 @@ class model
                 $val = $value;
                 //第三个参数data_type，使用 PDO::PARAM_* 常量明确地指定参数的类型，如：
                 //PDO::PARAM_INT、PDO::PARAM_STR、PDO::PARAM_BOOL、PDO::PARAM_NULL
-                $stmt->bindValue(':' . $key, $val, is_numeric($val) ? PDO::PARAM_INT : (is_string($val) ? PDO::PARAM_STR :
-                    (is_bool($val) ? PDO::PARAM_BOOL : (is_null($val) ? PDO::PARAM_NULL : PDO::PARAM_STR))));
+                $stmt->bindValue(':' . $key, $val, $this->pdo_param_type($val));
             }
             $stmt->execute();
             $count = $stmt->rowCount();

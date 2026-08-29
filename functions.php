@@ -1,11 +1,26 @@
 <?php
-/*
+/**
  * 函数库，用户可在此添加自己所需函数
  * YiluPHP vision 2.0
  * User: Jim.Wu
  * * Date: 2021/01/23
  * Time: 09:43
  */
+
+
+/**
+ * 对写入本地日志的文本做兜底脱敏。
+ *
+ * 业务代码仍应避免主动记录敏感值；这里用于保护框架统一记录的请求、响应和服务器变量。
+ */
+function redact_sensitive_log_data(string $text): string
+{
+    $sensitive_keys = '(?:password|passwd|secret(?:_key)?|worker_secret|payment_account|payee_name|phone|bank_name|bank_branch|authorization|http_authorization|cookie|http_cookie|set-cookie|csrf(?:_token)?|x-ai-sing-csrf|http_x_ai_sing_csrf|http_x_ai_sing_signature|accesskeyid|accesskeysecret|security-token|x-oss-security-token)';
+    $text = preg_replace('/(["\']' . $sensitive_keys . '["\']\s*[:=]\s*)["\'][^"\']*["\']/i', '$1"[REDACTED]"', $text);
+    $text = preg_replace('#https?://[^"\s]+(?:Signature|x-oss-signature)=[^"\s]+#i', '[SIGNED_URL_REDACTED]', $text);
+    $text = preg_replace('/((?:OSSAccessKeyId|Signature|security-token|x-oss-security-token|x-oss-signature|x-oss-credential)=)[^&\s"\']+/i', '$1[REDACTED]', $text);
+    return $text;
+}
 
 /**
  * @name 获取当前完整的URL，包含http头和域名
