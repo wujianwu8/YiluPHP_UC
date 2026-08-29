@@ -107,6 +107,7 @@ class hook_route_auth extends hook
             '/^\/setting\/save_avatar/',
             '/^\/setting\/save_password/',
             '/^\/setting\/save_email/',
+            '/^\/setting\/save_mobile/',
             '/^\/setting\/unbind_wechat/',
             '/^\/setting\/unbind_qq/',
             '/^\/setting\/unbind_alipay/',

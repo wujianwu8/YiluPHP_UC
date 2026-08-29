@@ -215,6 +215,7 @@ class logic_user
             'gender' => isset($user_info['gender']) ? $user_info['gender'] : 'male',
             'last_active' => time(),
             'remember' => $remember_me?1:0,
+            'credential_version' => strval(redis_y::I()->get(REDIS_KEY_USER_CREDENTIAL_VERSION.$user_info['uid']) ?: ''),
         ];
         $vk = $_COOKIE['vk'];
         $cache_key_vk = REDIS_KEY_LOGIN_USER_INFO_BY_VK.md5($vk);
@@ -244,6 +245,33 @@ class logic_user
 		unset($arr);
 		return true;
 	}
+
+    /**
+     * 保留当前浏览器登录状态，并使同一用户的其它登录会话失效。
+     */
+    public function revoke_other_login_sessions($uid, $current_vk='')
+    {
+        if (empty($uid)) {
+            return false;
+        }
+        if ($current_vk === '' && !empty($_COOKIE['vk'])) {
+            $current_vk = $_COOKIE['vk'];
+        }
+        $version = create_unique_key();
+        redis_y::I()->set(REDIS_KEY_USER_CREDENTIAL_VERSION.$uid, $version);
+
+        if ($current_vk !== '') {
+            $current_key = REDIS_KEY_LOGIN_USER_INFO_BY_VK.md5($current_vk);
+            if ($current_info = redis_y::I()->hgetall($current_key)) {
+                redis_y::I()->hset($current_key, 'credential_version', $version);
+            }
+        }
+        $uid_key = REDIS_KEY_LOGIN_USER_INFO_BY_UID.$uid;
+        if (redis_y::I()->exists($uid_key)) {
+            redis_y::I()->hset($uid_key, 'credential_version', $version);
+        }
+        return true;
+    }
 
     /**
      * @name 创建用户的临时登录令牌tlt
@@ -278,7 +306,7 @@ class logic_user
             return null;
         }
         $vk = $_COOKIE['vk'];
-        return redis_y::I()->hgetall(REDIS_KEY_LOGIN_USER_INFO_BY_VK.md5($vk));
+        return $this->get_login_user_info_by_vk($vk);
     }
 
     /**
@@ -290,7 +318,18 @@ class logic_user
      */
     public function get_login_user_info_by_vk($vk)
     {
-        return redis_y::I()->hgetall(REDIS_KEY_LOGIN_USER_INFO_BY_VK.md5($vk));
+        $key = REDIS_KEY_LOGIN_USER_INFO_BY_VK.md5($vk);
+        $info = redis_y::I()->hgetall($key);
+        if (!$info || empty($info['uid'])) {
+            return $info;
+        }
+        $version = strval(redis_y::I()->get(REDIS_KEY_USER_CREDENTIAL_VERSION.$info['uid']) ?: '');
+        $session_version = isset($info['credential_version']) ? strval($info['credential_version']) : '';
+        if ($version !== $session_version) {
+            redis_y::I()->del($key);
+            return null;
+        }
+        return $info;
     }
 
     /**

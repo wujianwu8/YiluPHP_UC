@@ -5,6 +5,67 @@ $head_info = [
 ];
 ?>
 
+<style>
+    .mobile-setting-value{display:flex;align-items:center;gap:.75rem;flex-wrap:wrap}
+    .dialog.mobile-setting-modal .dialog-content{
+        width:calc(100vw - 2rem);
+        max-width:32.5rem;
+        overflow:hidden;
+        background:#fff;
+    }
+    .dialog.mobile-setting-modal .dialog-content-hd{
+        padding:1.25rem 1.5rem .75rem;
+        margin-bottom:0;
+    }
+    .dialog.mobile-setting-modal .dialog-content-title{
+        font-family:inherit;
+        font-weight:600;
+    }
+    .dialog.mobile-setting-modal .dialog-content-bd{
+        margin:0;
+        padding:1.25rem 1.5rem 1.5rem;
+        text-align:left;
+    }
+    .dialog.mobile-setting-modal .dialog-content-ft .dialog-btn{
+        font-family:inherit;
+    }
+    .mobile-setting-dialog{width:100%;min-width:0;text-align:left}
+    .mobile-setting-dialog *{font-family:inherit!important}
+    .mobile-setting-dialog .form-group{margin-bottom:1rem}
+    .mobile-setting-dialog .form-group:last-child{margin-bottom:0}
+    .mobile-setting-dialog label{display:block;margin-bottom:.4rem;color:#495057;font-weight:500}
+    .mobile-setting-dialog .form-control,
+    .mobile-setting-dialog .custom-select{
+        display:block;
+        width:100%;
+        min-width:0;
+        height:2.5rem;
+        padding:.45rem .75rem;
+        border:1px solid #ced4da;
+        border-radius:.25rem;
+        color:#212529;
+        background-color:#fff;
+        user-select:text;
+        -webkit-user-select:text;
+    }
+    .mobile-setting-dialog .form-control:focus,
+    .mobile-setting-dialog .custom-select:focus{
+        border-color:#80bdff;
+        box-shadow:0 0 0 .2rem rgba(0,123,255,.15);
+    }
+    .mobile-setting-dialog .mobile-code-row{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:.625rem;align-items:stretch}
+    .mobile-setting-dialog .mobile-code-row button{min-width:7.5rem;padding:.45rem .8rem;white-space:nowrap;border-radius:.25rem}
+    .mobile-setting-dialog .alert{margin-bottom:1rem;padding:.75rem 1rem;border-radius:.25rem;line-height:1.55}
+    @media(max-width:575.98px){
+        .dialog.mobile-setting-modal .dialog-content{width:calc(100vw - 1.5rem)}
+        .dialog.mobile-setting-modal .dialog-content-hd{padding:1rem 1rem .625rem}
+        .dialog.mobile-setting-modal .dialog-content-bd{padding:1rem}
+        .mobile-setting-dialog .form-group{margin-bottom:.8rem}
+        .mobile-setting-dialog .mobile-code-row{grid-template-columns:minmax(0,1fr)}
+        .mobile-setting-dialog .mobile-code-row button{width:100%;min-width:0}
+    }
+</style>
+
 <h4 class="mb-3"><?php echo $head_info['title']; ?></h4>
 <form class="needs-validation title_content" novalidate="" method="post" id="setting_user_info">
     <div class="row mb-2">
@@ -81,8 +142,11 @@ $head_info = [
         <div class="col-sm-3 title">
             <label><?php echo YiluPHP::I()->lang('login_mobile'); ?></label>
         </div>
-        <div class="col-sm-7">
-            <?php echo $user_info['mobile'] ?: '-'; ?>
+        <div class="col-sm-7 mobile-setting-value">
+            <span id="current_login_mobile"><?php echo $user_info['mobile'] ?: '-'; ?></span>
+            <a href="javascript:void(0);" id="btn_mobile_setting">
+                <?php echo YiluPHP::I()->lang(empty($user_info['mobile']) ? 'bind_mobile' : 'change_mobile'); ?>
+            </a>
         </div>
     </div>
     <div class="row mb-2">
@@ -203,6 +267,136 @@ $head_info = [
 <script>
     //是否可以使用微信开放平台授权登录
     var haveWeixinOpen = <?php echo empty($config['oauth_plat']['wechat_open']['usable'])?'false':'true'; ?>;
+    var mobileSettingHasPassword = <?php echo $has_login_password ? 'true' : 'false'; ?>;
+    var mobileSettingHasMobile = <?php echo empty($user_info['mobile']) ? 'false' : 'true'; ?>;
+    var mobileSettingAreas = <?php echo json_encode($area_list, JSON_UNESCAPED_UNICODE|JSON_HEX_TAG|JSON_HEX_AMP|JSON_HEX_APOS|JSON_HEX_QUOT); ?>;
+
+    function mobileSettingNotice(message, dialogClass) {
+        $(document).dialog({
+            type: "notice",
+            position: "bottom",
+            dialogClass: dialogClass || "dialog_warn",
+            infoText: message,
+            autoClose: 3000,
+            overlayShow: false
+        });
+    }
+
+    function mobileSettingAreaOptions() {
+        var html = '';
+        for (var i = 0; i < mobileSettingAreas.length; i++) {
+            var item = mobileSettingAreas[i];
+            html += '<option value="'+item.code_number+'">(+'+item.code_number+') '+item.name+'</option>';
+        }
+        return html;
+    }
+
+    function openMobileSettingDialog() {
+        var passwordHtml = mobileSettingHasPassword
+            ? '<div class="form-group"><label for="mobile_login_password">'+getLang('enter_login_password')+'</label><input type="password" id="mobile_login_password" class="form-control" autocomplete="current-password" placeholder="'+getLang('enter_login_password_here')+'"></div>'
+            : '<div class="alert alert-info">'+getLang('current_account_has_no_password')+'</div>'+
+              '<div class="form-group"><label for="mobile_new_password">'+getLang('set_login_password')+'</label><input type="password" id="mobile_new_password" class="form-control" autocomplete="new-password" placeholder="'+getLang('password_rule_placeholder')+'"></div>'+
+              '<div class="form-group"><label for="mobile_confirm_password">'+getLang('confirm_new_password')+'</label><input type="password" id="mobile_confirm_password" class="form-control" autocomplete="new-password" placeholder="'+getLang('confirm_login_password_please')+'"></div>';
+        var content = '<div class="mobile-setting-dialog">'+
+            '<div class="form-group"><label for="mobile_area_code">'+getLang('country_region')+'</label><select id="mobile_area_code" class="custom-select">'+mobileSettingAreaOptions()+'</select></div>'+
+            '<div class="form-group"><label for="mobile_number">'+getLang('new_mobile')+'</label><input type="tel" inputmode="numeric" id="mobile_number" class="form-control" maxlength="11" placeholder="'+getLang('please_input_mobile_number')+'"></div>'+
+            '<div class="form-group"><label for="mobile_verify_code">'+getLang('sms_verify_code')+'</label><div class="mobile-code-row"><input type="text" inputmode="numeric" id="mobile_verify_code" class="form-control" maxlength="6" placeholder="'+getLang('please_input_verify_code')+'"><button type="button" class="btn btn-secondary" id="btn_send_mobile_code">'+getLang('send_verify_code')+'</button></div></div>'+
+            passwordHtml+'</div>';
+
+        var inputDialog = $(document).dialog({
+            type: 'confirm',
+            dialogClass: 'mobile-setting-modal',
+            titleText: getLang(mobileSettingHasMobile ? 'change_mobile' : 'bind_mobile'),
+            content: content,
+            contentScroll: false,
+            buttonTextConfirm: getLang('confirm_save'),
+            onClickConfirmBtn: function () {
+                var mobile = $.trim($('#mobile_number').val());
+                var code = $.trim($('#mobile_verify_code').val());
+                if (!/^\d{6,11}$/.test(mobile)) {
+                    mobileSettingNotice(getLang('wrong_mobile_number'));
+                    return false;
+                }
+                if (!/^\d{4,6}$/.test(code)) {
+                    mobileSettingNotice(getLang('verify_code_error'));
+                    return false;
+                }
+                var params = {dtype:'json', area_code:$('#mobile_area_code').val(), mobile:mobile, verify_code:code};
+                var encryptFields = ['mobile'];
+                if (mobileSettingHasPassword) {
+                    params.password = $('#mobile_login_password').val();
+                    if (!params.password) {
+                        mobileSettingNotice(getLang('enter_login_password'));
+                        return false;
+                    }
+                    encryptFields.push('password');
+                } else {
+                    params.new_password = $('#mobile_new_password').val();
+                    params.confirm_password = $('#mobile_confirm_password').val();
+                    if (!is_password(params.new_password)) {
+                        mobileSettingNotice(getLang('password_too_simple'));
+                        return false;
+                    }
+                    if (params.new_password !== params.confirm_password) {
+                        mobileSettingNotice(getLang('re_input_password_error'));
+                        return false;
+                    }
+                    encryptFields.push('new_password', 'confirm_password');
+                }
+                params = rsaEncryptData(params, encryptFields);
+                var toast = loading();
+                $.post(url_pre_lang+'/setting/save_mobile', params, function (data) {
+                    toast.close();
+                    if (data.code === 0) {
+                        inputDialog.close();
+                        $(document).dialog({titleShow:false, content:data.msg, contentScroll:false, onClickConfirmBtn:function(){reloadPage();}});
+                    } else {
+                        mobileSettingNotice(data.msg);
+                    }
+                }, 'json').fail(function () {
+                    toast.close();
+                    mobileSettingNotice(getLang('network_error_retry'), 'dialog_red');
+                });
+                return false;
+            }
+        });
+
+        $('#btn_send_mobile_code').off('click').on('click', function () {
+            var button = $(this);
+            var mobile = $.trim($('#mobile_number').val());
+            if (!/^\d{6,11}$/.test(mobile)) {
+                mobileSettingNotice(getLang('wrong_mobile_number'));
+                return;
+            }
+            var params = {dtype:'json', area_code:$('#mobile_area_code').val(), mobile:mobile, use_for:'bind_account'};
+            params = rsaEncryptData(params, ['mobile']);
+            button.prop('disabled', true).addClass('btn_loading');
+            $.post(url_pre_lang+'/send_sms_code', params, function (data) {
+                button.removeClass('btn_loading');
+                if (data.code !== 0) {
+                    button.prop('disabled', false);
+                    mobileSettingNotice(data.msg);
+                    return;
+                }
+                mobileSettingNotice(getLang('verify_code_sent'), 'dialog_blue');
+                var left = 30;
+                button.text(left);
+                var timer = setInterval(function () {
+                    left--;
+                    button.text(left);
+                    if (left <= 0) {
+                        clearInterval(timer);
+                        button.text(getLang('send_verify_code')).prop('disabled', false);
+                    }
+                }, 1000);
+            }, 'json').fail(function () {
+                button.removeClass('btn_loading').prop('disabled', false);
+                mobileSettingNotice(getLang('network_error_retry'), 'dialog_red');
+            });
+        });
+    }
+
+    $('#btn_mobile_setting').on('click', openMobileSettingDialog);
 
     (function() {
         // Fetch all the forms we want to apply custom Bootstrap validation styles to
